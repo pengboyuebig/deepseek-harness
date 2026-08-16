@@ -10,7 +10,7 @@
     root: './.sessions'
     compression: none
 
-# file/override both default to their DSH_SNAPSHOT_* env vars.
+# file/override both default to their GLH_SNAPSHOT_* env vars.
 - id: replay
   name: '@deepseek-ai/dsh-llm-replay'
 

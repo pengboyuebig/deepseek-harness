@@ -27,7 +27,7 @@ npx @deepseek-ai/dsh web
 如需从仓库源码运行：
 
 ```sh
-git clone <GLKJ 仓库地址>
+git clone <GLKJ-repo-url>
 cd deepseek-harness
 pnpm install
 pnpm run build

@@ -2,7 +2,7 @@
  * Per-harness-home anonymous user id shared by telemetry and feedback.
  *
  * The id is a random UUID persisted as a bare line in `.anonymous-user-id` inside the
- * harness home resolved by {@link resolveDshHome} (`$GLH_HOME` > `~/.dsh`),
+ * harness home resolved by {@link resolveDshHome} (`$GLH_HOME` > `~/.glh`),
  * and never derived from the hostname, network address, git remote, or any
  * other identifying source. It is scoped to the harness home, not the
  * machine: every process sharing one `$GLH_HOME` reports the same id, and

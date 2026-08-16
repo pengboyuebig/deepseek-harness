@@ -81,9 +81,9 @@ describe('jsonrpc-agent keyless smoke', () => {
       env: {
         GLKJ_API_KEY: 'keyless-smoke-no-call',
         GLKJ_BASE_URL: `http://127.0.0.1:${address.port}`,
-        DSH_CWD: root,
-        DSH_SESSION_ROOT: join(root, '.sessions'),
-        ...(envValue === undefined ? {} : { DSH_MAX_TOKENS_AS_SUCCESS: envValue }),
+        GLH_CWD: root,
+        GLH_SESSION_ROOT: join(root, '.sessions'),
+        ...(envValue === undefined ? {} : { GLH_MAX_TOKENS_AS_SUCCESS: envValue }),
       },
       timeout: 35_000,
       killSignal: 'SIGKILL',
@@ -185,7 +185,7 @@ describe('jsonrpc-agent keyless smoke', () => {
       cwd: repoRoot,
       env: {
         GLKJ_API_KEY: 'keyless-smoke-no-call',
-        DSH_MAX_TOKENS_AS_SUCCESS: 'sometimes',
+        GLH_MAX_TOKENS_AS_SUCCESS: 'sometimes',
       },
       stdin: 'ignore',
       timeout: 25_000,

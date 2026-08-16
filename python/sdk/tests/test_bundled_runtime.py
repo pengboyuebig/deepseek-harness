@@ -58,12 +58,12 @@ def _client(tmp_path: Path, launch_args: tuple[str, ...]) -> HarnessClient:
             launch_args_override=launch_args,
             cwd=str(tmp_path),
             env={
-                "DSH_CORDIS_CONFIG": "./cordis.yml",
-                "DSH_SESSION_ROOT": str(tmp_path / "sessions"),
-                "DSH_CWD": str(tmp_path),
+                "GLH_CORDIS_CONFIG": "./cordis.yml",
+                "GLH_SESSION_ROOT": str(tmp_path / "sessions"),
+                "GLH_CWD": str(tmp_path),
                 # The lazily mounted adapter requires a key even without a model call.
-                "DEEPSEEK_API_KEY": "sk-dummy-for-boot",
-                "DEEPSEEK_BASE_URL": "http://127.0.0.1:9",
+                "GLKJ_API_KEY": "sk-dummy-for-boot",
+                "GLKJ_BASE_URL": "http://127.0.0.1:9",
             },
             request_timeout_seconds=120,
         )
@@ -92,9 +92,9 @@ def test_python_sdk_boots_minimal_jsonrpc_config(tmp_path: Path, mode: str) -> N
         session_root=str(tmp_path / "sessions"),
         cordis=str(_MINIMAL_CONFIG),
         env={
-            "DSH_MODEL": model,
-            "DSH_CONTEXT_WINDOW": "1000000",
-            "DSH_SYSTEM_PROMPT": "You are the Python SDK minimal boot test agent.",
+            "GLH_MODEL": model,
+            "GLH_CONTEXT_WINDOW": "1000000",
+            "GLH_SYSTEM_PROMPT": "You are the Python SDK minimal boot test agent.",
         },
         api_key="sk-dummy-for-boot",
         base_url="http://127.0.0.1:9",
@@ -130,11 +130,11 @@ def test_zero_config_run_injects_bundled_default_cordis_config(
     tmp_path: Path, mode: str, ambient_config: str | None, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _launch_args(mode)  # skip early when this carrier is unavailable
-    monkeypatch.setenv("DSH_RUNTIME_MODE", mode)
+    monkeypatch.setenv("GLH_RUNTIME_MODE", mode)
     if ambient_config is None:
-        monkeypatch.delenv("DSH_CORDIS_CONFIG", raising=False)
+        monkeypatch.delenv("GLH_CORDIS_CONFIG", raising=False)
     else:
-        monkeypatch.setenv("DSH_CORDIS_CONFIG", ambient_config)
+        monkeypatch.setenv("GLH_CORDIS_CONFIG", ambient_config)
 
     harness = DeepSeekHarness(
         model="deepseek-v4-pro",

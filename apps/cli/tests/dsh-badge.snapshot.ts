@@ -77,28 +77,28 @@ describe('dsh badge assembled snapshot', () => {
       </skill_resources>
 
       <skill_instructions>
-      # dsh Badge
+      # glh Badge
 
-      Add the official “powered by dsh” badge without recreating or restyling it.
+      Add the official “powered by glh” badge without recreating or restyling it.
 
       ## Assets
 
       - Local PNG: [\`dsh-badge.png\`](dsh-badge.png), 726×120 source image; render at 121×20
-      - Shields.io image URL: \`https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white\`
-      - Project URL: \`https://github.com/deepseek-ai/deepseek-harness\`
+      - Shields.io image URL: \`https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square\`
+      - Project URL: \`https://git.glkj.example.com/glkj/harness\`
 
       ## Markdown
 
       Use this linked badge in Markdown:
 
       \`\`\`markdown
-      [![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
+      [![](https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square)](https://git.glkj.example.com/glkj/harness)
       \`\`\`
 
       If attribution should not be linked, use:
 
       \`\`\`markdown
-      ![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)
+      ![](https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square)
       \`\`\`
 
       ## Usage rules
@@ -116,28 +116,28 @@ describe('dsh badge assembled snapshot', () => {
           ],
           "isError": false,
           "value": {
-            "content": "# dsh Badge
+            "content": "# glh Badge
 
-      Add the official “powered by dsh” badge without recreating or restyling it.
+      Add the official “powered by glh” badge without recreating or restyling it.
 
       ## Assets
 
       - Local PNG: [\`dsh-badge.png\`](dsh-badge.png), 726×120 source image; render at 121×20
-      - Shields.io image URL: \`https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white\`
-      - Project URL: \`https://github.com/deepseek-ai/deepseek-harness\`
+      - Shields.io image URL: \`https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square\`
+      - Project URL: \`https://git.glkj.example.com/glkj/harness\`
 
       ## Markdown
 
       Use this linked badge in Markdown:
 
       \`\`\`markdown
-      [![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
+      [![](https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square)](https://git.glkj.example.com/glkj/harness)
       \`\`\`
 
       If attribution should not be linked, use:
 
       \`\`\`markdown
-      ![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)
+      ![](https://img.shields.io/badge/powered_by-glh-4D6BFE?style=flat-square)
       \`\`\`
 
       ## Usage rules

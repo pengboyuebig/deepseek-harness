@@ -578,7 +578,7 @@ describe('workspace context instruction discovery', () => {
     const root = await tempRepo()
     const emptyHome = await tempRepo()
     // Isolate the default-home fallback: blank GLH_HOME is treated as unset, and
-    // the home dirs point at an empty dir so the default ~/.dsh holds no global
+    // the home dirs point at an empty dir so the default ~/.glh holds no global
     // scope. Windows homedir() reads USERPROFILE (not HOME), so both must be
     // stubbed or a real ~/.glh/AGENTS.md would otherwise leak in.
     vi.stubEnv('GLH_HOME', '')
@@ -618,7 +618,7 @@ describe('workspace context instruction discovery', () => {
     }
   })
 
-  it('labels the default GLH home as ~/.dsh when HOME points at the configured default', async () => {
+  it('labels the default GLH home as ~/.glh when HOME points at the configured default', async () => {
     const root = await tempRepo()
     const home = await tempRepo()
     try {
@@ -641,7 +641,7 @@ describe('workspace context instruction discovery', () => {
     }
   })
 
-  it('expands a configured ~/.dsh home to the operating-system home directory', async () => {
+  it('expands a configured ~/.glh home to the operating-system home directory', async () => {
     const root = await tempRepo()
     const home = await tempRepo()
     try {
@@ -2406,7 +2406,7 @@ describe('workspace context request injection', () => {
     }
   })
 
-  it('labels a custom dshHome as GLH_HOME instead of pretending it is ~/.dsh', async () => {
+  it('labels a custom dshHome as GLH_HOME instead of pretending it is ~/.glh', async () => {
     const root = await tempRepo()
     const home = await tempRepo()
     try {

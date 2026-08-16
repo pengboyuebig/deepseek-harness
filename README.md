@@ -27,7 +27,7 @@ The command starts the Web UI, served at `http://127.0.0.1:3080` by default. See
 To run from a repository checkout:
 
 ```sh
-git clone <GLKJ repository URL>
+git clone <GLKJ-repo-url>
 cd deepseek-harness
 pnpm install
 pnpm run build

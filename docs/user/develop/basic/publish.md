@@ -10,8 +10,8 @@ To use a fresh source checkout instead, complete the [run-from-source section](.
 
 Installation is built on two concepts. Both are described by a `package.json`, but they carry different kinds of manifest under the `glh` key, and they answer different questions:
 
-- A **bundle** is an npm package that ships a configuration layer. Its manifest declares `glh.bundle`, answering "what does this package contribute?": a patch file that inserts or overrides plugin rows.
-- A **profile** is a directory under `$GLH_HOME/profiles/<name>` describing one runnable composition. Its manifest declares `glh.profile`, answering "which bundles compose this setup, in what order?".
+- A **bundle** is an npm package that ships a configuration layer. Its manifest declares `dsh.bundle`, answering "what does this package contribute?": a patch file that inserts or overrides plugin rows.
+- A **profile** is a directory under `$GLH_HOME/profiles/<name>` describing one runnable composition. Its manifest declares `dsh.profile`, answering "which bundles compose this setup, in what order?".
 
 A bundle is what you author and distribute; a profile is what a user boots with `glh --profile <name>`. Nothing is both.
 
@@ -25,7 +25,7 @@ mkdir -p hello-plugin
 
 ```
 hello-plugin/
-├── package.json       # declares glh.bundle
+├── package.json       # declares dsh.bundle
 ├── cordis.patch.yml   # the layer applied when a profile lists this bundle
 └── index.js           # plugin modules the patch rows reference
 ```
@@ -61,13 +61,13 @@ Create `hello-plugin/cordis.patch.yml`. The patch is a YAML array like the `--pa
       name: dsh-hello-plugin
 ```
 
-A package without the `glh.bundle` declaration still installs, but only as a plain dependency: `glh plugin` prints a warning and activates no layer. Use that package format for a library that plugin packages import rather than a plugin users enable.
+A package without the `dsh.bundle` declaration still installs, but only as a plain dependency: `glh plugin` prints a warning and activates no layer. Use that package format for a library that plugin packages import rather than a plugin users enable.
 
 ### The profile manifest
 
 A profile directory holds two files:
 
-- `package.json` — the profile's out-of-tree plugin dependencies (managed by pnpm) plus the `glh.profile` manifest with its ordered `bundles` list.
+- `package.json` — the profile's out-of-tree plugin dependencies (managed by pnpm) plus the `dsh.profile` manifest with its ordered `bundles` list.
 - `cordis.patch.yml` — the user's own patch layer, applied after every bundle layer.
 
 You never write a profile manifest by hand: `glh plugin` creates and maintains it. The next section shows the result.
@@ -80,7 +80,7 @@ You never write a profile manifest by hand: `glh plugin` creates and maintains i
 glh plugin --profile demo add ./hello-plugin
 ```
 
-The first use initializes the profile (with `@deepseek-ai/dsh-base` as its first bundle), pnpm links the checkout, and `glh` appends the bundle to `glh.profile.bundles` because the package declares `glh.bundle`:
+The first use initializes the profile (with `@deepseek-ai/dsh-base` as its first bundle), pnpm links the checkout, and `glh` appends the bundle to `dsh.profile.bundles` because the package declares `dsh.bundle`:
 
 ```json
 {
@@ -113,7 +113,7 @@ glh --profile demo
 
 The effective configuration composes over an empty root by applying, in order:
 
-1. Each bundle patch named in the profile's `glh.profile.bundles` list, in list order — `@deepseek-ai/dsh-base` first, then each installed bundle in the order it was added.
+1. Each bundle patch named in the profile's `dsh.profile.bundles` list, in list order — `@deepseek-ai/dsh-base` first, then each installed bundle in the order it was added.
 2. The profile's own `cordis.patch.yml`.
 3. The home-level `$GLH_HOME/cordis.patch.yml` — machine-local preferences shared by every profile.
 4. Each `--patch <path>` overlay, in argv order.

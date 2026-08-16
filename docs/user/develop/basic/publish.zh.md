@@ -10,8 +10,8 @@
 
 安装机制建立在两个概念之上。二者都由一份 `package.json` 描述，但它们在 `glh` 键下携带的 manifest（元数据清单）种类不同，回答的问题也不同：
 
-- **组合包**是附带一个配置层的 npm 包。它的 manifest 声明 `glh.bundle`，回答的是"这个包贡献什么？"：一个插入或覆盖插件行的 patch 文件。
-- **profile** 是位于 `$GLH_HOME/profiles/<name>` 下、描述一份可启动组合的目录。它的 manifest 声明 `glh.profile`，回答的是"这套配置由哪些组合包按什么顺序组成？"。
+- **组合包**是附带一个配置层的 npm 包。它的 manifest 声明 `dsh.bundle`，回答的是"这个包贡献什么？"：一个插入或覆盖插件行的 patch 文件。
+- **profile** 是位于 `$GLH_HOME/profiles/<name>` 下、描述一份可启动组合的目录。它的 manifest 声明 `dsh.profile`，回答的是"这套配置由哪些组合包按什么顺序组成？"。
 
 组合包是你编写并分发的东西；profile 是用户用 `glh --profile <name>` 启动的东西。没有东西同时是两者。
 
@@ -25,7 +25,7 @@ mkdir -p hello-plugin
 
 ```
 hello-plugin/
-├── package.json       # declares glh.bundle
+├── package.json       # declares dsh.bundle
 ├── cordis.patch.yml   # the layer applied when a profile lists this bundle
 └── index.js           # plugin modules the patch rows reference
 ```
@@ -61,13 +61,13 @@ export function apply() {
       name: dsh-hello-plugin
 ```
 
-没有 `glh.bundle` 声明的包仍然可以安装，但只作为普通依赖：`glh plugin` 会打印警告，且不激活任何层。如果一个库供插件包 import，而不是供用户启用，就使用这种包格式。
+没有 `dsh.bundle` 声明的包仍然可以安装，但只作为普通依赖：`glh plugin` 会打印警告，且不激活任何层。如果一个库供插件包 import，而不是供用户启用，就使用这种包格式。
 
 ### profile manifest
 
 profile 目录包含两个文件：
 
-- `package.json` — profile 的树外插件依赖（由 pnpm 管理），加上 `glh.profile` manifest 及其有序的 `bundles` 列表。
+- `package.json` — profile 的树外插件依赖（由 pnpm 管理），加上 `dsh.profile` manifest 及其有序的 `bundles` 列表。
 - `cordis.patch.yml` — 用户自己的 patch 层，在每个组合包层之后应用。
 
 profile manifest 从不需要手写：`glh plugin` 负责创建和维护它。下一节展示其结果。
@@ -80,7 +80,7 @@ profile manifest 从不需要手写：`glh plugin` 负责创建和维护它。�
 glh plugin --profile demo add ./hello-plugin
 ```
 
-首次使用会初始化 profile（`@deepseek-ai/dsh-base` 作为它的第一个组合包），pnpm 链接该 checkout，而 `glh` 因为这个包声明了 `glh.bundle`，把它追加进 `glh.profile.bundles`：
+首次使用会初始化 profile（`@deepseek-ai/dsh-base` 作为它的第一个组合包），pnpm 链接该 checkout，而 `glh` 因为这个包声明了 `dsh.bundle`，把它追加进 `dsh.profile.bundles`：
 
 ```json
 {
@@ -113,7 +113,7 @@ glh --profile demo
 
 生效配置在空根之上按以下顺序逐层组合：
 
-1. profile 的 `glh.profile.bundles` 列表所列的各个组合包 patch，按列表顺序——先是 `@deepseek-ai/dsh-base`，然后是每个已安装组合包，按其加入顺序。
+1. profile 的 `dsh.profile.bundles` 列表所列的各个组合包 patch，按列表顺序——先是 `@deepseek-ai/dsh-base`，然后是每个已安装组合包，按其加入顺序。
 2. profile 自己的 `cordis.patch.yml`。
 3. home 级的 `$GLH_HOME/cordis.patch.yml`——各 profile 共享的机器本地偏好。
 4. 每个 `--patch <path>` overlay，按 argv 顺序。

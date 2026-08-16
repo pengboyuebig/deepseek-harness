@@ -19,11 +19,11 @@ exe 缺失时抛出 `FileNotFoundError`，并写明两种获取途径：在 deep
 
 ## 解析 API
 
-- `resolve_bundled_launch_args(mode=None) -> tuple[str, ...]`——启动内置运行时的 argv 元组：exe 模式下为 `(exe_path,)`，node 模式下为 `(node_path, bin_js_path)`。模式选择：显式参数 > `DSH_RUNTIME_MODE` 环境变量（`exe` | `node`）> 自动。自动解析只找生产 exe——仅限开发的 node 载体必须显式选用，从而生产部署绝不会悄悄跑在源码构建上。
+- `resolve_bundled_launch_args(mode=None) -> tuple[str, ...]`——启动内置运行时的 argv 元组：exe 模式下为 `(exe_path,)`，node 模式下为 `(node_path, bin_js_path)`。模式选择：显式参数 > `GLH_RUNTIME_MODE` 环境变量（`exe` | `node`）> 自动。自动解析只找生产 exe——仅限开发的 node 载体必须显式选用，从而生产部署绝不会悄悄跑在源码构建上。
 - `bundled_runtime_path() -> Path`——平台 exe 路径（仅 exe 载体，并会在 macOS 上校验必要的 `-spawn-helper` 伴随文件也已安装）。node 载体没有单一路径的等价物，经由上面的 argv 元组启动。
 - `bundled_default_config_path() -> Path`——检入的默认配置（见下文）。
 - `bundled_package_dir() -> Path`——已安装包的数据根目录。
 
 ## 零配置设计
 
-运行时二进制始终要求显式配置（`$DSH_CORDIS_CONFIG`，或作为 argv 位置参数的配置路径），缺了就报错退出——这一强制语义是运行时设计的一部分，本包不会弱化它。bin（`dsh-jsonrpc-agent`）只启动配置里列出的插件；对外服务接口（stdio JSON-RPC 服务器）也是其中一个条目（`@deepseek-ai/dsh-sdk-jsonrpc-server`），缺了它，启动出的 agent（智能体）就没有对外通道。本包检入的 `runtime/cordis.yml` 包含 JSON-RPC 服务条目、agent 核心、预载的 DeepSeek 适配器、JSONL 持久化、显式组合的语义检查点策略、本地 bash，以及用于有界加载工作区指令的本地文件系统提供方。持久化后端负责持久存储，独立的策略则选择请求、工具分发和已完成步骤的检查点。DeepSeek 适配器读取 `DEEPSEEK_API_KEY` 与 `DEEPSEEK_BASE_URL`，持久化、bash 和文件系统提供方则使用 `DSH_SESSION_ROOT` 和 `DSH_CWD`，并为手动运行提供回退值。调用方未使用任何显式配置通道时，`deepseek_harness` 客户端把该文件路径注入 `DSH_CORDIS_CONFIG`（注入条件见 [sdk README](https://github.com/deepseek-ai/deepseek-harness/blob/master/python/sdk/README.md)）。因此，零配置是包装层中一次显式、可见的参数传递，而不是运行时中的隐藏回退。
+运行时二进制始终要求显式配置（`$GLH_CORDIS_CONFIG`，或作为 argv 位置参数的配置路径），缺了就报错退出——这一强制语义是运行时设计的一部分，本包不会弱化它。bin（`dsh-jsonrpc-agent`）只启动配置里列出的插件；对外服务接口（stdio JSON-RPC 服务器）也是其中一个条目（`@deepseek-ai/dsh-sdk-jsonrpc-server`），缺了它，启动出的 agent（智能体）就没有对外通道。本包检入的 `runtime/cordis.yml` 包含 JSON-RPC 服务条目、agent 核心、预载的 DeepSeek 适配器、JSONL 持久化、显式组合的语义检查点策略、本地 bash，以及用于有界加载工作区指令的本地文件系统提供方。持久化后端负责持久存储，独立的策略则选择请求、工具分发和已完成步骤的检查点。DeepSeek 适配器读取 `GLKJ_API_KEY` 与 `GLKJ_BASE_URL`，持久化、bash 和文件系统提供方则使用 `GLH_SESSION_ROOT` 和 `GLH_CWD`，并为手动运行提供回退值。调用方未使用任何显式配置通道时，`deepseek_harness` 客户端把该文件路径注入 `GLH_CORDIS_CONFIG`（注入条件见 [sdk README](https://github.com/deepseek-ai/deepseek-harness/blob/master/python/sdk/README.md)）。因此，零配置是包装层中一次显式、可见的参数传递，而不是运行时中的隐藏回退。
