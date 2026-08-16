@@ -56,7 +56,7 @@ const GROUPS = [{
 /** Boot the plugin over fake faces + a stateful fake host (current moves on selectModel). */
 async function bench() {
   const ctx = new Context()
-  let current: ModelSelection = { provider: 'deepseek-official', model: 'deepseek-v4-flash' }
+  let current: ModelSelection | undefined = { provider: 'deepseek-official', model: 'deepseek-v4-flash' }
   const calls = { models: 0, select: 0 }
   ctx.provide('connection', { api: { sessions: {
     models: () => {
@@ -127,7 +127,7 @@ async function bench() {
     contribution: () => contribution!,
     seat: () => seats.get('conversation.input.model')!,
     hostCurrent: () => current,
-    setHostCurrent: (selection: ModelSelection) => { current = selection },
+    setHostCurrent: (selection: ModelSelection | undefined) => { current = selection },
     address: (id: SessionId) => { addressed.add(id) },
     setRoutable: (next: boolean) => { routable = next },
     blockOf: (key: string) => blocks.get(sid(key)),
@@ -233,6 +233,19 @@ describe('ui-model-selection dual entry', () => {
     expect(face2.directory).not.toBe(face1.directory)
   })
 
+  it('blocks the composer with the no-model message until a model is chosen', async () => {
+    const b = await bench()
+    b.setHostCurrent(undefined)
+    b.setRoutable(false)
+    b.mint('s1')
+    const face = b.seat().inject!(sid('s1'))
+    face.load()
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(face.directory.getSnapshot()).toMatchObject({ current: undefined, routable: false })
+    expect(b.blockOf('s1')?.reason).toBe(zh['blocked.unselected'])
+  })
+
   it('blocks the composer only once the Host reports the route unservable', async () => {
     const b = await bench()
     b.mint('s1')
@@ -250,7 +263,7 @@ describe('ui-model-selection dual entry', () => {
     b.ctx.remote.$dispatch('llm/adapters-updated', [])
     await Promise.resolve()
     await Promise.resolve()
-    expect(b.blockOf('s1')?.reason).toBe(zh['blocked.composer'])
+    expect(b.blockOf('s1')?.reason).toBe(zh['blocked.unavailable'])
 
     // Recovering clears it without a reload of the surface.
     b.setRoutable(true)

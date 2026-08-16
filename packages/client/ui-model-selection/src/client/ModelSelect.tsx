@@ -188,14 +188,15 @@ export function ModelSelect(
   }
 
   const chooseEffort = (effort: string | undefined): void => {
-    if (state.current === null) return
+    const current = state.current
+    if (current === null || current === undefined) return
     if (effectiveEffort === effort) {
       close(true)
       return
     }
     const selection: ModelSelection = {
-      provider: state.current.provider,
-      model: state.current.model,
+      provider: current.provider,
+      model: current.model,
       ...effort === undefined ? {} : { reasoningEffort: effort },
     }
     lastActionRef.current = 'select'

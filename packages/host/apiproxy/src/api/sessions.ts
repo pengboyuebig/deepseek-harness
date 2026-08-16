@@ -150,15 +150,16 @@ export interface ModelCatalogFailure {
 
 /** Detached model-directory snapshot for one session. */
 export interface SessionModels {
-  /** Model selection for the session's next assembled step. */
-  current: ModelSelection
+  /** Model selection for the session's next assembled step, if one was chosen. */
+  current?: ModelSelection
   /**
-   * Whether an adapter currently serves `current.provider`, and therefore
-   * whether this session can start a turn at all. Deliberately NOT derivable
-   * from `groups`: catalog membership is advisory, so a route serving a model
-   * it stopped advertising is absent from the groups yet perfectly usable,
-   * while a route whose adapter is gone can serve nothing. A surface that
-   * blocks input must read this rather than the groups.
+   * Whether an adapter currently serves the selected provider, and therefore
+   * whether this session can start a turn at all. `false` also means no model
+   * has been selected yet. Deliberately NOT derivable from `groups`: catalog
+   * membership is advisory, so a route serving a model it stopped advertising
+   * is absent from the groups yet perfectly usable, while a route whose adapter
+   * is gone can serve nothing. A surface that blocks input must read this
+   * rather than the groups.
    */
   routable: boolean
   /** Successfully loaded provider groups. */

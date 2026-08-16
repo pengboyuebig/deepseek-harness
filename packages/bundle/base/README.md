@@ -10,7 +10,7 @@ The row set and its rationale are documented inline in the patch file; the [gene
 
 ## Model Experience
 
-Indirectly, through the inserted rows: this bundle selects the shipped persona-less prompt base, tool set, and DeepSeek adapter that mode bundles specialize, and contributes no model-visible text of its own.
+Indirectly, through the inserted rows: this bundle selects the shipped persona-less prompt base, tool set, and DeepSeek adapter that mode bundles specialize. GLKJ intentionally ships without a default model; users configure and select a model through the Models page before sending a request.
 
 #### KV Cache effect
 

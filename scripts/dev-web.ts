@@ -63,6 +63,7 @@ export async function watchClientPlugins(
   const bundles = await build({
     cwd: root,
     workspace: [...pluginDirs],
+    configLoader: 'native',
     watch: true,
     hooks: {
       'build:done': ({ options }) => {

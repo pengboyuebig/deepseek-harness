@@ -13,8 +13,8 @@ import { createSnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
 
 /** Directory snapshot both entries render from. */
 export interface ModelDirectoryState {
-  /** Model selection the host reports for the next assembled step; null before the first load. */
-  current: ModelSelection | null
+  /** Model selection the host reports for the next assembled step; null before the first load, undefined when none is selected. */
+  current: ModelSelection | null | undefined
   /**
    * Whether an adapter serves the current selection's provider, as the host reports
    * it — null before the first load, which is NOT the same as blocked. Read

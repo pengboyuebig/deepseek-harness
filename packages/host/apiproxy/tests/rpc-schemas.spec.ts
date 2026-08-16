@@ -205,6 +205,11 @@ describe('sessions domain schemas', () => {
     }).hasMore).toBe(false)
     expect(sessionModelsRequestSchema.parse({ sessionId: 's1' }).sessionId).toBe('s1')
     expect(sessionModelsValueSchema.parse({
+      routable: false,
+      groups: [],
+      failures: [],
+    }).current).toBeUndefined()
+    expect(sessionModelsValueSchema.parse({
       current: { provider: 'deepseek-official', model: 'deepseek-v4-flash', reasoningEffort: 'max' },
       routable: true,
       groups: [{

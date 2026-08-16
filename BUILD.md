@@ -44,7 +44,7 @@ pnpm glh --profile headless "任务"  # 单任务无界面
 
 Web 前端热更新开发：`pnpm run dev:web`（配合 `pnpm glh web` 使用）。
 
-启动前需配置模型后端（否则首启引导会提示）：
+启动前需要配置并选择模型。GLKJ 不预设默认模型，因此首次进入 Web UI 后，打开 Models 页配置供应商、Base URL、API Key 和模型，再在会话模型选择器中选中该模型；未选择前不会向占位地址请求：
 
 ```sh
 export GLKJ_API_KEY="你的密钥"

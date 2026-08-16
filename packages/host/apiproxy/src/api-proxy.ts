@@ -639,7 +639,7 @@ export interface ApiProxyDefaults {
    * every access rather than captured, so a default saved during this process
    * reaches the sessions that have not run a turn yet.
    */
-  defaultModelSelection: () => ModelSelection
+  defaultModelSelection: () => ModelSelection | undefined
   /**
    * Record a selection as the new default. Either absent, or a closure that
    * may itself decline — the gateway plugin always passes one, and it no-ops
@@ -1108,12 +1108,12 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
     ?? DEFAULT_SESSION_LOG_COMPRESSION_LEVEL
   const coldBlankProbeMaxBytes = defaults.coldBlankProbeMaxBytes
     ?? DEFAULT_COLD_BLANK_PROBE_MAX_BYTES
-  /** The seed model each create/resume declares; re-read so it never goes stale. */
+  /** The seed model each create/resume declares when a default is configured; re-read so it never goes stale. */
   const agentOptions = (): AgentOptions => {
-    const { provider, model } = defaults.defaultModelSelection()
-    return { provider, model }
+    const selection = defaults.defaultModelSelection()
+    return selection === undefined ? {} : { provider: selection.provider, model: selection.model }
   }
-  type WebModelSelectionRef = ModelSelectionRef & { current: ModelSelection }
+  type WebModelSelectionRef = ModelSelectionRef
   const selections = new WeakMap<Agent, WebModelSelectionRef>()
   /**
    * Serializes `agentPreset.select` per session. Two concurrent selects both
@@ -1156,7 +1156,7 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
     if (installed !== undefined) return installed
     let picked: ModelSelection | undefined
     const selection: WebModelSelectionRef = {
-      get current(): ModelSelection {
+      get current(): ModelSelection | undefined {
         if (picked !== undefined) return picked
         // Incrementally folded by the session, so a per-step read costs
         // O(new events) rather than a rescan.
@@ -1170,7 +1170,7 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
             : { reasoningEffort: logged.reasoningEffort },
         }
       },
-      set current(next: ModelSelection) {
+      set current(next: ModelSelection | undefined) {
         picked = next
       },
       assembled: undefined,
@@ -1854,6 +1854,15 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
     if ('error' in found) return { refused: err(request, found.error) }
     const agent = found.agent
     const selection = selectionFor(agent).current
+    if (selection === undefined) {
+      return {
+        refused: err(request, {
+          code: 'model-not-selected',
+          message: 'no model is selected; select a model for this session before sending a message',
+          details: {},
+        }),
+      }
+    }
     if (!routeServed(selection.provider)) {
       return {
         refused: err(request, {
@@ -2275,8 +2284,13 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
         if ('error' in found) return err(request, found.error)
         const current = selectionFor(found.agent).current
         const { groups, failures } = await buildModelCatalog(ctx)
-        const routable = routeServed(current.provider)
-        return ok(request, { current: { ...current }, routable, groups, failures })
+        const routable = current !== undefined && routeServed(current.provider)
+        return ok(request, {
+          ...current === undefined ? {} : { current: { ...current } },
+          routable,
+          groups,
+          failures,
+        })
       },
 
       async selectModel(request) {
@@ -2473,6 +2487,8 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
         const resolved = await turnAgentFor<{ accepted: true }>(request, sessionId)
         if ('refused' in resolved) return resolved.refused
         const agent = resolved.agent
+        const selection = selectionFor(agent).current
+        if (selection === undefined) throw new Error('api-proxy: accepted a prompt with no selected model')
         // Request identity and optional browser zone ride the exact durable user message.
         const source: MessageSource = {
           kind: 'user',
@@ -2483,12 +2499,11 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
         const admit = async (): Promise<RpcResponse<{ accepted: true }>> => {
           try {
             if (hasImage) {
-              const current = selectionFor(agent).current
-              const modelInfo = await ctx.llm.resolveModelInfo(current.provider, current.model)
+              const modelInfo = await ctx.llm.resolveModelInfo(selection.provider, selection.model)
               if (modelInfo.inputModalities !== undefined && !modelInfo.inputModalities.includes('image')) {
                 return err(request, {
                   code: 'attachment-error',
-                  message: `Model "${current.model}" does not support image input.`,
+                  message: `Model "${selection.model}" does not support image input.`,
                   details: { reason: 'MODEL_DOES_NOT_SUPPORT_IMAGES' },
                 })
               }
@@ -2931,8 +2946,7 @@ export function createApiProxy(ctx: Context, defaults: ApiProxyDefaults): ApiPro
           cwd: defaults.cwd,
           // Read live for the same reason: this is what the NEXT session will
           // start from, so a saved default has to be what it reports.
-          provider: selection.provider,
-          model: selection.model,
+          ...selection === undefined ? {} : { provider: selection.provider, model: selection.model },
           attachedSessions: ctx.agents.list().length,
           canOpenPath: canOpenPaths(),
         }))

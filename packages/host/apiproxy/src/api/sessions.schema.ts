@@ -248,7 +248,7 @@ export const sessionModelsRequestSchema = z.object({
 
 /** session.models response value. */
 export const sessionModelsValueSchema = z.object({
-  current: modelSelectionSchema,
+  current: modelSelectionSchema.optional(),
   routable: z.boolean(),
   groups: z.array(modelProviderGroupSchema),
   failures: z.array(modelCatalogFailureSchema),

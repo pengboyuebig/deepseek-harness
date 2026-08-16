@@ -36,14 +36,14 @@ export class ModelDirectoryResolver extends Service {
 
   private readonly live: LiveState = { directories: new Map() }
 
-  /** Localized composer-block copy; this plugin owns the string it raises. */
-  private readonly blockReason: () => string
+  /** Localized composer-block copy for an unset or unavailable model route. */
+  private readonly blockReason: (selected: boolean) => string
 
   /**
    * @param ctx - owning root context (the service registers itself as `models`).
    * @param config - the bound translator for this plugin's own dictionary.
    */
-  constructor(ctx: Context, config: { blockReason: () => string }) {
+  constructor(ctx: Context, config: { blockReason: (selected: boolean) => string }) {
     super(ctx, 'modelDirectories')
     this.blockReason = config.blockReason
     ctx.on('connection/reset', () => {
@@ -88,8 +88,9 @@ export class ModelDirectoryResolver extends Service {
     const conversation = this.ctx.get('conversation')
     if (conversation !== undefined) {
       const publish = (): void => {
-        conversation.blocks.set(sessionId, directory.store.getSnapshot().routable === false
-          ? { reason: this.blockReason() }
+        const snapshot = directory.store.getSnapshot()
+        conversation.blocks.set(sessionId, snapshot.routable === false
+          ? { reason: this.blockReason(snapshot.current !== undefined) }
           : undefined)
       }
       publish()

@@ -43,7 +43,7 @@ pnpm glh web
 
 ## 4. 模型接入（后端配置）
 
-默认端点当前为**占位地址** `https://api.glkj.example.com`，接入公司网关前需配置真实地址。
+默认端点当前为**占位地址** `https://api.glkj.example.com`。GLKJ 不预设默认模型；首次使用需先在 Models 页配置真实后端并选择模型。
 
 两种方式（任选）：
 
@@ -58,8 +58,7 @@ glh web
 也可写入分层 `.env`：项目目录或 `~/.glh/.env`（`GLKJ_API_KEY` 这类引导变量只能
 export，不能进 `.env`，启动器会拒绝并提示）。
 
-**方式二：Web UI 配置页** — 首次进入 Web UI 会弹出引导对话框，在 Models 页填写
-Base URL 与 API Key，密钥存储在 `~/.glh/.credentials.yaml`，轮换后无需重启。
+**方式二：Web UI 配置页** — 打开 Models 页，添加或编辑供应商，填写 Base URL、API Key 和模型后，在会话模型选择器中选中它。密钥存储在 `~/.glh/.credentials.yaml`，轮换后无需重启。未选模型前编辑器会提示先选择模型，且不会向占位后端发起请求。
 
 ### 主要环境变量
 

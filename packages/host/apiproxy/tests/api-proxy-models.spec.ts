@@ -375,6 +375,39 @@ describe('Web session model selection', () => {
     await ctx.fiber.dispose()
   })
 
+  it('reports no model for a blank session until the user selects one', async () => {
+    const { ctx, sessionId } = await harness()
+    const api = createApiProxy(ctx, {
+      defaultModelSelection: () => undefined,
+      cwd: '/tmp',
+    })
+
+    const catalog = expectValue(await api.sessions.models(request({ sessionId })))
+    expect(catalog.current).toBeUndefined()
+    expect(catalog.routable).toBe(false)
+
+    const refused = await api.sessions.prompt(request({
+      sessionId, mode: 'queue' as const, content: [{ type: 'text' as const, text: 'hi' }],
+    }))
+    expect(refused.result).toEqual({
+      ok: false,
+      error: {
+        code: 'model-not-selected',
+        message: 'no model is selected; select a model for this session before sending a message',
+        details: {},
+      },
+    })
+
+    expectValue(await api.sessions.selectModel(request({
+      sessionId, provider: 'deepseek-official', model: 'deepseek-chat',
+    })))
+    expect(expectValue(await api.sessions.models(request({ sessionId })))).toMatchObject({
+      current: { provider: 'deepseek-official', model: 'deepseek-chat' },
+      routable: true,
+    })
+    await ctx.fiber.dispose()
+  })
+
   it('reads the Agent default live for a session whose log names no selection', async () => {
     const { ctx, sessionId } = await harness()
     let stored = { provider: 'deepseek-official', model: 'deepseek-chat' }
