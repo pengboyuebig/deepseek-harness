@@ -394,7 +394,7 @@
         argumentsPreviewChars: 500
 
     # Every mode enables the stable model-facing web_search tool. DeepSeek search
-    # resolves the same DEEPSEEK_API_KEY credential the Models page manages for
+    # resolves the same GLKJ_API_KEY credential the Models page manages for
     # chat, at each search; its Messages endpoint is separate from the
     # chat-completions endpoint, so it takes its own base-URL override. Fetch stays
     # disabled and no fetch provider is mounted: that provider defers SSRF
@@ -409,7 +409,7 @@
     - id: web-search-deepseek
       name: '@deepseek-ai/dsh-web-search-deepseek'
       config:
-        apiKeyEnv: DEEPSEEK_API_KEY
+        apiKeyEnv: GLKJ_API_KEY
 
     - id: tool-web
       name: '@deepseek-ai/dsh-tool-web'

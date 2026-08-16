@@ -23,8 +23,8 @@ afterEach(cleanup)
 const t: ModelsSectionInjected['t'] = key => en[key]
 const OPENAI_TARGET = { provider: 'openai', displayName: 'openai' }
 const openaiCopy = (template: string): string => providerCopy(template, OPENAI_TARGET)
-const DEEPSEEK_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
-const deepSeekCopy = (template: string): string => providerCopy(template, DEEPSEEK_TARGET)
+const GLKJ_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
+const deepSeekCopy = (template: string): string => providerCopy(template, GLKJ_TARGET)
 
 /** Open one row's capacity disclosure (1-based, as the labels read). */
 function expandRow(position: number): void {
@@ -89,7 +89,7 @@ function wireNamespaces(): SettingsNamespaceView[] {
       ns: 'llm-deepseek',
       schema: JSON.parse(JSON.stringify(DeepSeekConfig.toJSON())) as unknown,
       value: {
-        apiKeyEnv: 'DEEPSEEK_API_KEY',
+        apiKeyEnv: 'GLKJ_API_KEY',
         baseURL: 'https://base',
         defaultContextWindow: 1_000_000,
         maxTokens: 256_000,
@@ -345,7 +345,7 @@ describe('ModelsSection', () => {
     const key = screen.getByLabelText<HTMLInputElement>(en.keyInput)
     fireEvent.change(key, { target: { value: '  sk-live  ' } })
     fireEvent.click(screen.getByText(en.apply))
-    await waitFor(() => { expect(set).toHaveBeenCalledWith({ ref: 'DEEPSEEK_API_KEY', value: 'sk-live' }) })
+    await waitFor(() => { expect(set).toHaveBeenCalledWith({ ref: 'GLKJ_API_KEY', value: 'sk-live' }) })
     expect(update).not.toHaveBeenCalled()
     await waitFor(() => { expect(face.settings.describe.mock.calls.length).toBeGreaterThan(1) })
     expect((await screen.findByRole('status')).textContent).toBe(
@@ -402,7 +402,7 @@ describe('ModelsSection', () => {
     fireEvent.click(save)
 
     expect(await screen.findByText(en.onboardingSaving)).toBeTruthy()
-    expect(set).toHaveBeenCalledWith({ ref: 'DEEPSEEK_API_KEY', value: 'sk-onboarding' })
+    expect(set).toHaveBeenCalledWith({ ref: 'GLKJ_API_KEY', value: 'sk-onboarding' })
     expect(mutate).not.toHaveBeenCalled()
     expect(onClose).not.toHaveBeenCalled()
 
@@ -422,7 +422,7 @@ describe('ModelsSection', () => {
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
     // The deepseek placeholder is pinned to the public endpoint, not the
     // effective value (which may reflect a launch-environment override).
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com')
+    expect(baseURL.placeholder).toBe('https://api.glkj.example.com')
     fireEvent.change(baseURL, { target: { value: 'https://next2' } })
     fireEvent.click(screen.getByText(en.apply))
     await waitFor(() => { expect(mutate).toHaveBeenCalledTimes(1) })
@@ -858,7 +858,7 @@ describe('ModelsSection', () => {
     />)
     fireEvent.click(screen.getByText(en.customized))
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com')
+    expect(baseURL.placeholder).toBe('https://api.glkj.example.com')
     fireEvent.change(baseURL, { target: { value: 'https://x' } })
     expect(baseURL.value).toBe('https://x')
     fireEvent.change(baseURL, { target: { value: '' } })
@@ -1052,7 +1052,7 @@ describe('ModelsSection', () => {
 
   it('surfaces a shadowed credential write on the card', async () => {
     await mountFirstRun({
-      set: vi.fn(() => Promise.resolve(fail('credentials: DEEPSEEK_API_KEY is shadowed by the read-only environment', 'credential-rejected'))),
+      set: vi.fn(() => Promise.resolve(fail('credentials: GLKJ_API_KEY is shadowed by the read-only environment', 'credential-rejected'))),
     })
     const key = screen.getByLabelText<HTMLInputElement>(en.keyInput)
     fireEvent.change(key, { target: { value: 'sk-live' } })
@@ -1368,7 +1368,7 @@ describe('apiKeyFailure', () => {
   })
 
   it.each([
-    ['a pasted environment line', 'DEEPSEEK_API_KEY=sk-abc'],
+    ['a pasted environment line', 'GLKJ_API_KEY=sk-abc'],
     ['double quotes', '"sk-abc"'],
     ['single quotes', '\'sk-abc\''],
     ['backticks', '`sk-abc`'],

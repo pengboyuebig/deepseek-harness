@@ -159,7 +159,7 @@ const NS = settingsNamespace('llm-deepseek')
 
 const AdapterConfig = z.object({
   apiKey: z.string().role('secret'),
-  apiKeyEnv: z.string().default('DEEPSEEK_API_KEY'),
+  apiKeyEnv: z.string().default('GLKJ_API_KEY'),
   baseURL: z.string(),
 })
 
@@ -258,7 +258,7 @@ describe('settings domain', () => {
     expect(view.ns).toBe('llm-deepseek')
     expect(view.applies).toBe('live')
     expect((view.schema as { refs?: unknown }).refs).toBeDefined()
-    expect(view.value).toEqual({ apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://user' })
+    expect(view.value).toEqual({ apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://user' })
     expect(view.base).toEqual({ baseURL: 'https://base' })
     expect(view.user).toEqual({ baseURL: 'https://user' })
     expect(view.secrets).toEqual([{ path: ['apiKey'], set: true }])
@@ -469,7 +469,7 @@ describe('settings domain', () => {
     expect(frames).toEqual([forwardedSettings('llm-deepseek')])
     // The resolved value never moved: base already said https://base.
     expect(expectOk(await api.settings.describe(request({}))).namespaces[0]!.value)
-      .toEqual({ apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://base' })
+      .toEqual({ apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://base' })
   })
 
   it('broadcasts a permission change without invalidating the model catalog', async () => {
@@ -522,7 +522,7 @@ describe('settings domain', () => {
     const api = createApiProxy(ctx, DEFAULTS)
     const frames = await collectHost(api, ['host/remote-event'], 1, async () => {
       const view = expectOk(await api.settings.update(request({ ns: 'llm-deepseek', patch: { apiKey: 'sk-new', baseURL: 'https://next' } })))
-      expect(view.value).toEqual({ apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://next' })
+      expect(view.value).toEqual({ apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://next' })
       expect(view.user).toEqual({ baseURL: 'https://next' })
       expect(view.secrets).toEqual([{ path: ['apiKey'], set: true }])
       expect(JSON.stringify(view)).not.toContain('sk-new')
@@ -535,7 +535,7 @@ describe('settings domain', () => {
     ctx.settings.register(NS, AdapterConfig)
     const api = createApiProxy(ctx, DEFAULTS)
     const view = expectOk(await api.settings.replace(request({ ns: 'llm-deepseek', section: {} })))
-    expect(view.value).toEqual({ apiKeyEnv: 'DEEPSEEK_API_KEY' })
+    expect(view.value).toEqual({ apiKeyEnv: 'GLKJ_API_KEY' })
     expect(view.user).toEqual({})
   })
 
@@ -606,14 +606,14 @@ describe('credentials domain', () => {
   })
 
   it('maps a shadowed write onto credential-rejected for set and unset alike', async () => {
-    const ctx = await harness({ credentials: { shadowed: ['DEEPSEEK_API_KEY'] } })
+    const ctx = await harness({ credentials: { shadowed: ['GLKJ_API_KEY'] } })
     const api = createApiProxy(ctx, DEFAULTS)
-    const described = expectOk(await api.credentials.describe(request({ refs: ['DEEPSEEK_API_KEY'] })))
-    expect(described.credentials['DEEPSEEK_API_KEY']).toEqual({ configured: true, source: 'env', writable: false })
-    const setError = expectErr(await api.credentials.set(request({ ref: 'DEEPSEEK_API_KEY', value: 'x' })))
+    const described = expectOk(await api.credentials.describe(request({ refs: ['GLKJ_API_KEY'] })))
+    expect(described.credentials['GLKJ_API_KEY']).toEqual({ configured: true, source: 'env', writable: false })
+    const setError = expectErr(await api.credentials.set(request({ ref: 'GLKJ_API_KEY', value: 'x' })))
     expect(setError.code).toBe('credential-rejected')
-    expect(setError.details).toEqual({ ref: 'DEEPSEEK_API_KEY' })
-    const unsetError = expectErr(await api.credentials.unset(request({ ref: 'DEEPSEEK_API_KEY' })))
+    expect(setError.details).toEqual({ ref: 'GLKJ_API_KEY' })
+    const unsetError = expectErr(await api.credentials.unset(request({ ref: 'GLKJ_API_KEY' })))
     expect(unsetError.code).toBe('credential-rejected')
   })
 })
@@ -770,7 +770,7 @@ describe('llm.discoverModels', () => {
 
     const error = expectErr(await api.llm.discoverModels(request({
       settingsNs: 'llm-deepseek',
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
     })))
 
     expect(error.code).toBe('model-discovery-failed')

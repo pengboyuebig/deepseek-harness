@@ -25,8 +25,8 @@ async function harness(_model: string, config: Partial<PiAiProviderProfile> = {}
   await ctx.plugin(LlmPiAi, {
     providers: {
       deepseek: {
-        ...process.env.DEEPSEEK_API_KEY === undefined ? {} : { apiKey: process.env.DEEPSEEK_API_KEY },
-        ...process.env.DEEPSEEK_BASE_URL === undefined ? {} : { baseURL: process.env.DEEPSEEK_BASE_URL },
+        ...process.env.GLKJ_API_KEY === undefined ? {} : { apiKey: process.env.GLKJ_API_KEY },
+        ...process.env.GLKJ_BASE_URL === undefined ? {} : { baseURL: process.env.GLKJ_BASE_URL },
         ...config,
       },
     },
@@ -66,7 +66,7 @@ const weatherTool: ToolSchema = {
   },
 }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('llm-pi-ai e2e (real API)', () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('llm-pi-ai e2e (real API)', () => {
   it.each([FLASH, PRO])('%s + provider-default reasoning: plain text generation', async (model) => {
     const ctx = await harness(model)
     const result = await assemble(ctx,{

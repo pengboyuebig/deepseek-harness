@@ -74,7 +74,7 @@ function harness(options: {
   }
   let fileConfigured = false
   const configured = options.configured ?? (() => fileConfigured)
-  const apiKeyEnv = options.apiKeyEnv === undefined ? 'DEEPSEEK_API_KEY' : options.apiKeyEnv
+  const apiKeyEnv = options.apiKeyEnv === undefined ? 'GLKJ_API_KEY' : options.apiKeyEnv
   const mutate = vi.fn(() => Promise.resolve(ok(deepSeekNamespace(apiKeyEnv))))
   const set = vi.fn((_payload: { ref: string; value: string }) => {
     if (options.setReject !== undefined) return Promise.reject(new Error(options.setReject))
@@ -111,7 +111,7 @@ function harness(options: {
       describe: () => options.describeFailure === undefined
         ? Promise.resolve(ok({
           credentials: {
-            DEEPSEEK_API_KEY: {
+            GLKJ_API_KEY: {
               configured: configured(),
               ...configured() && options.credential?.source !== undefined
                 ? { source: options.credential.source }

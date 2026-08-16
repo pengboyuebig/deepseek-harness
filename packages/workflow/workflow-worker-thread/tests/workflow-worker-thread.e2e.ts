@@ -18,7 +18,7 @@ import WorkerThreadWorkflowEngine from '../src/index.ts'
  * and one schema'd child through the real structured-output runtime — and
  * the run's value, events, and child sessions are asserted from the outside
  * (never the script's self-report alone). Key-gated (self-skips without
- * DEEPSEEK_API_KEY).
+ * GLKJ_API_KEY).
  */
 
 let ctx: Context | undefined
@@ -59,7 +59,7 @@ const judged = await agent(
 )
 return { prose, containsFour: judged === null ? null : judged.containsFour }`
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('worker workflow engine with-key e2e', () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('worker workflow engine with-key e2e', () => {
   it('runs a two-phase script in a worker thread over real children, one through the structured runtime', async () => {
     ctx = await harness()
     const parentHandle = await ctx.agents.create({

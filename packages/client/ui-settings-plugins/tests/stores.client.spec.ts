@@ -27,7 +27,7 @@ function acceptWrites<T>(host: StubSettingsScope<T>): void {
 function credentialsApi(configured: boolean) {
   const describe = vi.fn(() => Promise.resolve({
     rpcId: 'c-1' as never,
-    result: { ok: true as const, value: { credentials: { DEEPSEEK_API_KEY: { configured, writable: true } } } },
+    result: { ok: true as const, value: { credentials: { GLKJ_API_KEY: { configured, writable: true } } } },
   }))
   const set = vi.fn(() => Promise.resolve({ rpcId: 'c-2' as never, result: { ok: true as const, value: {} } }))
   return { api: { credentials: { describe, set } } as never, describe, set }
@@ -409,12 +409,12 @@ describe('WebSearchCardController', () => {
 
     credentials.describe.mockImplementation(() => Promise.resolve({
       rpcId: 'c-1' as never,
-      result: { ok: true as const, value: { credentials: { DEEPSEEK_API_KEY: { configured: true, writable: true } } } },
+      result: { ok: true as const, value: { credentials: { GLKJ_API_KEY: { configured: true, writable: true } } } },
     }))
     face.save()
     await vi.waitFor(() => { expect(credentials.set).toHaveBeenCalled() })
 
-    expect(credentials.set).toHaveBeenCalledWith({ ref: 'DEEPSEEK_API_KEY', value: 'ds-secret' })
+    expect(credentials.set).toHaveBeenCalledWith({ ref: 'GLKJ_API_KEY', value: 'ds-secret' })
     expect(host.set).not.toHaveBeenCalled()
     await vi.waitFor(() => {
       expect(face.hooks.webSearchCard.getSnapshot()).toMatchObject({ dirty: false, apiKeyConfigured: true })
@@ -451,9 +451,9 @@ describe('WebSearchCardController', () => {
     // A key written on another surface reaches this card only through this signal.
     credentials.describe.mockImplementation(() => Promise.resolve({
       rpcId: 'c-1' as never,
-      result: { ok: true as const, value: { credentials: { DEEPSEEK_API_KEY: { configured: true, writable: true } } } },
+      result: { ok: true as const, value: { credentials: { GLKJ_API_KEY: { configured: true, writable: true } } } },
     }))
-    controller.refreshCredential('DEEPSEEK_API_KEY')
+    controller.refreshCredential('GLKJ_API_KEY')
 
     await vi.waitFor(() => {
       expect(controller.inject().hooks.webSearchCard.getSnapshot().apiKeyConfigured).toBe(true)

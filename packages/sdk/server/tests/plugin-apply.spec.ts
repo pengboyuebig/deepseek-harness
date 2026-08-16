@@ -152,7 +152,7 @@ async function mockCompletionServer(): Promise<{ url: string; requests: unknown[
 describe('dsh-sdk-jsonrpc-server plugin apply', () => {
   it('serves initialize over the injected stdio pair', async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-apply-init-'))
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     const harness = await mountPlugin(storageDir)
     try {
       harness.send({ jsonrpc: '2.0', id: 'init-1', method: 'initialize', params: { cwd: storageDir, provider: 'deepseek-official', model: 'apply-model' } })
@@ -173,8 +173,8 @@ describe('dsh-sdk-jsonrpc-server plugin apply', () => {
   it('drives a session/prompt turn end-to-end and forwards session notifications as output frames', async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-apply-prompt-'))
     const llmServer = await mockCompletionServer()
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
-    vi.stubEnv('DEEPSEEK_BASE_URL', llmServer.url)
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_BASE_URL', llmServer.url)
     const harness = await mountPlugin(storageDir)
     try {
       harness.send({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { cwd: storageDir, provider: 'deepseek-official', model: 'dsagent-model' } })

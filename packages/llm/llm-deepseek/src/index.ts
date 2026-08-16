@@ -42,7 +42,7 @@ export const name = 'llm-deepseek'
 export const inject = ['llm']
 
 const NS = settingsNamespace('llm-deepseek')
-const DEFAULT_API_KEY_ENV = 'DEEPSEEK_API_KEY'
+const DEFAULT_API_KEY_ENV = 'GLKJ_API_KEY'
 /** The single provider route this plugin owns. */
 const PROVIDER = 'deepseek-official'
 
@@ -60,9 +60,9 @@ const DEFAULT_MODELS: DeepSeekCatalogModel[] = [
  * reasoning effort resolves to `high`.
  */
 export interface Config {
-  /** Credential reference (environment-variable name) resolved per request; defaults to `DEEPSEEK_API_KEY`. */
+  /** Credential reference (environment-variable name) resolved per request; defaults to `GLKJ_API_KEY`. */
   apiKeyEnv?: string
-  /** Endpoint base; falls back to $DEEPSEEK_BASE_URL from a trusted environment layer, then the public API. */
+  /** Endpoint base; falls back to $GLKJ_BASE_URL from a trusted environment layer, then the public API. */
   baseURL?: string
   /** Deployment thinking policy; `disabled` limits every conversation request to `off`. */
   thinking?: 'enabled' | 'disabled'
@@ -100,11 +100,11 @@ export const Config: z<Config> = z.object({
   retryPolicy: RetryPolicySchema,
 })
 
-/** Public API default; the internal endpoint comes from $DEEPSEEK_BASE_URL. */
-export const PUBLIC_BASE_URL = 'https://api.deepseek.com'
+/** Public API default; the internal endpoint comes from $GLKJ_BASE_URL. */
+export const PUBLIC_BASE_URL = 'https://api.glkj.example.com'
 
 /** Environment variable naming this provider's endpoint, honored only from trusted layers. */
-const BASE_URL_ENV = 'DEEPSEEK_BASE_URL'
+const BASE_URL_ENV = 'GLKJ_BASE_URL'
 
 /**
  * One resolution's complete request facts. Connection and credential facts

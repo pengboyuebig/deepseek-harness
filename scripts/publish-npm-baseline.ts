@@ -915,7 +915,7 @@ function installedArtifactEnvironment(consumerRoot: string): NodeJS.ProcessEnv {
   environment.GLH_HOME = resolve(consumerRoot, '.dsh')
   environment.GLH_AGENTS_HOME = resolve(consumerRoot, '.agents')
   environment.GLH_TELEMETRY_DISABLED = '1'
-  environment.DEEPSEEK_API_KEY = 'keyless-installed-web-no-call'
+  environment.GLKJ_API_KEY = 'keyless-installed-web-no-call'
   environment.LANG = 'en_US.UTF-8'
   environment.LC_ALL = 'en_US.UTF-8'
   environment.LC_CTYPE = 'en_US.UTF-8'

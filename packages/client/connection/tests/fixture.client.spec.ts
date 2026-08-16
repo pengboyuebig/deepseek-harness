@@ -216,14 +216,14 @@ describe('createFixtureApi', () => {
     if (!settings.result.ok) throw new Error('settings describe failed')
     expect(settings.result.value.namespaces).toMatchObject([{
       ns: 'llm-deepseek',
-      value: { apiKeyEnv: 'DEEPSEEK_API_KEY' },
+      value: { apiKeyEnv: 'GLKJ_API_KEY' },
       secrets: [{ path: ['apiKey'], set: false }],
     }])
 
-    const initial = await api.credentials.describe(req({ refs: ['DEEPSEEK_API_KEY', 'TEST_API_KEY'] }))
+    const initial = await api.credentials.describe(req({ refs: ['GLKJ_API_KEY', 'TEST_API_KEY'] }))
     if (!initial.result.ok) throw new Error('credential describe failed')
     expect(initial.result.value.credentials).toEqual({
-      DEEPSEEK_API_KEY: { configured: true, source: 'file', writable: true },
+      GLKJ_API_KEY: { configured: true, source: 'file', writable: true },
       TEST_API_KEY: { configured: false, writable: true },
     })
     await api.credentials.set(req({ ref: 'TEST_API_KEY', value: 'write-only-fixture-secret' }))

@@ -1,7 +1,7 @@
 /**
  * Register a DeepSeek-backed provider in `ctx.web`. It calls the Anthropic-compatible Messages API
- * with native `web_search_20250305`. The provider reuses `DEEPSEEK_API_KEY` but not
- * `DEEPSEEK_BASE_URL`, because search and chat-completions use different bases.
+ * with native `web_search_20250305`. The provider reuses `GLKJ_API_KEY` but not
+ * `GLKJ_BASE_URL`, because search and chat-completions use different bases.
  * @module @deepseek-ai/dsh-web-search-deepseek
  */
 
@@ -15,22 +15,22 @@ import type {} from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-web'
 import {
   DeepSeekSearchProvider,
-  DEEPSEEK_DEFAULT_API_VERSION,
-  DEEPSEEK_DEFAULT_BASE_URL,
-  DEEPSEEK_DEFAULT_MAX_TOKENS,
-  DEEPSEEK_DEFAULT_MAX_USES,
-  DEEPSEEK_DEFAULT_MODEL,
+  GLKJ_DEFAULT_API_VERSION,
+  GLKJ_DEFAULT_BASE_URL,
+  GLKJ_DEFAULT_MAX_TOKENS,
+  GLKJ_DEFAULT_MAX_USES,
+  GLKJ_DEFAULT_MODEL,
 } from './provider.ts'
 import type { DeepSeekSearchProviderOptions } from './provider.ts'
 
 export {
   DeepSeekSearchProvider,
-  DEEPSEEK_DEFAULT_API_VERSION,
-  DEEPSEEK_DEFAULT_BASE_URL,
-  DEEPSEEK_DEFAULT_MAX_TOKENS,
-  DEEPSEEK_DEFAULT_MAX_USES,
-  DEEPSEEK_DEFAULT_MODEL,
-  DEEPSEEK_PROVIDER_ID,
+  GLKJ_DEFAULT_API_VERSION,
+  GLKJ_DEFAULT_BASE_URL,
+  GLKJ_DEFAULT_MAX_TOKENS,
+  GLKJ_DEFAULT_MAX_USES,
+  GLKJ_DEFAULT_MODEL,
+  GLKJ_PROVIDER_ID,
 } from './provider.ts'
 export type { DeepSeekSearchLlmRequest, DeepSeekSearchProviderOptions } from './provider.ts'
 
@@ -40,13 +40,13 @@ export const name = 'web-search-deepseek'
 /** The web seam this provider registers into. */
 export const inject = ['web']
 
-const DEFAULT_API_KEY_ENV = 'DEEPSEEK_API_KEY'
+const DEFAULT_API_KEY_ENV = 'GLKJ_API_KEY'
 
 /** Plugin config (all optional — `apply` fills env-var and constant defaults). */
 export interface Config {
   /** Literal DeepSeek API key; prefer {@link apiKeyEnv} so no secret enters configuration files. */
   apiKey?: string
-  /** Credential reference resolved for each search; defaults to `DEEPSEEK_API_KEY`. */
+  /** Credential reference resolved for each search; defaults to `GLKJ_API_KEY`. */
   apiKeyEnv?: string
   /** Anthropic-compatible endpoint base; `/messages` is appended. */
   baseURL?: string
@@ -67,19 +67,19 @@ export const Config: z<Config> = z.object({
   // renders the resolved section, so a default the schema does not carry reads
   // there as no value at all.
   baseURL: z.string(),
-  model: z.string().default(DEEPSEEK_DEFAULT_MODEL),
-  apiVersion: z.string().default(DEEPSEEK_DEFAULT_API_VERSION),
-  maxTokens: z.number().step(1).min(1).default(DEEPSEEK_DEFAULT_MAX_TOKENS),
-  maxUses: z.number().step(1).min(1).default(DEEPSEEK_DEFAULT_MAX_USES),
+  model: z.string().default(GLKJ_DEFAULT_MODEL),
+  apiVersion: z.string().default(GLKJ_DEFAULT_API_VERSION),
+  maxTokens: z.number().step(1).min(1).default(GLKJ_DEFAULT_MAX_TOKENS),
+  maxUses: z.number().step(1).min(1).default(GLKJ_DEFAULT_MAX_USES),
 })
 
 /**
  * Environment variable naming this provider's endpoint. Deliberately distinct
- * from `$DEEPSEEK_BASE_URL`, which belongs to the chat-completions adapter:
+ * from `$GLKJ_BASE_URL`, which belongs to the chat-completions adapter:
  * search speaks the Anthropic-compatible Messages API, so one variable cannot
  * serve both.
  */
-const SEARCH_BASE_URL_ENV = 'DEEPSEEK_SEARCH_BASE_URL'
+const SEARCH_BASE_URL_ENV = 'GLKJ_SEARCH_BASE_URL'
 
 /** Settings namespace carrying this provider's endpoint, model, and key reference. */
 export const WEB_SEARCH_DEEPSEEK_SETTINGS_NAMESPACE = settingsNamespace('web-search-deepseek')
@@ -109,11 +109,11 @@ function resolveOptions(ctx: Context, config: Config): DeepSeekSearchProviderOpt
     apiKeyEnv,
     baseURL: config.baseURL
       ?? launchEnvironmentOf(ctx).get(SEARCH_BASE_URL_ENV)?.value
-      ?? DEEPSEEK_DEFAULT_BASE_URL,
-    model: config.model ?? DEEPSEEK_DEFAULT_MODEL,
-    apiVersion: config.apiVersion ?? DEEPSEEK_DEFAULT_API_VERSION,
-    maxTokens: config.maxTokens ?? DEEPSEEK_DEFAULT_MAX_TOKENS,
-    maxUses: config.maxUses ?? DEEPSEEK_DEFAULT_MAX_USES,
+      ?? GLKJ_DEFAULT_BASE_URL,
+    model: config.model ?? GLKJ_DEFAULT_MODEL,
+    apiVersion: config.apiVersion ?? GLKJ_DEFAULT_API_VERSION,
+    maxTokens: config.maxTokens ?? GLKJ_DEFAULT_MAX_TOKENS,
+    maxUses: config.maxUses ?? GLKJ_DEFAULT_MAX_USES,
     recordRequest: (request) => {
       ctx.get('agents')?.currentInitiator()?.session.append(
         'web/deepseek-search-llm-request',

@@ -22,7 +22,7 @@ const NAMESPACES = [
   {
     ns: 'llm-deepseek',
     schema: {},
-    value: { apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://base' },
+    value: { apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://base' },
     base: { baseURL: 'https://base' },
     applies: 'live' as const,
     secrets: [],
@@ -78,12 +78,12 @@ describe('ModelsSettingsStore', () => {
     expect(state.status).toBe('ready')
     expect(state.writable).toBe(true)
     expect(state.credentialError).toBeNull()
-    expect(seenRefs).toEqual([['DEEPSEEK_API_KEY', 'OPENAI_API_KEY']])
+    expect(seenRefs).toEqual([['GLKJ_API_KEY', 'OPENAI_API_KEY']])
     const byProvider = new Map(state.rows.map(row => [row.entry.provider, row]))
     expect(byProvider.get('deepseek-official')).toMatchObject({
       configured: true,
       removable: false,
-      apiKeyEnv: 'DEEPSEEK_API_KEY',
+      apiKeyEnv: 'GLKJ_API_KEY',
       credential: { configured: false, writable: true },
     })
     expect(byProvider.get('openai')).toMatchObject({

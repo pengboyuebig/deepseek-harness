@@ -13,7 +13,7 @@ import { assemble } from './assemble.ts'
 import { closeMockServers, mockServer, textEvents } from './mock-server.ts'
 
 const NS = settingsNamespace('llm-deepseek')
-const KEY_REF = credentialRef('DEEPSEEK_API_KEY')
+const KEY_REF = credentialRef('GLKJ_API_KEY')
 
 const cleanups: Array<() => Promise<void>> = []
 
@@ -60,9 +60,9 @@ function prompt(ctx: Context) {
 
 describe('request-level dynamic configuration', () => {
   it('routes the next request with the freshly resolved base URL and credential', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
-    await writeFile(join(dir, '.credentials.yaml'), 'DEEPSEEK_API_KEY: first-key\n', { mode: 0o600 })
+    await writeFile(join(dir, '.credentials.yaml'), 'GLKJ_API_KEY: first-key\n', { mode: 0o600 })
     const serverA = await mockServer([{ kind: 'sse', events: textEvents }])
     const serverB = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await boot(dir, { baseURL: serverA.url })
@@ -80,7 +80,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('starts keyless and serves the next request once the key arrives', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await boot(dir, { baseURL: server.url })
@@ -95,7 +95,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('rejects a stored credential no header can carry, never echoing it in the failure', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
     const { ctx } = await boot(dir, { baseURL: 'http://127.0.0.1:1' })
     const secret = 'sk-\u{1F600}supersecret'
@@ -167,7 +167,7 @@ describe('request-level dynamic configuration', () => {
     const dir = await home()
     const good = await mockServer([{ kind: 'sse', events: textEvents }])
     const rejected = await mockServer([{ kind: 'sse', events: textEvents }])
-    vi.stubEnv('DEEPSEEK_API_KEY', 'good-key')
+    vi.stubEnv('GLKJ_API_KEY', 'good-key')
     const { ctx } = await boot(dir, { baseURL: good.url })
 
     // One snapshot moves the endpoint and fails the resolve step beyond the
@@ -186,9 +186,9 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('falls back to the composition entry when settings detach', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
-    await writeFile(join(dir, '.credentials.yaml'), 'DEEPSEEK_API_KEY: steady-key\n', { mode: 0o600 })
+    await writeFile(join(dir, '.credentials.yaml'), 'GLKJ_API_KEY: steady-key\n', { mode: 0o600 })
     const serverA = await mockServer([{ kind: 'sse', events: textEvents }])
     const serverB = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx, settingsFiber } = await boot(dir, { baseURL: serverA.url })

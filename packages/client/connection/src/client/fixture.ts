@@ -78,7 +78,7 @@ const MARKDOWN_FIXTURE = [
   '| history | rendered |',
   '| streaming | stable |',
   '',
-  '[DeepSeek](https://www.deepseek.com)',
+  '[GLKJ](https://www.glkj.example.com)',
   '',
   '```ts',
   'const markdown = true',
@@ -262,11 +262,11 @@ const WEB_SEARCH_RESULT: Omit<Extract<ToolResultView, { card: 'web'; kind: 'sear
       publishedAt: '2026-07-01',
     },
     {
-      url: 'https://www.deepseek.com/blog/harness-architecture',
+      url: 'https://www.glkj.example.com/blog/harness-architecture',
       snippet: 'The capability-seam pattern splits each capability into interface, implementation, and consumer packages.',
     },
     {
-      url: 'https://docs.deepseek.com/harness/plugins',
+      url: 'https://docs.glkj.example.com/harness/plugins',
       title: 'Writing a harness plugin',
       publishedAt: '2026-06-15',
     },
@@ -276,12 +276,12 @@ const WEB_SEARCH_RESULT: Omit<Extract<ToolResultView, { card: 'web'; kind: 'sear
 
 /** The `web_fetch` result view for the web-fetch turn, authored inline for the same reason. */
 const WEB_FETCH_RESULT: Omit<Extract<ToolResultView, { card: 'web'; kind: 'fetch' }>, 'card' | 'kind'> = {
-  url: 'https://www.deepseek.com/blog/harness-architecture',
+  url: 'https://www.glkj.example.com/blog/harness-architecture',
   statusCode: 200,
   truncated: false,
 }
 
-const DEEPSEEK_REASONING = {
+const GLKJ_REASONING = {
   efforts: [
     { id: 'off', name: 'Off' },
     { id: 'high', name: 'High' },
@@ -311,13 +311,13 @@ function fixtureModelGroups(): ModelProviderGroup[] {
           id: 'deepseek-v4-flash',
           name: 'DeepSeek-V4-Flash',
           description: '快速响应',
-          reasoning: DEEPSEEK_REASONING,
+          reasoning: GLKJ_REASONING,
         },
         {
           id: 'deepseek-v4-pro',
           name: 'DeepSeek-V4-Pro',
           description: '复杂任务',
-          reasoning: DEEPSEEK_REASONING,
+          reasoning: GLKJ_REASONING,
         },
       ],
     },
@@ -546,7 +546,7 @@ function buildAlphaLog(): SessionEvent[] {
   // the todo turn for the same reason turn 66 is: the standing plan retires at
   // the next turn/start, so a turn after it would empty the dock's plan strip.
   toolTurn(70, 'web_search', '{"query":"deepseek harness architecture"}', 'Search results for deepseek harness architecture.')
-  toolTurn(71, 'web_fetch', '{"url":"https://www.deepseek.com/blog/harness-architecture"}', '# Harness architecture\n\nEverything is a plugin.')
+  toolTurn(71, 'web_fetch', '{"url":"https://www.glkj.example.com/blog/harness-architecture"}', '# Harness architecture\n\nEverything is a plugin.')
 
   // Turn 72: max-tokens sample — the provider ends the turn at its output cap
   // mid-sentence, so the chat flow must render the turn-max-tokens notice
@@ -1530,7 +1530,7 @@ function createFixtureWorld(options: FixtureOptions): FixtureWorld {
   const fixtureCredentials = new Map<string, true>([
     // The assembled fixture represents an already-configured shipped
     // DeepSeek route so unrelated GUI journeys do not enter first-run setup.
-    ['DEEPSEEK_API_KEY', true],
+    ['GLKJ_API_KEY', true],
   ])
   /**
    * Preset compositions the fixture serves. Held as state rather than
@@ -2902,7 +2902,7 @@ function createFixtureWorld(options: FixtureOptions): FixtureWorld {
         namespaces: [{
           ns: 'llm-deepseek',
           schema: {},
-          value: { apiKeyEnv: 'DEEPSEEK_API_KEY' },
+          value: { apiKeyEnv: 'GLKJ_API_KEY' },
           applies: 'live',
           secrets: [{ path: ['apiKey'], set: false }],
           revision: 0,

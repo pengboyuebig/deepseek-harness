@@ -112,8 +112,8 @@ describe('HarnessSdkJsonRpcServer', () => {
   it('creates a harness agent and calls the configured OpenAI-compatible endpoint', { timeout: 15_000 }, async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-'))
     const llmServer = await mockCompletionServer()
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
-    vi.stubEnv('DEEPSEEK_BASE_URL', llmServer.url)
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_BASE_URL', llmServer.url)
     const ctx = await makeHarness(storageDir)
     try {
       const transport = new FakeTransport()
@@ -298,8 +298,8 @@ describe('HarnessSdkJsonRpcServer', () => {
   it('creates an SDK session without an optional system prompt', { timeout: 15_000 }, async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-no-system-'))
     const llmServer = await mockCompletionServer()
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
-    vi.stubEnv('DEEPSEEK_BASE_URL', llmServer.url)
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_BASE_URL', llmServer.url)
     const ctx = await makeHarness(storageDir)
     try {
       const server = new HarnessSdkJsonRpcServer(ctx, new FakeTransport())
@@ -778,7 +778,7 @@ describe('HarnessSdkJsonRpcServer', () => {
   it('does not re-register an LLM adapter whose provider already has an owner', async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-existing-llm-'))
     const ctx = await makeHarness(storageDir)
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     await ctx.plugin(LlmDeepSeek)
     try {
       const server = new HarnessSdkJsonRpcServer(ctx, new FakeTransport())
@@ -799,7 +799,7 @@ describe('HarnessSdkJsonRpcServer', () => {
   it('rejects a missing non-DeepSeek provider when an LLM service already exists', async () => {
     const storageDir = await mkdtemp(join(tmpdir(), 'dsh-jsonrpc-new-llm-'))
     const ctx = await makeHarness(storageDir)
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     await ctx.plugin(LlmDeepSeek)
     try {
       const server = new HarnessSdkJsonRpcServer(ctx, new FakeTransport())

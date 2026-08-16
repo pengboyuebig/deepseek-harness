@@ -19,7 +19,7 @@ import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
 import * as claudeCode from '../src/index.ts'
 
 const execFileAsync = promisify(execFile)
-const OFFICIAL_DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
+const OFFICIAL_DEEPSEEK_BASE_URL = 'https://api.glkj.example.com'
 const sdkRoot = dirname(fileURLToPath(
   import.meta.resolve('@anthropic-ai/claude-agent-sdk'),
 ))
@@ -47,7 +47,7 @@ afterEach(async () => {
 })
 
 function deepSeekBaseUrl(): string {
-  const configured = (process.env.DEEPSEEK_BASE_URL ?? OFFICIAL_DEEPSEEK_BASE_URL)
+  const configured = (process.env.GLKJ_BASE_URL ?? OFFICIAL_DEEPSEEK_BASE_URL)
     .replace(/\/+$/, '')
   if (configured !== OFFICIAL_DEEPSEEK_BASE_URL) {
     throw new Error('Claude Code DeepSeek e2e requires the official DeepSeek base URL')
@@ -63,12 +63,12 @@ async function expectQuiescent(handles: readonly SubprocessHandle[]): Promise<vo
   }
 }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)(
+describe.skipIf(!process.env.GLKJ_API_KEY)(
   'Claude Code provider with real DeepSeek API',
   () => {
     it('returns one unique nonce through the production provider and real SDK/CLI', async () => {
-      const apiKey = process.env.DEEPSEEK_API_KEY
-      if (apiKey === undefined) throw new Error('e2e ran without DEEPSEEK_API_KEY')
+      const apiKey = process.env.GLKJ_API_KEY
+      if (apiKey === undefined) throw new Error('e2e ran without GLKJ_API_KEY')
       const root = mkdtempSync(join(tmpdir(), 'dsh-claude-deepseek-e2e-'))
       roots.push(root)
       const workspace = join(root, 'workspace')

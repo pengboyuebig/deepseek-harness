@@ -13,7 +13,7 @@ import * as acp from '../src/index.ts'
 /**
  * With-key cross-process boundary proof: the backend spawns the real acp-agent example, speaks ACP over
  * stdio, and returns its real model answer. This is the out-of-process counterpart to in-process
- * spawn coverage and self-skips without `DEEPSEEK_API_KEY`.
+ * spawn coverage and self-skips without `GLKJ_API_KEY`.
  */
 
 // The real acp-agent example: its bin + cordis.yml (the live DeepSeek config).
@@ -29,8 +29,8 @@ const childLaunch = resolveExampleLaunch({
   configArgs: ['--config', exampleConfig],
   tsconfigPath: repoTsconfig,
   env: {
-    ...process.env.DEEPSEEK_API_KEY !== undefined ? { DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY } : {},
-    ...process.env.DEEPSEEK_BASE_URL !== undefined ? { DEEPSEEK_BASE_URL: process.env.DEEPSEEK_BASE_URL } : {},
+    ...process.env.GLKJ_API_KEY !== undefined ? { GLKJ_API_KEY: process.env.GLKJ_API_KEY } : {},
+    ...process.env.GLKJ_BASE_URL !== undefined ? { GLKJ_BASE_URL: process.env.GLKJ_BASE_URL } : {},
     GLH_PERMISSION_MODE: 'danger-full-access',
   },
 })
@@ -48,7 +48,7 @@ afterEach(async () => {
   workdir = undefined
 })
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('ACP backend with-key e2e (drive our own acp-agent)', () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('ACP backend with-key e2e (drive our own acp-agent)', () => {
   it('drives the real acp-agent example process to answer a prompt', async () => {
     workdir = await mkdtemp(join(tmpdir(), 'dsh-subagent-acp-e2e-'))
     ctx = new Context()

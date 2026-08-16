@@ -23,7 +23,7 @@ import {
 export const WEB_SEARCH_NS = 'web-search-deepseek'
 
 /** Credential reference the provider resolves when the section names none. */
-const DEFAULT_API_KEY_REF = 'DEEPSEEK_API_KEY'
+const DEFAULT_API_KEY_REF = 'GLKJ_API_KEY'
 
 /** Form field the credential control stages under. */
 const API_KEY_FIELD = 'apiKey'

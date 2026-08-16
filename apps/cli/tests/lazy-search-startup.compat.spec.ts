@@ -48,10 +48,10 @@ function runBuiltWeb(cwd: string): Promise<{ stdout: string; stderr: string; cod
   return new Promise((resolveRun, rejectRun) => {
     const env: NodeJS.ProcessEnv = {
       ...process.env,
-      DEEPSEEK_API_KEY: 'dsh-cli-smoke-dummy-key',
+      GLKJ_API_KEY: 'dsh-cli-smoke-dummy-key',
       GLH_HOME: join(cwd, '.glh'),
     }
-    delete env.DEEPSEEK_BASE_URL
+    delete env.GLKJ_BASE_URL
     delete env.NODE_OPTIONS
     delete env.NODE_NO_WARNINGS
     const child = spawn(process.execPath, [

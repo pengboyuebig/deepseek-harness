@@ -13,7 +13,7 @@ import { assemble, type AssembledResult } from './assemble.ts'
 /**
  * Real-API e2e for the direct-fetch adapter: V4 Flash + V4 Pro across
  * thinking modes and both official effort levels. Key-gated — skips
- * entirely without $DEEPSEEK_API_KEY (see vitest.e2e.config.ts).
+ * entirely without $GLKJ_API_KEY (see vitest.e2e.config.ts).
  */
 
 const FLASH = 'deepseek-v4-flash'
@@ -64,18 +64,18 @@ const weatherTool: ToolSchema = {
   },
 }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('llm-deepseek e2e (real API)', () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('llm-deepseek e2e (real API)', () => {
   it('serves a real request with the key held only by a credentials-local document', async () => {
-    const key = process.env.DEEPSEEK_API_KEY
-    if (key === undefined) throw new Error('e2e ran without DEEPSEEK_API_KEY')
+    const key = process.env.GLKJ_API_KEY
+    if (key === undefined) throw new Error('e2e ran without GLKJ_API_KEY')
     const dir = await mkdtemp(join(tmpdir(), 'dsh-e2e-credentials-'))
     try {
       // JSON.stringify quotes the value: YAML is a JSON superset, so a real
       // key survives whatever characters it happens to carry.
-      await writeFile(join(dir, '.credentials.yaml'), `DEEPSEEK_API_KEY: ${JSON.stringify(key)}\n`, { mode: 0o600 })
+      await writeFile(join(dir, '.credentials.yaml'), `GLKJ_API_KEY: ${JSON.stringify(key)}\n`, { mode: 0o600 })
       // Scrub the ambient variable so only the credential seam can supply the
       // key: this request proves the per-request resolution path end to end.
-      vi.stubEnv('DEEPSEEK_API_KEY', '')
+      vi.stubEnv('GLKJ_API_KEY', '')
       const ctx = new Context()
       contexts.push(ctx)
       await ctx.plugin(LlmRuntime)

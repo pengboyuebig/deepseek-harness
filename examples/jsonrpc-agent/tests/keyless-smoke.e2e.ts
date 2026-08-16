@@ -79,8 +79,8 @@ describe('jsonrpc-agent keyless smoke', () => {
     ], {
       cwd: repoRoot,
       env: {
-        DEEPSEEK_API_KEY: 'keyless-smoke-no-call',
-        DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}`,
+        GLKJ_API_KEY: 'keyless-smoke-no-call',
+        GLKJ_BASE_URL: `http://127.0.0.1:${address.port}`,
         DSH_CWD: root,
         DSH_SESSION_ROOT: join(root, '.sessions'),
         ...(envValue === undefined ? {} : { DSH_MAX_TOKENS_AS_SUCCESS: envValue }),
@@ -184,7 +184,7 @@ describe('jsonrpc-agent keyless smoke', () => {
     ], {
       cwd: repoRoot,
       env: {
-        DEEPSEEK_API_KEY: 'keyless-smoke-no-call',
+        GLKJ_API_KEY: 'keyless-smoke-no-call',
         DSH_MAX_TOKENS_AS_SUCCESS: 'sometimes',
       },
       stdin: 'ignore',

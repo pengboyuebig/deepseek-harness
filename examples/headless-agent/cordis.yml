@@ -10,7 +10,7 @@
   name: '@deepseek-ai/dsh-settings-file'
 
 # Credential store: the live process environment over `$DSH_HOME/.credentials.yaml`
-# (owner-only file, hot-reloaded). The adapter resolves `DEEPSEEK_API_KEY`
+# (owner-only file, hot-reloaded). The adapter resolves `GLKJ_API_KEY`
 # through it at each request, so no key is inlined in this file.
 - id: credentials
   name: '@deepseek-ai/dsh-credentials-local'

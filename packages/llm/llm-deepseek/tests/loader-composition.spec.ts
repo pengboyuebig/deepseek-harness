@@ -27,7 +27,7 @@ import { assemble } from './assemble.ts'
 import { closeMockServers, mockServer, textEvents } from './mock-server.ts'
 
 const NS = settingsNamespace('llm-deepseek')
-const KEY_REF = credentialRef('DEEPSEEK_API_KEY')
+const KEY_REF = credentialRef('GLKJ_API_KEY')
 
 let root: string | undefined
 let context: Context | undefined
@@ -53,7 +53,7 @@ async function loadComposition(
   const credentialsPath = join(root, '.credentials.yaml')
   if (options.withDynamic && fresh) {
     await writeFile(settingsPath, '# personal settings\n')
-    await writeFile(credentialsPath, 'DEEPSEEK_API_KEY: boot-key\n', { mode: 0o600 })
+    await writeFile(credentialsPath, 'GLKJ_API_KEY: boot-key\n', { mode: 0o600 })
   }
 
   const configPath = join(root, 'cordis.yml')
@@ -109,7 +109,7 @@ async function loadComposition(
 
 describe('llm-deepseek real dynamic composition', () => {
   it('boots from cordis.yml and routes the next request after external settings and credential edits', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const serverA = await mockServer([{ kind: 'sse', events: textEvents }])
     const serverB = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx, settingsPath, credentialsPath } = await loadComposition({ withDynamic: true, baseURL: serverA.url })
@@ -124,7 +124,7 @@ describe('llm-deepseek real dynamic composition', () => {
     await vi.waitFor(() => {
       expect((ctx.get('settings')!.get(NS) as { baseURL?: string }).baseURL).toBe(serverB.url)
     }, { timeout: 5000 })
-    await writeFile(credentialsPath, 'DEEPSEEK_API_KEY: rotated-key\n', { mode: 0o600 })
+    await writeFile(credentialsPath, 'GLKJ_API_KEY: rotated-key\n', { mode: 0o600 })
     await vi.waitFor(async () => {
       expect(await ctx.get('credentials')!.resolve(KEY_REF)).toEqual({ value: 'rotated-key', source: 'file' })
     }, { timeout: 5000 })
@@ -135,9 +135,9 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('keeps a stored key writable and rotatable across a real restart', async () => {
-    // No ambient DEEPSEEK_API_KEY: the shipped surfaces do not hoist
+    // No ambient GLKJ_API_KEY: the shipped surfaces do not hoist
     // the credentials document into process.env, so a stored key must stay file-sourced.
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const first = await mockServer([{ kind: 'sse', events: textEvents }])
     const second = await mockServer([{ kind: 'sse', events: textEvents }])
     const boot = await loadComposition({ withDynamic: true, baseURL: first.url })
@@ -166,7 +166,7 @@ describe('llm-deepseek real dynamic composition', () => {
   it('boots the same adapter on entry config alone, resolving the reference from the environment', async () => {
     // No settings and no credentials provider: configuration carries only the
     // reference, so the environment is the whole credential plane here.
-    vi.stubEnv('DEEPSEEK_API_KEY', 'entry-key')
+    vi.stubEnv('GLKJ_API_KEY', 'entry-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await loadComposition({ withDynamic: false, baseURL: server.url })
 

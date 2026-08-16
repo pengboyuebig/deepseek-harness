@@ -661,7 +661,7 @@ describe('provider profile lifecycle', () => {
   })
 
   it('accepts absent credentials for pi-ai ambient authentication', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'ambient-key')
+    vi.stubEnv('GLKJ_API_KEY', 'ambient-key')
     const server = await mockServer([{ events: textEvents }])
     // A profile that names no reference at all is the one case that defers to
     // pi-ai's own provider-native discovery.
@@ -683,7 +683,7 @@ describe('provider profile lifecycle', () => {
     // unrelated provider key sits in the environment. Deferring to pi-ai's own
     // discovery here would authenticate as another tenant.
     vi.stubEnv('PI_CUSTOM_REF_KEY', '')
-    vi.stubEnv('DEEPSEEK_API_KEY', 'ambient-key')
+    vi.stubEnv('GLKJ_API_KEY', 'ambient-key')
     const server = await mockServer([{ events: textEvents }])
     const ctx = await harness(server.url, { apiKey: undefined, apiKeyEnv: 'PI_CUSTOM_REF_KEY' })
     const first = await assemble(ctx, { model: 'deepseek-v4-flash', messages: [] })

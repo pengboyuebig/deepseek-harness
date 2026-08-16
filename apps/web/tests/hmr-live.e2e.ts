@@ -95,7 +95,7 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
       [process.execPath, binPath, 'web', '--port', '0'],
       world,
       {
-        DEEPSEEK_API_KEY: 'keyless-hmr-no-call',
+        GLKJ_API_KEY: 'keyless-hmr-no-call',
         GLH_HOME: join(world, '.glh'),
       },
     ))

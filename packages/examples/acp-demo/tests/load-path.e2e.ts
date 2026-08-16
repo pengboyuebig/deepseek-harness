@@ -88,7 +88,7 @@ async function boot(): Promise<Spawned & { cwd: string }> {
         ...process.env,
         TSX_TSCONFIG_PATH: repoTsconfig,
         // Key-present check only; no prompt is sent, so the model is never called.
-        DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY ?? 'keyless-acp-agent-smoke',
+        GLKJ_API_KEY: process.env.GLKJ_API_KEY ?? 'keyless-acp-agent-smoke',
         GLH_HOME: join(cwd, '.glh'),
         GLH_AGENTS_HOME: join(cwd, '.agents'),
       },

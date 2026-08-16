@@ -396,7 +396,7 @@ describe('E2BSubprocessHandle', () => {
         PATH: '/bin',
         'FOO-BAR': 'hyphen-value',
         '--split-string': 'literal-value',
-        DEEPSEEK_API_KEY: 'explicit-secret',
+        GLKJ_API_KEY: 'explicit-secret',
         GLH_MODE: 'test',
         // The seam's tombstone: an explicit undefined removes the ambient entry.
         KEEP: undefined,
@@ -420,7 +420,7 @@ describe('E2BSubprocessHandle', () => {
     })
     const command = fake.commandsSeen.find(value => value.includes('exec "$dsh_e2b_env_bin" -i'))!
     expect(command).toContain('"$dsh_e2b_setsid" --wait -- "$dsh_e2b_bash" -c')
-    expect(command).not.toContain('DEEPSEEK_API_KEY')
+    expect(command).not.toContain('GLKJ_API_KEY')
     expect(command).not.toContain('GLH_MODE')
     expect(command).not.toContain('FOO-BAR')
     expect(command).not.toContain('explicit-secret')
@@ -445,7 +445,7 @@ describe('E2BSubprocessHandle', () => {
       '/workspace/.dsh-e2b/processes/one/stderr.log',
     ])
     expect(fake.writtenFileData.get('/workspace/.dsh-e2b/processes/one/environment')).toBe(
-      'PATH=/bin\0UNICODE=你好\0HOME=/home/user\0FOO-BAR=hyphen-value\0--split-string=literal-value\0DEEPSEEK_API_KEY=explicit-secret\0GLH_MODE=test\0',
+      'PATH=/bin\0UNICODE=你好\0HOME=/home/user\0FOO-BAR=hyphen-value\0--split-string=literal-value\0GLKJ_API_KEY=explicit-secret\0GLH_MODE=test\0',
     )
 
     let piped = ''

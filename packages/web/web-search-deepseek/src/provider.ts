@@ -24,30 +24,30 @@ import type {
 } from './types.ts'
 
 /** Stable id this provider registers under. */
-export const DEEPSEEK_PROVIDER_ID = 'deepseek-official'
+export const GLKJ_PROVIDER_ID = 'deepseek-official'
 
 /**
  * Default endpoint: DeepSeek's Anthropic-compatible API, `/v1` included
  * (`/messages` is appended). This is NOT the chat-completions base
- * (`https://api.deepseek.com`) `@deepseek-ai/dsh-llm-deepseek` uses, so this
- * provider does NOT reuse `$DEEPSEEK_BASE_URL` — only the API key is shared.
+ * (`https://api.glkj.example.com`) `@deepseek-ai/dsh-llm-deepseek` uses, so this
+ * provider does NOT reuse `$GLKJ_BASE_URL` — only the API key is shared.
  */
-export const DEEPSEEK_DEFAULT_BASE_URL = 'https://api.deepseek.com/anthropic/v1'
+export const GLKJ_DEFAULT_BASE_URL = 'https://api.glkj.example.com/anthropic/v1'
 
 /** Default Anthropic-format model name (aligned with the repo's DeepSeek model vocabulary). */
-export const DEEPSEEK_DEFAULT_MODEL = 'deepseek-v4-flash'
+export const GLKJ_DEFAULT_MODEL = 'deepseek-v4-flash'
 
 /** Default `anthropic-version` header value. */
-export const DEEPSEEK_DEFAULT_API_VERSION = '2023-06-01'
+export const GLKJ_DEFAULT_API_VERSION = '2023-06-01'
 
 /** Default upper bound on generated tokens for the Messages request. */
-export const DEEPSEEK_DEFAULT_MAX_TOKENS = 4096
+export const GLKJ_DEFAULT_MAX_TOKENS = 4096
 
 /** Default maximum `web_search` server-tool uses per request. */
-export const DEEPSEEK_DEFAULT_MAX_USES = 5
+export const GLKJ_DEFAULT_MAX_USES = 5
 
 /** Attribution header sent on every request. Bump with the package version. */
-const USER_AGENT = 'deepseek-harness/0.0.1'
+const USER_AGENT = 'glkj-harness/0.1.0'
 
 /**
  * Exact secret-free DeepSeek Messages request recorded immediately before one
@@ -175,7 +175,7 @@ export function mapAnthropicResponse(response: AnthropicResponse): WebSearchResu
 
 /** The DeepSeek-backed search provider; HTTP redirects fail as `WEB_PROVIDER_ERROR`. */
 export class DeepSeekSearchProvider implements WebSearchProvider {
-  readonly id = DEEPSEEK_PROVIDER_ID
+  readonly id = GLKJ_PROVIDER_ID
 
   /**
    * @param resolveOptions - the options for the NEXT operation, snapshotted
@@ -290,7 +290,7 @@ export class DeepSeekSearchProvider implements WebSearchProvider {
       )
     }
     if (resolved !== undefined && resolved.length > 0) return resolved
-    const ref = options.apiKeyEnv ?? 'DEEPSEEK_API_KEY'
+    const ref = options.apiKeyEnv ?? 'GLKJ_API_KEY'
     throw new WebError(
       `DeepSeek search has no API key for "${ref}"; store it through the credentials service`
       + ' (the web Models page writes it), export it in the launching environment, or set a literal'

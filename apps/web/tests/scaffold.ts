@@ -229,7 +229,7 @@ export interface LaunchOptions {
   cordisTools?: boolean
   /**
    * Keep the shipped DeepSeek adapter mounted while masking the process
-   * environment's DEEPSEEK_API_KEY for this scaffold lifetime. This is the
+   * environment's GLKJ_API_KEY for this scaffold lifetime. This is the
    * keyless first-run configuration lane; the default disables the adapter.
    */
   deepSeekMissingCredential?: boolean
@@ -298,23 +298,23 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
   if (mode === 'record') {
     // Both owning vitest configs (web unconditionally, snapshot in record
     // mode) load the repo-root .env before this file runs.
-    if (process.env.DEEPSEEK_API_KEY === undefined || process.env.DEEPSEEK_API_KEY.length === 0) {
-      throw new Error('web e2e record mode needs DEEPSEEK_API_KEY (env or repo-root .env)')
+    if (process.env.GLKJ_API_KEY === undefined || process.env.GLKJ_API_KEY.length === 0) {
+      throw new Error('web e2e record mode needs GLKJ_API_KEY (env or repo-root .env)')
     }
   }
   if (mode === 'record' && options.deepSeekMissingCredential === true) {
     throw new Error('deepSeekMissingCredential is a keyless replay/refresh option')
   }
   const maskDeepSeekCredential = mode !== 'record' && options.deepSeekMissingCredential === true
-  const originalDeepSeekCredential = process.env.DEEPSEEK_API_KEY
+  const originalDeepSeekCredential = process.env.GLKJ_API_KEY
   let credentialEnvironmentRestored = false
   const restoreCredentialEnvironment = (): void => {
     if (credentialEnvironmentRestored || !maskDeepSeekCredential) return
     credentialEnvironmentRestored = true
     if (originalDeepSeekCredential === undefined) {
-      Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
+      Reflect.deleteProperty(process.env, 'GLKJ_API_KEY')
     } else {
-      process.env.DEEPSEEK_API_KEY = originalDeepSeekCredential
+      process.env.GLKJ_API_KEY = originalDeepSeekCredential
     }
   }
   const workspaceCwd = await realpath(await mkdtemp(join(tmpdir(), 'dsh-web-e2e-ws-')))
@@ -360,7 +360,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     if (failures.length > 1) throw new AggregateError(failures, 'web scaffold temp-root setup failed')
     throw error
   }
-  if (maskDeepSeekCredential) Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
+  if (maskDeepSeekCredential) Reflect.deleteProperty(process.env, 'GLKJ_API_KEY')
 
   // The include patch set — the same layer stack the profile boot composes
   // (bundle patches in dsh.profile.bundles order), applied over the SAME empty root (a

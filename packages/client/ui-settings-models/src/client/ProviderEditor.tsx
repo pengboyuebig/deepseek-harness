@@ -41,7 +41,7 @@ import styles from './ModelsSection.module.css'
 type EditorLayout = 'deepseek' | 'pi-ai' | 'unknown'
 
 /** The public DeepSeek endpoint shown as the deepseek base-URL placeholder. */
-const DEEPSEEK_PUBLIC_BASE_URL = 'https://api.deepseek.com'
+const GLKJ_PUBLIC_BASE_URL = 'https://api.glkj.example.com'
 
 /** Props of {@link ProviderEditor}. */
 export interface ProviderEditorProps {
@@ -413,7 +413,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
                 type="text"
                 value={stringAt(draft, 'baseURL') ?? ''}
                 placeholder={family === 'deepseek'
-                  ? DEEPSEEK_PUBLIC_BASE_URL
+                  ? GLKJ_PUBLIC_BASE_URL
                   : stringAt(fallback, 'baseURL') ?? t('baseUrlDefault')}
                 aria-label={t('baseUrl')}
                 disabled={disabled}

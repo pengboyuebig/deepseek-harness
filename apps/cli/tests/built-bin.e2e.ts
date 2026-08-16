@@ -379,8 +379,8 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
       const result = await runBuiltBin(['--profile', 'headless', 'answer', 'from', 'the', 'published', 'entry'], {
         GLH_HOME: home,
         GLH_TELEMETRY_DISABLED: '1',
-        DEEPSEEK_API_KEY: apiKey,
-        DEEPSEEK_BASE_URL: server.baseURL,
+        GLKJ_API_KEY: apiKey,
+        GLKJ_BASE_URL: server.baseURL,
       })
       expect(result.code, result.stderr).toBe(0)
       expect(result.stdout).toBe('published headless profile reached the mock')
@@ -426,7 +426,7 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
     })
     const home = mkdtempSync(join(tmpdir(), 'dsh-home-environment-'))
     const project = mkdtempSync(join(tmpdir(), 'dsh-home-project-'))
-    writeFileSync(join(home, '.credentials.yaml'), `DEEPSEEK_API_KEY: ${apiKey}\n`, { mode: 0o600 })
+    writeFileSync(join(home, '.credentials.yaml'), `GLKJ_API_KEY: ${apiKey}\n`, { mode: 0o600 })
     createEnvironmentProbeProfile(home, project)
     try {
       const result = await runBuiltBin(
@@ -434,8 +434,8 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
         {
           GLH_HOME: home,
           GLH_TELEMETRY_DISABLED: '1',
-          DEEPSEEK_API_KEY: undefined,
-          DEEPSEEK_BASE_URL: server.baseURL,
+          GLKJ_API_KEY: undefined,
+          GLKJ_BASE_URL: server.baseURL,
         },
         project,
       )
@@ -466,7 +466,7 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
     try {
       const result = await runBuiltBin(['--profile', 'web', '--patch', invalidProvider], {
         GLH_HOME: home,
-        DEEPSEEK_API_KEY: 'keyless-invalid-config',
+        GLKJ_API_KEY: 'keyless-invalid-config',
         GLH_TELEMETRY_DISABLED: '1',
       })
       expect(result.code).toBe(1)

@@ -88,7 +88,7 @@ async function runHeadlessPtySmoke(): Promise<string> {
       env: {
         GLH_HOME: home,
         GLH_AGENTS_HOME: join(cwd, '.agents'),
-        DEEPSEEK_API_KEY: 'keyless-shutdown-no-call',
+        GLKJ_API_KEY: 'keyless-shutdown-no-call',
         GLH_TELEMETRY_DISABLED: '1',
         GLH_TEST_SHUTDOWN_ARM_FILE: join(cwd, 'shutdown-armed'),
       },
