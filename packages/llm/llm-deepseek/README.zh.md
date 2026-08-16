@@ -14,8 +14,8 @@ harness LLM（大语言模型）seam 的 DeepSeek chat-completions 适配器：�
 - id: llm-deepseek
   name: '@deepseek-ai/dsh-llm-deepseek'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY  # default; resolved per request via ctx.credentials, then the environment
-    baseURL: https://api.deepseek.com # optional; $DEEPSEEK_BASE_URL then the public API when omitted
+    apiKeyEnv: GLKJ_API_KEY  # default; resolved per request via ctx.credentials, then the environment
+    baseURL: https://api.glkj.example.com # optional; $GLKJ_BASE_URL then the public API when omitted
     thinking: enabled        # optional; provider default is enabled
     reasoningEffort: high    # optional; off | high | max — omitted ⇒ high
     maxTokens: 256000        # optional positive per-request output cap; this is the default

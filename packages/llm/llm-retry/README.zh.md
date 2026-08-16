@@ -15,7 +15,7 @@
 ```yaml
 - name: '@deepseek-ai/dsh-llm-deepseek'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY
+    apiKeyEnv: GLKJ_API_KEY
     retryPolicy:
       mode: always
       backoff:

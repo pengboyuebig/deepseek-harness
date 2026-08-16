@@ -18,7 +18,7 @@ afterEach(() => {
 })
 
 describe('dsh path helpers', () => {
-  it('owns the shared default DSH home directory name', () => {
+  it('owns the shared default GLH home directory name', () => {
     expect(GLH_HOME_DIR_NAME).toBe('.glh')
     expect(DEFAULT_DSH_HOME_DISPLAY).toBe('~/.glh')
     expect(defaultDshHome()).toBe(join(homedir(), '.glh'))

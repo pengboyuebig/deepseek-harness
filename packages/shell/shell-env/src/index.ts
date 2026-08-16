@@ -27,7 +27,7 @@ export const inject: string[] = []
 
 /** Plugin config (all optional — the built-in facts resolve without defaults). */
 export interface Config {
-  /** DeepSeek Harness home directory exposed as `GLH_HOME`; defaults to `$GLH_HOME` or `~/.glh`. */
+  /** GLKJ Harness home directory exposed as `GLH_HOME`; defaults to `$GLH_HOME` or `~/.glh`. */
   dshHome?: string
 }
 

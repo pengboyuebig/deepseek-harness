@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-terminal-bash",
-  "description": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+  "description": "Persistent shell PTY backend over the GLKJ Harness subprocess terminal primitive",
   "version": "0.1.0-rc.5",
   "publishConfig": {
     "access": "public"

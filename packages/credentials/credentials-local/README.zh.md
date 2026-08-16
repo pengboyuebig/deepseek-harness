@@ -7,11 +7,11 @@
 | 层 | 来源 id | 可写 | 优先 |
 |---|---|---|---|
 | 继承的进程环境 | `env` | 否 | 始终优先 |
-| `$DSH_HOME/.credentials.yaml` 文档 | `file` | 是（`set`/`unset`） | 高于两个 `.env` 层 |
+| `$GLH_HOME/.credentials.yaml` 文档 | `file` | 是（`set`/`unset`） | 高于两个 `.env` 层 |
 | `<invocation cwd>/.env` | `project-env` | 不在此处 | 高于用户 `.env` |
-| `$DSH_HOME/.env` | `user-env` | 不在此处 | 其余情况 |
+| `$GLH_HOME/.env` | `user-env` | 不在此处 | 其余情况 |
 
-启动环境优先，因为按次覆盖（`DEEPSEEK_API_KEY=… dsh`、CI 机密、容器 `-e`）代表本次运行的操作者意图——而它无法从进程内部修改，就必须*可见地*只读：`describe()` 报告 `source: 'env', writable: false`，`set`/`unset` 直接拒绝，而不是写下一个读取方永远看不到的变更。
+启动环境优先，因为按次覆盖（`GLKJ_API_KEY=… glh`、CI 机密、容器 `-e`）代表本次运行的操作者意图——而它无法从进程内部修改，就必须*可见地*只读：`describe()` 报告 `source: 'env', writable: false`，`set`/`unset` 直接拒绝，而不是写下一个读取方永远看不到的变更。
 
 它之下的所有来源优先级都低于受管存储，因此 Models 页写入的密钥会立即生效，即使某个 `.env` 里还留着更旧的密钥。没有存储任何东西时这两层仍会参与解析，`describe()` 会把来源报告为 `project-env` 或 `user-env` 且 `writable: true`——存入一个密钥就会取代它们成为生效来源。
 
@@ -22,7 +22,7 @@
 | 字段 | 默认值 | 含义 |
 |---|---|---|
 | `path` | `<harness home>/.credentials.yaml` | 凭据文档位置。 |
-| `dshHome` | `$DSH_HOME` 或 `~/.dsh` | `path` 缺省时使用的 harness home。 |
+| `dshHome` | `$GLH_HOME` 或 `~/.glh` | `path` 缺省时使用的 harness home。 |
 | `watch` | `true` | 热发布外部编辑。 |
 | `debounceMs` | `100` | watcher 写入稳定窗口。 |
 
@@ -31,7 +31,7 @@
 一个从凭据引用到值的 YAML mapping，除此之外别无他物：
 
 ```yaml
-DEEPSEEK_API_KEY: sk-…
+GLKJ_API_KEY: sk-…
 OPENAI_API_KEY: sk-…
 ```
 
@@ -53,7 +53,7 @@ OPENAI_API_KEY: sk-…
 
 ## 安全边界
 
-文档在 `0700` 目录下以 `0600` 权限存放，这挡得住其他 OS 用户，**挡不住**模型。工具进程（bash、文件系统工具）以同一用户身份运行，而已交付的 `workspace-write` 文件策略限制的是修改而非读取，因此它们读这个文件与读该用户拥有的任何其他文件毫无二致；也没有任何沙箱模式会把它单独挑出来。harness 真正守住的更窄：它绝不把该文档的解析后路径交给模型，也绝不把它载入进程环境——这与用户的普通环境层 `$DSH_HOME/.env` 不同（见 [app-boot 的 Harness home 各层](../../boot/app-boot/README.md#profiles)）——因此要拿到这个值，需要刻意去读一条并未交给 agent（智能体）的路径。
+文档在 `0700` 目录下以 `0600` 权限存放，这挡得住其他 OS 用户，**挡不住**模型。工具进程（bash、文件系统工具）以同一用户身份运行，而已交付的 `workspace-write` 文件策略限制的是修改而非读取，因此它们读这个文件与读该用户拥有的任何其他文件毫无二致；也没有任何沙箱模式会把它单独挑出来。harness 真正守住的更窄：它绝不把该文档的解析后路径交给模型，也绝不把它载入进程环境——这与用户的普通环境层 `$GLH_HOME/.env` 不同（见 [app-boot 的 Harness home 各层](../../boot/app-boot/README.md#profiles)）——因此要拿到这个值，需要刻意去读一条并未交给 agent（智能体）的路径。
 
 这是审慎，不是边界。必须让提供方密钥远离自身 agent 的部署无法靠文件权限做到；OS 钥匙串提供方——一种模型运行所在进程根本无法读取的存储——才是延后的答案，它应当作为平级包与本提供方并列。
 

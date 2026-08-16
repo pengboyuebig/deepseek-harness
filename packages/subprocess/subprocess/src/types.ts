@@ -9,13 +9,13 @@
 
 import type { Readable, Writable } from 'node:stream'
 
-/** Namespace prefix reserved for DeepSeek Harness-managed child environment facts. */
+/** Namespace prefix reserved for GLKJ Harness-managed child environment facts. */
 export const GLH_ENV_PREFIX = 'GLH_' as const
 
 /** One environment key inside the managed {@link GLH_ENV_PREFIX} namespace. */
 export type DshEnvironmentKey = `${typeof GLH_ENV_PREFIX}${string}`
 
-/** Trusted DeepSeek Harness variables for one child-process execution. */
+/** Trusted GLKJ Harness variables for one child-process execution. */
 export type DshEnvironment = Readonly<Record<DshEnvironmentKey, string>>
 
 /** One captured stream: the (possibly truncated) text plus recovery info. */

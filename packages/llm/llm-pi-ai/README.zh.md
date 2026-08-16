@@ -38,7 +38,7 @@
       # Catalog route with one model reshaped in place; the rest of the
       # catalog keeps serving (a models list would replace it instead).
       deepseek:
-        apiKeyEnv: DEEPSEEK_API_KEY
+        apiKeyEnv: GLKJ_API_KEY
         modelOverrides:
           deepseek-v4-pro:
             reasoningEfforts:

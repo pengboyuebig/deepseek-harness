@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-agent-presets",
-  "description": "Per-session agent composition from preset cordis.yml files for the DeepSeek Harness",
+  "description": "Per-session agent composition from preset cordis.yml files for the GLKJ Harness",
   "version": "0.1.0-rc.5",
   "publishConfig": {
     "access": "public"

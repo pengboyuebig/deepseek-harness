@@ -2,7 +2,7 @@
 
 English | [中文](README.zh.md)
 
-The SDK provider runs each subagent as a complete DeepSeek Harness runtime in a fresh subprocess, driven over stdio JSON-RPC through the [TypeScript SDK client](../../sdk/client/README.md). It is the second out-of-process backend beside [`subagent-acp`](../subagent-acp/README.md), differing in the wire and the child contract: the ACP backend drives any Agent Client Protocol agent; this backend drives specifically a harness SDK runtime (`dsh-jsonrpc-agent` bin or packaged executable), so the child is a full peer harness — own `cordis.yml`-decided composition, session persistence, model route, and tools.
+The SDK provider runs each subagent as a complete GLKJ Harness runtime in a fresh subprocess, driven over stdio JSON-RPC through the [TypeScript SDK client](../../sdk/client/README.md). It is the second out-of-process backend beside [`subagent-acp`](../subagent-acp/README.md), differing in the wire and the child contract: the ACP backend drives any Agent Client Protocol agent; this backend drives specifically a harness SDK runtime (`dsh-jsonrpc-agent` bin or packaged executable), so the child is a full peer harness — own `cordis.yml`-decided composition, session persistence, model route, and tools.
 
 ## Start and ownership
 
@@ -33,7 +33,7 @@ The provider advertises no start-time capabilities (`outputSchema`/`depthLimit`/
 | `provider` | `deepseek-official` | Provider route sent in the child's `initialize`. |
 | `model` | `deepseek-v4-flash` | Model sent in the child's `initialize`. |
 | `maxTokens` | adapter/provider route default | Per-request output-token cap sent in the child's `initialize`; it applies to the child root agent and its in-process descendants. |
-| `env` | `{}` | Explicit child environment layered over a credential-scrubbed parent environment (e.g. the child's own `DEEPSEEK_API_KEY`, or `DSH_CORDIS_CONFIG`). |
+| `env` | `{}` | Explicit child environment layered over a credential-scrubbed parent environment (e.g. the child's own `GLKJ_API_KEY`, or `GLH_CORDIS_CONFIG`). |
 | `shutdownTimeoutMs` | `1000` | Bound on the protocol `shutdown` exchange during dispose. |
 | `disposeEofGraceMs` | `6000` | Grace after stdin EOF before platform termination. |
 | `disposeGraceMs` | `3000` | Exit-confirmation grace after termination; POSIX also waits this long after SIGTERM before SIGKILL. |
@@ -47,7 +47,7 @@ The provider advertises no start-time capabilities (`outputSchema`/`depthLimit`/
     args: ['./packages/examples/jsonrpc-demo/lib/bin.js', './examples/jsonrpc-agent/cordis.yml']
     maxTokens: 49152
     env:
-      DEEPSEEK_API_KEY: !!js process.env.DEEPSEEK_API_KEY
+      GLKJ_API_KEY: !!js process.env.GLKJ_API_KEY
 - id: tool-subagent
   name: '@deepseek-ai/dsh-tool-subagent'
   config: { provider: dsh-sdk, toolName: subagent, maxDepth: 'provider-managed' }
@@ -55,7 +55,7 @@ The provider advertises no start-time capabilities (`outputSchema`/`depthLimit`/
 
 ## Process boundary
 
-The child environment is the [`dsh-subprocess`](../../subprocess/README.md) seam's `scrubbedParentEnv()` base — ambient credential-shaped and `DSH_*` names dropped — with explicit `config.env` values merged after the scrub. The child is spawned by the SDK client rather than through `ctx.subprocess` (the subprocess README's documented exception for SDK-managed transports), which is why this backend applies the scrub itself. The JSON-RPC wire is the real serialization boundary.
+The child environment is the [`dsh-subprocess`](../../subprocess/README.md) seam's `scrubbedParentEnv()` base — ambient credential-shaped and `GLH_*` names dropped — with explicit `config.env` values merged after the scrub. The child is spawned by the SDK client rather than through `ctx.subprocess` (the subprocess README's documented exception for SDK-managed transports), which is why this backend applies the scrub itself. The JSON-RPC wire is the real serialization boundary.
 
 The package has no default export. Cordis loader unwrapping would otherwise hide the named `inject` metadata; see [postmortem 0001](../../../docs/postmortem/0001-acp-default-export-drops-inject.md).
 

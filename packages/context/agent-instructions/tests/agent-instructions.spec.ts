@@ -618,7 +618,7 @@ describe('workspace context instruction discovery', () => {
     }
   })
 
-  it('labels the default DSH home as ~/.dsh when HOME points at the configured default', async () => {
+  it('labels the default GLH home as ~/.dsh when HOME points at the configured default', async () => {
     const root = await tempRepo()
     const home = await tempRepo()
     try {
@@ -650,7 +650,7 @@ describe('workspace context instruction discovery', () => {
       vi.resetModules()
       vi.doMock('node:os', () => ({ homedir: () => home }))
       const isolated = await import('@deepseek-ai/dsh-agent-instructions')
-      const files = await isolated.discoverBaselineInstructionFiles({ cwd: root, dshHome: '~/.dsh' })
+      const files = await isolated.discoverBaselineInstructionFiles({ cwd: root, dshHome: '~/.glh' })
 
       expect(files).toEqual([{ absolutePath: join(home, '.glh/AGENTS.md'), displayPath: '~/.glh/AGENTS.md' }])
     } finally {

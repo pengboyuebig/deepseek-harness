@@ -549,7 +549,7 @@ describe.skipIf(!process.env.GLKJ_API_KEY || notReady.length > 0)('web smoke (re
     await page.waitForFunction(() => document.body.innerText.length > 50, undefined, { timeout: 15_000 })
     expect(pageErrors).toEqual([])
     await page.waitForFunction(
-      () => document.title !== 'DeepSeek Harness' && document.title.endsWith(' — DeepSeek Harness'),
+      () => document.title !== 'GLKJ Harness' && document.title.endsWith(' — GLKJ Harness'),
       undefined,
       { timeout: 15_000 },
     )
@@ -561,7 +561,7 @@ describe.skipIf(!process.env.GLKJ_API_KEY || notReady.length > 0)('web smoke (re
     if (sessionId === undefined) throw new Error('created Web session was not listed')
     const durableTitle = await waitForProviderTitle(baseUrl, sessionId)
     await page.waitForFunction(
-      expected => document.title === `${expected} — DeepSeek Harness`,
+      expected => document.title === `${expected} — GLKJ Harness`,
       durableTitle,
       { timeout: 15_000 },
     )

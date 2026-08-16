@@ -51,7 +51,7 @@ export interface Config {
   providerName?: string
   /** Whether project and user roots are included around custom roots. */
   includeDefaultRoots?: boolean
-  /** DeepSeek Harness config root. Defaults to `$GLH_HOME` or `~/.dsh`. */
+  /** GLKJ Harness config root. Defaults to `$GLH_HOME` or `~/.dsh`. */
   dshHome?: string
   /** Shared agent config root. Defaults to `$GLH_AGENTS_HOME` or `~/.agents`. */
   agentsHome?: string

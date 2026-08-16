@@ -898,7 +898,7 @@ describe('abort edge cases', () => {
 })
 
 describe('environment and spill-file hardening', () => {
-  it('scrubs credential-shaped and ambient DSH env vars from child processes', async () => {
+  it('scrubs credential-shaped and ambient GLH env vars from child processes', async () => {
     process.env.GLH_TEST_API_KEY = 'super-secret'
     process.env.GLH_TEST_TOKEN = 'also-secret'
     process.env.SUBPROCESS_TEST_PASSWORD = 'password-secret'

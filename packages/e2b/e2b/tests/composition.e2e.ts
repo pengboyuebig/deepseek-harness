@@ -105,10 +105,10 @@ describe.skipIf(!process.env.E2B_API_KEY)('E2B live Loader composition', () => {
       })
       const session = await backend.spawn({ sessionId: TerminalSessionId('env'), owner, type: 'shell' })
       const result = await session.startSend({
-        text: "printf 'NPM=<%s> DSH=<%s> KEEP=<%s>\\n' \"$NPM_TOKEN\" \"$GLH_STALE\" \"$KEEP\"",
+        text: "printf 'NPM=<%s> GLH=<%s> KEEP=<%s>\\n' \"$NPM_TOKEN\" \"$GLH_STALE\" \"$KEEP\"",
         submit: true,
       }).done
-      expect(result.viewport).toContain('NPM=<> DSH=<> KEEP=<visible>')
+      expect(result.viewport).toContain('NPM=<> GLH=<> KEEP=<visible>')
       expect(result.viewport).not.toContain('sentinel-secret')
       expect(result.viewport).not.toContain('sentinel-stale')
       await expect(sandbox.files.read(profileLeakPath)).rejects.toBeInstanceOf(FileNotFoundError)

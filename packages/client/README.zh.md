@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-dsh web GUI 的浏览器侧：shell 启动、浏览器与宿主通信、共享 UI 服务和功能插件。编写规则见 [AGENTS.md](AGENTS.md)；宿主半侧是 [`host/`](../host/README.md)。除 `test-runtime` 外，均为名为 `@deepseek-ai/dsh-client-<name>` 的**产品**包。
+glh web GUI 的浏览器侧：shell 启动、浏览器与宿主通信、共享 UI 服务和功能插件。编写规则见 [AGENTS.md](AGENTS.md)；宿主半侧是 [`host/`](../host/README.md)。除 `test-runtime` 外，均为名为 `@deepseek-ai/dsh-client-<name>` 的**产品**包。
 
 | 包 | 目的 |
 |---|---|
@@ -40,7 +40,7 @@ dsh web GUI 的浏览器侧：shell 启动、浏览器与宿主通信、共享 U
 | [`ui-agent-preset/`](ui-agent-preset/README.md) | 选择会话的 agent 预设，并编写预设组合。 |
 | [`ui-settings/`](ui-settings/README.md) | 承载设置界面及其扩展区域。 |
 | [`ui-settings-general/`](ui-settings-general/README.md) | 提供常规设置分区。 |
-| [`ui-settings-models/`](ui-settings-models/README.md) | 提供模型提供方配置与 DeepSeek 配置引导。 |
+| [`ui-settings-models/`](ui-settings-models/README.md) | 提供模型提供方配置与 GLKJ 配置引导。 |
 | [`ui-settings-plugin-inventory/`](ui-settings-plugin-inventory/README.md) | 向“插件”设置贡献只读的 Host Loader 清单标签页。 |
 
 每个子文档负责自身的约定和详细行为。[slot 系统标准](../../.agents/notes/implemented/architecture/2026-07-22-slot-type-chain-implementation.md)与 [Web 客户端架构 Agent Note](../../.agents/notes/implemented/architecture/2026-07-19-gui-web-client-architecture.md)负责跨包组合与加载决策。

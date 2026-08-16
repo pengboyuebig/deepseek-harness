@@ -12,15 +12,15 @@ Exa 和 Perplexity 提供专用搜索端点，DeepSeek 则没有。该提供方�
 
 **严格模式**：如果响应不含 `web_search_tool_result` 块（未触发原生搜索），提供方会抛出 `WebError` `WEB_PROVIDER_ERROR`，而非降级为文本抓取。
 
-它复用 `DEEPSEEK_API_KEY` 凭据引用（不增加密钥），但**不会**复用 `$DEEPSEEK_BASE_URL`：搜索端点使用 Anthropic 兼容基址（`https://api.deepseek.com/anthropic/v1`），不同于 LLM（大语言模型）适配器使用的 chat-completions 基址（`https://api.deepseek.com`）。已挂载的凭据服务具有权威性；没有该服务时，提供方会回退到启动进程的环境变量。每次搜索都会解析该引用，因此在 Web 的 Models 页中存储或轮换的密钥无需重启，即可用于下一次调用。
+它复用 `GLKJ_API_KEY` 凭据引用（不增加密钥），但**不会**复用 `$GLKJ_BASE_URL`：搜索端点使用 Anthropic 兼容基址（`https://api.glkj.example.com/anthropic/v1`），不同于 LLM（大语言模型）适配器使用的 chat-completions 基址（`https://api.glkj.example.com`）。已挂载的凭据服务具有权威性；没有该服务时，提供方会回退到启动进程的环境变量。每次搜索都会解析该引用，因此在 Web 的 Models 页中存储或轮换的密钥无需重启，即可用于下一次调用。
 
 ## 配置
 
 | 配置键 | 默认值 | 含义 |
 |---|---|---|
 | `apiKey` | 未设置 | DeepSeek API 密钥字面值。优先使用 `apiKeyEnv`，避免密钥进入配置；非空字面值优先。 |
-| `apiKeyEnv` | `DEEPSEEK_API_KEY` | 每次搜索都会通过 `ctx.credentials` 解析该凭据引用；没有该 seam 时则从进程环境解析。值缺失时，调用以 `WEB_PROVIDER_CREDENTIAL_MISSING` 失败。 |
-| `baseURL` | `https://api.deepseek.com/anthropic/v1` | Anthropic 兼容端点基址；追加 `/messages`。缺省时回退到任一环境层中的 `$DEEPSEEK_SEARCH_BASE_URL`；禁止复用属于 chat-completions LLM 适配器的 `$DEEPSEEK_BASE_URL`。无法解析时提供方不可用。 |
+| `apiKeyEnv` | `GLKJ_API_KEY` | 每次搜索都会通过 `ctx.credentials` 解析该凭据引用；没有该 seam 时则从进程环境解析。值缺失时，调用以 `WEB_PROVIDER_CREDENTIAL_MISSING` 失败。 |
+| `baseURL` | `https://api.glkj.example.com/anthropic/v1` | Anthropic 兼容端点基址；追加 `/messages`。缺省时回退到任一环境层中的 `$GLKJ_SEARCH_BASE_URL`；禁止复用属于 chat-completions LLM 适配器的 `$GLKJ_BASE_URL`。无法解析时提供方不可用。 |
 | `model` | `deepseek-v4-flash` | Anthropic 格式模型名称。 |
 | `apiVersion` | `2023-06-01` | `anthropic-version` 标头值。 |
 | `maxTokens` | `4096` | Messages 请求生成 token 的正整数上限。 |
@@ -30,7 +30,7 @@ Exa 和 Perplexity 提供专用搜索端点，DeepSeek 则没有。该提供方�
 - id: web-search-deepseek
   name: '@deepseek-ai/dsh-web-search-deepseek'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY
+    apiKeyEnv: GLKJ_API_KEY
     baseURL: https://gateway.internal/anthropic/v1
 ```
 
