@@ -53,7 +53,7 @@ export {
  * Resolve the config to boot. Replay swaps a `cordis.yml` basename for
  * `cordis.snapshot.yml` in the same directory; every other mode keeps the path.
  * @param configPath - the requested config path (absolute, or relative to `cwd`).
- * @param snapshotMode - the bin's `$DSH_SNAPSHOT` value; only `'replay'` swaps the
+ * @param snapshotMode - the bin's `$GLH_SNAPSHOT` value; only `'replay'` swaps the
  *   basename.
  * @param cwd - the base a relative `configPath` resolves against.
  * @returns the absolute path of the config to boot.
@@ -114,7 +114,7 @@ const BOOTSTRAP_NAMES = new Set([
 ])
 
 /** Name prefixes no discovered file may set. */
-const BOOTSTRAP_PREFIXES = ['DSH_', 'XDG_', 'DYLD_', 'BASH_FUNC_']
+const BOOTSTRAP_PREFIXES = ['GLH_', 'XDG_', 'DYLD_', 'BASH_FUNC_']
 
 /**
  * Whether a variable may come only from the inherited process environment

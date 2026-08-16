@@ -10,7 +10,7 @@
 import type { SandboxEnforcement, SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
 import type { CollectedOutput, DshEnvironment } from '@deepseek-ai/dsh-subprocess'
 
-export { DSH_ENV_PREFIX } from '@deepseek-ai/dsh-subprocess'
+export { GLH_ENV_PREFIX } from '@deepseek-ai/dsh-subprocess'
 export type { CollectedOutput, DshEnvironment, DshEnvironmentKey } from '@deepseek-ai/dsh-subprocess'
 
 /**
@@ -67,8 +67,8 @@ export interface ShellExecRequest {
    */
   env?: Record<string, string> | undefined
   /**
-   * Harness-owned `DSH_*` variables for this execution (typed to managed
-   * keys). Executors discard ambient `DSH_*` entries before merging this
+   * Harness-owned `GLH_*` variables for this execution (typed to managed
+   * keys). Executors discard ambient `GLH_*` entries before merging this
    * snapshot last, so an unavailable current fact cannot inherit a stale
    * value from the harness process and a caller {@link env} entry cannot
    * displace a managed one.
@@ -103,7 +103,7 @@ export interface ShellExecSpec {
    * ordinary extra environment.
    */
   env?: Record<string, string> | undefined
-  /** Managed `DSH_*` snapshot (typed to managed keys); merges after {@link env}. */
+  /** Managed `GLH_*` snapshot (typed to managed keys); merges after {@link env}. */
   dshEnv?: DshEnvironment | undefined
   /** Resolved sandbox policy; ignored by executors that do not confine. */
   sandboxPolicy: SandboxExecutionPolicy | undefined

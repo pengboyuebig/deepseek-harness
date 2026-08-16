@@ -899,34 +899,34 @@ describe('abort edge cases', () => {
 
 describe('environment and spill-file hardening', () => {
   it('scrubs credential-shaped and ambient DSH env vars from child processes', async () => {
-    process.env.DSH_TEST_API_KEY = 'super-secret'
-    process.env.DSH_TEST_TOKEN = 'also-secret'
+    process.env.GLH_TEST_API_KEY = 'super-secret'
+    process.env.GLH_TEST_TOKEN = 'also-secret'
     process.env.SUBPROCESS_TEST_PASSWORD = 'password-secret'
-    process.env.DSH_TEST_PLAIN = 'visible'
+    process.env.GLH_TEST_PLAIN = 'visible'
     try {
       const result = await finish(spawnSubprocess(spec(
-        'echo "[${DSH_TEST_API_KEY:-absent}|${DSH_TEST_TOKEN:-absent}|${SUBPROCESS_TEST_PASSWORD:-absent}|${DSH_TEST_PLAIN:-absent}]"',
+        'echo "[${GLH_TEST_API_KEY:-absent}|${GLH_TEST_TOKEN:-absent}|${SUBPROCESS_TEST_PASSWORD:-absent}|${GLH_TEST_PLAIN:-absent}]"',
       )))
       expect(result.stdout.text.trim()).toBe('[absent|absent|absent|absent]')
     } finally {
-      delete process.env.DSH_TEST_API_KEY
-      delete process.env.DSH_TEST_TOKEN
+      delete process.env.GLH_TEST_API_KEY
+      delete process.env.GLH_TEST_TOKEN
       delete process.env.SUBPROCESS_TEST_PASSWORD
-      delete process.env.DSH_TEST_PLAIN
+      delete process.env.GLH_TEST_PLAIN
     }
   })
 
-  it('forwards explicit DSH_* env entries while scrubbing ambient ones', async () => {
-    // Both facts through one explicit map: the ambient DSH_STALE is dropped by
+  it('forwards explicit GLH_* env entries while scrubbing ambient ones', async () => {
+    // Both facts through one explicit map: the ambient GLH_STALE is dropped by
     // the scrub, and the deliberately supplied current values merge after it.
-    process.env.DSH_STALE = 'old-value'
+    process.env.GLH_STALE = 'old-value'
     try {
-      const result = await finish(spawnSubprocess(spec('echo "[${DSH_STALE:-absent}|$DSH_SHELL|$DSH_SESSION_ID]"', {
-        env: { DSH_SHELL: '1', DSH_SESSION_ID: 'current-session' },
+      const result = await finish(spawnSubprocess(spec('echo "[${GLH_STALE:-absent}|$GLH_SHELL|$GLH_SESSION_ID]"', {
+        env: { GLH_SHELL: '1', GLH_SESSION_ID: 'current-session' },
       })))
       expect(result.stdout.text.trim()).toBe('[absent|1|current-session]')
     } finally {
-      delete process.env.DSH_STALE
+      delete process.env.GLH_STALE
     }
   })
 

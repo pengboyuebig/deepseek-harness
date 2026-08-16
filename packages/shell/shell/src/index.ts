@@ -21,7 +21,7 @@ import type { ShellExecRequest, ShellExecSpec, ShellProcess, ShellRunResult } fr
  */
 export const SHELL_SETTINGS_NAMESPACE = settingsNamespace('shell')
 
-export { DSH_ENV_PREFIX } from './types.ts'
+export { GLH_ENV_PREFIX } from './types.ts'
 export type {
   ShellExecRequest,
   ShellExecSpec,

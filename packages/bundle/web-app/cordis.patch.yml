@@ -34,11 +34,11 @@
 
 - id: tools
   config:
-    # TEMPORARY workaround: DSH_TOOLS_MODE (native|code|both) opts a whole dsh
+    # TEMPORARY workaround: GLH_TOOLS_MODE (native|code|both) opts a whole dsh
     # process into Code Mode while per-session tool-presentation selection is being
     # designed; unset keeps the schema default (native). Remove the env seam
     # once the web UI owns the choice per session.
-    mode: !!js process.env.DSH_TOOLS_MODE
+    mode: !!js process.env.GLH_TOOLS_MODE
 
 # ── web-only host rows, the transport layer, and the browser roster ─────────
 
@@ -285,7 +285,7 @@
 # the composition.
 
 # `shell-env` STAYS in the host plane: `apps/cli/src/web.ts` injects it to
-# publish `DSH_WEB_URL`/`DSH_WEB_MODE`, and a host row that injects a service is
+# publish `GLH_WEB_URL`/`GLH_WEB_MODE`, and a host row that injects a service is
 # the criterion for host-plane ownership — injection resolves before any session
 # exists, so there is no agent to key by. Behind a preset realm those variables
 # would never reach the model's shell at all.
@@ -408,7 +408,7 @@
   disabled: true
 
 # The preset roster. `config/agent-presets/` ships with the deployment and is
-# read-only (its entries carry `system` trust); `$DSH_HOME/.agent-presets` is
+# read-only (its entries carry `system` trust); `$GLH_HOME/.agent-presets` is
 # where a person — or an agent — authors their own, and carries the same trust
 # as shell access because a preset IS a composition.
 #

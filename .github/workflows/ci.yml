@@ -38,7 +38,7 @@ env:
   PRIMARY_NODE_VERSION: '24'
   # CI runs must never report to the production telemetry endpoint baked
   # into apps/cli/cordis.yml (AppCLIEntry disables the row when set).
-  DSH_TELEMETRY_DISABLED: '1'
+  GLH_TELEMETRY_DISABLED: '1'
 
 jobs:
 
@@ -50,7 +50,7 @@ jobs:
   # all three jobs enter runner allocation independently.
   #
   # FAILOVER (Linux): each Linux enterprise job resolves its pool through the
-  # DSH_CI_FAILOVER_LINUX repository variable. Unset (normal), the expressions
+  # GLH_CI_FAILOVER_LINUX repository variable. Unset (normal), the expressions
   # pick the hosted enterprise pools below. Setting the variable to
   # 'selfhosted' (repo Settings → Actions → Variables; writer-manageable
   # repository state — not PR-editable, no merge required) retargets all
@@ -59,17 +59,17 @@ jobs:
   # see .agents/notes/implemented/process/2026-07-26-ci-failover-runbook.md. The
   # in-house pool's readiness is re-proven on every master push by the
   # serial-linux-selfhosted standby lane below. The Windows failover switch is
-  # the separate DSH_CI_FAILOVER_WINDOWS variable on the windows-native job below.
+  # the separate GLH_CI_FAILOVER_WINDOWS variable on the windows-native job below.
   node-24:
     if: github.event_name == 'pull_request'
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
           || 'dsh-ubuntu-24-04-16core' }}
     name: node 24 / static
     env:
-      DSH_GATE_CONCURRENCY: '8'
+      GLH_GATE_CONCURRENCY: '8'
     steps:
       # Fetch complete history so the archive gate can read the trusted PR base from a reused shallow checkout.
       - uses: actions/checkout@v6
@@ -97,7 +97,7 @@ jobs:
       # compression and upload on the paid latency-critical path. Skipped
       # under failover — see the coverage lane's identical rationale.
       - uses: actions/cache/restore@v4
-        if: vars.DSH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
         with:
           path: ${{ steps.pnpm-store.outputs.path }}
           key: ${{ runner.os }}-node-${{ env.PRIMARY_NODE_VERSION }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
@@ -109,13 +109,13 @@ jobs:
 
       - name: Run static gates
         env:
-          DSH_ARCHIVE_BASE_REF: ${{ github.event.pull_request.base.sha }}
+          GLH_ARCHIVE_BASE_REF: ${{ github.event.pull_request.base.sha }}
         run: pnpm run check:ci:static
 
   node-24-coverage:
     if: github.event_name == 'pull_request'
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
           || 'dsh-ubuntu-24-04-16core' }}
@@ -125,8 +125,8 @@ jobs:
       # shares one 64-core VM across six always-on runner instances, so each
       # instance may use eight while keeping the worst case at 8 × 6 = 48
       # workers; process-bound suites remain isolated in forks.
-      DSH_COVERAGE_MAX_WORKERS: ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]' && '8' || '6' }}
-      DSH_GATE_CONCURRENCY: '3'
+      GLH_COVERAGE_MAX_WORKERS: ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]' && '8' || '6' }}
+      GLH_GATE_CONCURRENCY: '3'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -152,7 +152,7 @@ jobs:
       # already serves warm installs, while restoring the hosted archive
       # would spend ~52 s pulling ~180 MB into that populated store.
       - uses: actions/cache/restore@v4
-        if: vars.DSH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
         with:
           path: ${{ steps.pnpm-store.outputs.path }}
           key: ${{ runner.os }}-node-${{ env.PRIMARY_NODE_VERSION }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
@@ -178,18 +178,18 @@ jobs:
   node-24-consumers:
     if: github.event_name == 'pull_request'
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
           || 'dsh-ubuntu-24-04-16core' }}
     name: node 24 / snapshots and artifacts
     env:
-      DSH_GATE_CONCURRENCY: '8'
-      DSH_NODE_COMPAT_SKIP_TYPECHECK: '1'
-      DSH_OXLINT_THREADS: '8'
-      DSH_PUBLINT_CONCURRENCY: '8'
+      GLH_GATE_CONCURRENCY: '8'
+      GLH_NODE_COMPAT_SKIP_TYPECHECK: '1'
+      GLH_OXLINT_THREADS: '8'
+      GLH_PUBLINT_CONCURRENCY: '8'
       # Failover halves snapshot concurrency for the shared 64-core VM.
-      DSH_SNAPSHOT_MAX_CONCURRENCY: ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]' && '12' || '32' }}
+      GLH_SNAPSHOT_MAX_CONCURRENCY: ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]' && '12' || '32' }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -213,7 +213,7 @@ jobs:
 
       # Skipped under failover — see the coverage lane's identical rationale.
       - uses: actions/cache/restore@v4
-        if: vars.DSH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
         with:
           path: ${{ steps.pnpm-store.outputs.path }}
           key: ${{ runner.os }}-node-${{ env.PRIMARY_NODE_VERSION }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
@@ -223,7 +223,7 @@ jobs:
       # Pull requests restore the cache normally produced by serial-linux on
       # master; they do not pay compression and upload on the required path.
       - uses: actions/cache/restore@v4
-        if: vars.DSH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
@@ -244,13 +244,13 @@ jobs:
           exit "$sandbox_status"
 
       - name: Install Playwright Chromium and hosted dependencies
-        if: vars.DSH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX != 'selfhosted' || github.event.pull_request.user.login == 'dependabot[bot]'
         run: pnpm --filter @deepseek-ai/dsh-web-frontend exec playwright install --with-deps chromium
 
       # The persistent VM image owns Playwright's Linux system packages; do
       # not mutate the shared host with apt on every failover run.
       - name: Install Playwright Chromium on the failover VM
-        if: vars.DSH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]'
+        if: vars.GLH_CI_FAILOVER_LINUX == 'selfhosted' && github.event.pull_request.user.login != 'dependabot[bot]'
         run: pnpm --filter @deepseek-ai/dsh-web-frontend exec playwright install chromium
 
       - name: Run compatibility, snapshot, and artifact gates
@@ -263,8 +263,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     name: ${{ matrix.name }}
     env:
-      DSH_GATE_CONCURRENCY: ${{ matrix.gate_concurrency }}
-      DSH_NODE_COMPAT_SKIP_TYPECHECK: '1'
+      GLH_GATE_CONCURRENCY: ${{ matrix.gate_concurrency }}
+      GLH_NODE_COMPAT_SKIP_TYPECHECK: '1'
     strategy:
       fail-fast: false
       matrix:
@@ -438,25 +438,25 @@ jobs:
   # its own unmasked conclusion but is deliberately absent from
   # all-checks-passed.needs, so it never delays or changes that required
   # verdict. Under normal operation it runs on the hosted larger runner; under
-  # Windows failover (DSH_CI_FAILOVER_WINDOWS=selfhosted) it retargets onto the
+  # Windows failover (GLH_CI_FAILOVER_WINDOWS=selfhosted) it retargets onto the
   # in-house self-hosted Windows pool. Dependabot PRs are excluded from the
   # self-hosted pool and stay queued for the hosted runner — see the failover
   # runbook. This Windows switch is independent of the Linux
-  # DSH_CI_FAILOVER_LINUX variable that retargets the three required Linux jobs
+  # GLH_CI_FAILOVER_LINUX variable that retargets the three required Linux jobs
   # and the all-checks-passed verdict above.
   windows-native:
     if: github.event_name == 'pull_request'
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_WINDOWS == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_WINDOWS == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "dsh-win-ci", "windows"]')
           || 'dsh-windows-2025-16core' }}
     name: windows node 24 / native complete
     timeout-minutes: 60
     env:
-      DSH_COVERAGE_MAX_WORKERS: '2'
-      DSH_GATE_CONCURRENCY: '2'
-      DSH_PUBLINT_CONCURRENCY: '8'
+      GLH_COVERAGE_MAX_WORKERS: '2'
+      GLH_GATE_CONCURRENCY: '2'
+      GLH_PUBLINT_CONCURRENCY: '8'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -549,20 +549,20 @@ jobs:
 
       - name: Run complete unsharded primary Node CI serially
         env:
-          DSH_ARCHIVE_BASE_REF: ${{ github.event.before }}
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_E2E_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_OXLINT_THREADS: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
-          DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
+          GLH_ARCHIVE_BASE_REF: ${{ github.event.before }}
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_E2E_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_OXLINT_THREADS: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
+          GLH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci:linux-primary
 
   # Hot-standby drill for the in-house self-hosted pool: every master move
   # re-runs the complete unsharded aggregate on the persistent 64-core VM,
   # continuously proving that environment can take over a required lane if
   # the hosted pools degrade (the switch is then setting the writer-manageable
-  # DSH_CI_FAILOVER_LINUX variable — see the failover runbook, no merge required).
+  # GLH_CI_FAILOVER_LINUX variable — see the failover runbook, no merge required).
   # Push-triggered, so this lane always executes the base branch's own
   # workflow definition. (Under failover, pull_request jobs do reach these
   # runners with the PR merge ref's workflow — the boundary there is
@@ -576,7 +576,7 @@ jobs:
     name: serial / linux (self-hosted standby)
     runs-on: [self-hosted, linux, x64, vm-backup]
     steps:
-      # Full history + DSH_ARCHIVE_BASE_REF below: same frozen-archive
+      # Full history + GLH_ARCHIVE_BASE_REF below: same frozen-archive
       # comparison as serial-linux. Depth 2 would miss github.event.before
       # on multi-commit or force pushes; full fetch is cheap here because
       # checkout resolves against the VM's local mirror.
@@ -608,13 +608,13 @@ jobs:
 
       - name: Run complete unsharded primary Node CI serially
         env:
-          DSH_ARCHIVE_BASE_REF: ${{ github.event.before }}
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_E2E_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_OXLINT_THREADS: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
-          DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
+          GLH_ARCHIVE_BASE_REF: ${{ github.event.before }}
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_E2E_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_OXLINT_THREADS: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
+          GLH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci:linux-primary
 
   serial-macos:
@@ -637,18 +637,18 @@ jobs:
 
       - name: Run complete unsharded primary Node CI serially
         env:
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_E2E_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
-          DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_E2E_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
+          GLH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci
 
   # Hot-standby drill for the in-house self-hosted Windows pool: every master
   # move re-runs the complete unsharded Windows gate inventory on the persistent
   # VM, continuously proving that environment can take over the required
   # `windows` lane if the hosted pool degrades (the switch is setting the
-  # writer-manageable DSH_CI_FAILOVER_WINDOWS variable — see the failover
+  # writer-manageable GLH_CI_FAILOVER_WINDOWS variable — see the failover
   # runbook, no merge required). Push-triggered, so this lane always executes
   # the base branch's own workflow definition. Non-blocking for pull requests;
   # absent from all-checks-passed.needs by design — the required `windows` job
@@ -690,9 +690,9 @@ jobs:
       - name: Run complete unsharded Windows gate inventory serially
         shell: pwsh
         env:
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
         run: pnpm run check:ci:windows-complete
 
   # Manual, bounded comparison of the actual critical Linux and Windows lanes.
@@ -887,18 +887,18 @@ jobs:
       - name: Run complete unsharded primary Node CI concurrently
         if: matrix.platform == 'linux'
         env:
-          DSH_COVERAGE_MAX_WORKERS: ${{ matrix.workers }}
-          DSH_GATE_CONCURRENCY: ${{ matrix.workers }}
-          DSH_OXLINT_THREADS: ${{ matrix.workers }}
-          DSH_PUBLINT_CONCURRENCY: ${{ matrix.workers }}
-          DSH_SNAPSHOT_MAX_CONCURRENCY: ${{ matrix.workers }}
+          GLH_COVERAGE_MAX_WORKERS: ${{ matrix.workers }}
+          GLH_GATE_CONCURRENCY: ${{ matrix.workers }}
+          GLH_OXLINT_THREADS: ${{ matrix.workers }}
+          GLH_PUBLINT_CONCURRENCY: ${{ matrix.workers }}
+          GLH_SNAPSHOT_MAX_CONCURRENCY: ${{ matrix.workers }}
         run: pnpm run check:ci
 
       - name: Run blocking Windows builds concurrently
         if: matrix.platform == 'windows'
         shell: pwsh
         env:
-          DSH_GATE_CONCURRENCY: ${{ matrix.workers }}
+          GLH_GATE_CONCURRENCY: ${{ matrix.workers }}
         run: pnpm run check:ci:windows-blocking
 
   # Single stable required check for branch protection: require "all checks
@@ -918,10 +918,10 @@ jobs:
     # provisioning — and under Linux failover it follows the same selector as
     # the worker jobs it aggregates, so a standard-hosted outage cannot strand
     # the branch-protection verdict either. It retargets with the Linux switch
-    # (DSH_CI_FAILOVER_LINUX), not the Windows one, because it aggregates the
+    # (GLH_CI_FAILOVER_LINUX), not the Windows one, because it aggregates the
     # required Linux workers and runs on the vm-backup pool.
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
           || 'ubuntu-latest' }}

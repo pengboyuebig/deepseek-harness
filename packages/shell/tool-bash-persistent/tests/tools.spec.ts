@@ -343,13 +343,13 @@ describe('tool-bash-persistent', () => {
     session.mode = 'prompt-only'
     const promptFallback = text(await call(ctx, owner, 'bad {'))
     expect(promptFallback).toContain('bash: synt')
-    expect(promptFallback).not.toContain('DSH_PERSISTENT_BASH_PROMPT')
+    expect(promptFallback).not.toContain('GLH_PERSISTENT_BASH_PROMPT')
 
     session.mode = 'prompt-crlf'
     session.scrollback = ''
     const crlfPromptFallback = text(await call(ctx, owner, 'bad {'))
     expect(crlfPromptFallback).toContain('bash: synt')
-    expect(crlfPromptFallback).not.toContain('DSH_PERSISTENT_BASH_PROMPT')
+    expect(crlfPromptFallback).not.toContain('GLH_PERSISTENT_BASH_PROMPT')
 
     session.mode = 'end-only'
     session.scrollback = ''
@@ -444,8 +444,8 @@ describe('tool-bash-persistent', () => {
     const result = text(await call(ctx, owner, 'bad {'))
     expect(result).toContain('partial syntax output')
     expect(result).toContain('bash: syntax error')
-    expect(result).not.toContain('DSH_PERSISTENT_BASH_PROMPT')
-    expect(result).not.toContain('DSH_PERSISTENT_BASH_START')
+    expect(result).not.toContain('GLH_PERSISTENT_BASH_PROMPT')
+    expect(result).not.toContain('GLH_PERSISTENT_BASH_START')
   })
 
   it('does not attribute old scrollback truncation to a complete current command', async () => {
