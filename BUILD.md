@@ -1,188 +1,249 @@
-# GLKJ Harness 构建与打包指南（BUILD.md）
+# GLKJ Harness 构建、部署与打包指南
 
-面向部署/运维：从零环境到启动、构建、打包、分发的完整步骤。
-日常使用见 [USAGE.md](USAGE.md)；品牌占位素材替换见 [BRANDING.md](BRANDING.md)。
+本文件面向开发、构建和运维人员，说明 GLKJ Harness 的环境要求、源码开发、生产 Web/CLI 部署、私有 npm 包族发布及 Python 运行时构建。日常 Web 使用和模型配置见 [USAGE.md](USAGE.md)。
 
-## 1. 环境要求
+## 1. 选择交付方式
 
-| 依赖 | 版本要求 | 用途 | 安装方式 |
+| 场景 | 推荐方式 | 目标环境 | 启动入口 |
 | --- | --- | --- | --- |
-| Node.js | **≥ 22 LTS**（构建机推荐 22.x；上游 CI 打包 exe 用 24.x） | 运行时与构建 | [nodejs.org](https://nodejs.org) 或系统包管理器 |
-| pnpm | **≥ 11.7** | monorepo 依赖与脚本 | `npm install -g pnpm@11` |
-| Git | 任意较新版本 | 拉取仓库 | — |
-| Python + uv（可选） | Python ≥ 3.12 + [uv](https://docs.astral.sh/uv/) | 仅构建/使用 Python SDK 时需要 | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| Playwright Chromium（可选） | 与仓库锁定的 1.61.x | 仅跑 Web 浏览器 e2e 测试时需要 | 见第 7 节 |
+| 本地开发与联调 | 源码 checkout | Node.js、pnpm | `pnpm glh web` + `pnpm run dev:web` |
+| 单机或内网生产 Web/CLI | 源码构建部署 | Node.js；构建机还需 pnpm | `node apps/cli/lib/bin.js web` |
+| 团队规模化 CLI 分发 | 公司私有 npm Registry 的完整包族 | Node.js | `glh web` |
+| SDK 或无人值守 agent | Python SDK + 平台 runtime wheel | Python ≥ 3.10 | Python 程序或 SDK 示例 |
 
-磁盘要求：源码 + 依赖约 3 GB；若构建 Python 单文件运行时（exe），额外约 1 GB（产物单文件约 200 MB）。
+> 当前 npm 包内部仍保留 `@deepseek-ai/*` 兼容命名空间。**公共 npm 的同名包是上游 DeepSeek 产品，不是本 GLKJ 分支。**不要使用 `npx @deepseek-ai/dsh web`，也不要只安装一个 CLI tarball 后直接运行；生产 npm 分发必须发布并消费同版本的完整包族，见第 7 节。
 
-## 2. 获取源码与安装依赖
+## 2. 环境要求
+
+| 依赖 | 要求 | 用途 |
+| --- | --- | --- |
+| Node.js | `^22.19.0 || >=24.0.0` | CLI/Web 运行与构建 |
+| pnpm | `11.7.0` | 源码依赖、构建与开发脚本 |
+| Git | 较新版本 | 获取源码与版本管理 |
+| Python（可选） | ≥ 3.10 | 使用 Python SDK |
+| uv（可选） | 最新稳定版 | 构建或测试 Python wheel |
+| Playwright Chromium（可选） | 仓库锁定版本 | 浏览器 e2e 测试 |
+
+预留至少约 3 GB 用于源码和 Node 依赖。构建 Python 单文件运行时还需要约 1 GB 额外空间；单个 runtime executable 约 200 MB。
+
+## 3. 获取源码、安装依赖与首次构建
 
 ```sh
 git clone <GLKJ-repo-url>
 cd deepseek-harness
 
-# 安装全部 workspace 依赖（会自动执行 postinstall：lefthook 钩子、
-# node-pty 补丁、spawn-helper 权限修复等）
-pnpm install
-```
-
-离线/内网环境可加 `--prefer-offline`。国内网络拉 npm 包慢时，可先设置镜像：
-
-```sh
-pnpm config set registry https://registry.npmmirror.com
-```
-
-## 3. 开发模式启动（无需构建）
-
-源码经 tsx 直跑，改代码即时生效：
-
-```sh
-pnpm glh web                      # Web UI，默认 http://127.0.0.1:3080
-pnpm glh --profile tui            # 终端 UI
-pnpm glh --profile headless "任务"  # 单任务无界面
-```
-
-Web 前端热更新开发：`pnpm run dev:web`（配合 `pnpm glh web` 使用）。
-
-启动前需要配置并选择模型。GLKJ 不预设默认模型，因此首次进入 Web UI 后，打开 Models 页配置供应商、Base URL、API Key 和模型，再在会话模型选择器中选中该模型；未选择前不会向占位地址请求：
-
-```sh
-export GLKJ_API_KEY="你的密钥"
-export GLKJ_BASE_URL="https://你的网关地址"   # 不设则为占位地址 api.glkj.example.com
-```
-
-## 4. 构建产物（pnpm run build）
-
-```sh
+# 构建/CI 推荐锁定依赖版本；正常安装会执行 postinstall，修复所需链接与权限。
+pnpm install --frozen-lockfile
 pnpm run build
 ```
 
-等价于两步：
+`pnpm run build` 依次构建：
 
-| 步骤 | 命令 | 产物 |
+| 阶段 | 实际命令 | 主要产物 |
 | --- | --- | --- |
-| build:lib | `tsc -b` + `tsdown`（host/client 两个 face） | 每个 `packages/*/*/lib/` 下的 JS + d.ts |
-| build:web | Vite 构建 `apps/web` 前端 | `apps/web/dist/`（由 CLI 在运行时伺服） |
+| `build:lib:host` | `tsc -b tsconfig.host.json` + `tsdown --env.GLH_BUILD_FACE host` | Host 侧 workspace `lib/` |
+| `build:lib:client` | `tsc -b tsconfig.client.json` + `tsdown --env.GLH_BUILD_FACE client` | Client plugin `lib/client.js` 与类型 |
+| `build:web` | `pnpm --filter @deepseek-ai/dsh-web-frontend run build` | `apps/web/dist/` |
 
-构建后即可用**纯 Node 运行**（不再依赖 tsx/TS 源码）：
+验收构件至少应存在：
 
-```sh
-node apps/cli/lib/bin.js web        # 与 pnpm glh web 等价，但走构建产物
+```text
+apps/cli/lib/bin.js
+apps/web/dist/index.html
 ```
 
-## 5. 打包为可安装的 npm 包并分发
+Web 前端由 GLKJ CLI 内嵌 HTTP 服务提供；**不要把独立 Vite 服务当作 GLKJ Web 产品服务器**，它没有运行时注入的宿主配置。
 
-CLI 包名 `@deepseek-ai/dsh`，bin 命令为 `glh`，打包内容为 `lib/*.js` 与 `config/`。
+## 4. 开发环境启动
+
+源码命令使用 TypeScript 入口，适用于开发和本地联调。全新 checkout 或产物已过期时先执行第 3 节的 `pnpm run build`。
 
 ```sh
-# 1. 先构建（打包不自动构建）
-pnpm run build
+# 终端 1：源码 Host + Web 服务
+pnpm glh web
 
-# 2. 在 workspace 内打出 tarball（产物生成在仓库根目录）
-pnpm --filter @deepseek-ai/dsh pack
-
-# 产物示例：./deepseek-ai-dsh-0.1.0-rc.5.tgz（内含 lib/*.js 与 config/）
+# 终端 2：仅监听 Web client-plugin 并重建 bundle
+pnpm run dev:web
 ```
 
-### ⚠️ 重要：不要直接 `npm install -g <tarball>`
+Web 服务默认在 <http://127.0.0.1:3080/> 提供页面。控制台打印 `glh web: ...` 才表示组合配置、`/api` 路由和前端 fallback 已完成加载。
 
-本分支保留了上游包名 `@deepseek-ai/dsh-*`（品牌只改用户可见层，见
-BRANDING.md「有意保留」）。npm 公共仓库上的同名依赖是**上游 DeepSeek 版本**
-（旧导出名），tarball 安装时会从 registry 拉上游依赖，启动即报
-`does not provide an export named 'GLH_...'` 崩溃——已实测验证。
+### watcher 的作用与边界
 
-### 正确的分发方式（三选一）
+- `pnpm run dev:web` 已固定通过 Node 运行 `scripts/dev-web.ts --poll`，不要手动改用 `tsx`。
+- watcher 只发现启动时已有的 Web `dsh.client` 包，并重建它们的 `lib/client.js`；新增这类包后必须重启 watcher。
+- Host、普通 Node 包、`apps/web` shell、Vite 配置及静态资源的变更不会自动通过该 watcher 生效；重新运行 `pnpm run build`、刷新浏览器，必要时重启 Web 服务。
+- 两个进程必须从同一个 checkout 启动。按 `Ctrl+C` 分别停止；监督程序使用 `SIGTERM` 可请求优雅关闭。
 
-**方式 A：随源码仓库分发（最简单，已验证可用）**
+## 5. 生产 Web/CLI 部署
 
-目标机器克隆本仓库并 `pnpm install && pnpm run build` 后，直接运行构建产物：
+### 5.1 安全与状态目录
+
+GLKJ Web 默认只绑定 `127.0.0.1`，当前会拒绝 `--host 0.0.0.0`。如需远程访问，请使用经过认证和访问控制的反向代理或 SSH 隧道，保持 GLKJ 仅在 loopback 监听。
+
+为生产服务账户设置独立且受权限保护的状态目录：
 
 ```sh
-node apps/cli/lib/bin.js web            # 等价于 pnpm glh web，但走构建产物
+export GLH_HOME=/var/lib/glkj-harness
+export GLKJ_API_KEY="<模型服务密钥>"
+export GLKJ_BASE_URL="https://<公司模型网关>/v1"
+```
+
+`GLH_HOME` 默认是 `~/.glh`；其中 `.credentials.yaml` 存储 Web UI 凭据，`settings.yaml` 存储模型与供应商配置。不要把这些文件写进 Git、镜像层或日志；按公司密钥管理和备份策略保护它们。
+
+默认 `GLKJ_BASE_URL` 为 `https://api.glkj.example.com`，这只是占位地址，不能用于正式调用。
+
+### 5.2 使用构建后的生产入口启动
+
+从已构建的源码目录启动：
+
+```sh
+cd /opt/glkj/deepseek-harness
+node apps/cli/lib/bin.js web
+```
+
+常用参数：
+
+```sh
+# 默认：127.0.0.1:3080
+node apps/cli/lib/bin.js web
+
+# 指定固定端口
+node apps/cli/lib/bin.js web --port 8080
+
+# 由系统分配一个空闲端口
+node apps/cli/lib/bin.js web --port 0
+
+# 检查组合配置，不启动服务
+node apps/cli/lib/bin.js web --dump-config
+
+# 无界面执行一次任务
 node apps/cli/lib/bin.js --profile headless "任务描述"
 ```
 
-**方式 B：私有 registry 发布全家桶（团队规模化推荐）**
+启动成功时进程输出 `glh web: http://127.0.0.1:<port>`。可将该输出、`GET /` 返回 200 和一次受控 `POST /api/host.describe` 作为进程 readiness 检查。
 
-把 workspace 内全部 `@deepseek-ai/dsh-*` 包（版本号需整体高于上游，例如
-`0.1.0-rc.5` → 用私有版本段）发布到 Verdaccio/Nexus，团队机器配置：
+### 5.3 首次模型配置
 
-```sh
-npm config set registry https://你的私服地址/
-npm install -g @deepseek-ai/dsh
-glh web
-```
+GLKJ 不出厂预选模型。部署环境设置 API Key/Base URL 或在 UI 保存供应商信息后，仍需在 **Settings → Models** 中配置供应商并在会话模型选择器中选中一个模型，才能发送消息。
 
-**方式 C：Python 单文件运行时**（完全无 Node 依赖，见第 6 节），适合
-只跑无人值守 agent 的场景。
+如果出现 `404 status code (no body)`，通常说明模型选择已成功、但上游模型服务拒绝了真实生成请求。检查供应商协议、Base URL 与路径是否匹配：例如 `/v1` 重复或遗漏，或将 OpenAI Chat Completions、OpenAI Responses、Anthropic Messages 协议配错。它不是本地 Web 服务的默认模型问题。
 
-## 6. Python SDK 运行时打包（可选）
+## 6. 构建验证与测试
 
-Python SDK 依赖一个单文件 Node 运行时（内置全部插件闭包）：
+按需要选择：
 
 ```sh
-# 构建 linux-x64 单文件运行时（约 200 MB）
-# 目标格式：<nodeRange>-<platform>-<arch>，如 node22-linux-x64 / node24-macos-arm64
-npx tsx scripts/build-exe-for-python-sdk.ts --targets=node22-linux-x64
-
-# 产物：dist-exe/dsh-jsonrpc-agent-pkg-linux-x64
-# 同时同步到 python/sdk-runtime/src/deepseek_harness_runtime/runtime/
+pnpm run build                         # 构建 Host/Client/Web
+pnpm test                              # 全量 Vitest
+pnpm run test:e2e                      # 真实 API e2e；无密钥时相关测试跳过
+pnpm run test:snapshot                 # Web 快照回放
+pnpm run test:web                      # 构建后浏览器 e2e
+pnpm run verify-translation-pairing    # 翻译配对记录
+pnpm run doc-sync                      # 文档一致性门禁
 ```
 
-再打 Python wheel：
-
-```sh
-# 生成 deepseek_harness_sdk-<版本>-py3-none-any.whl（需要 uv）
-python3 scripts/build-python-release.py --runtime-exe dist-exe/dsh-jsonrpc-agent-pkg-linux-x64
-```
-
-使用方安装 wheel 后（详见 USAGE.md 第 6 节）：
-
-```python
-from deepseek_harness import DeepSeekHarnessClient, HarnessConfig
-client = DeepSeekHarnessClient(HarnessConfig(base_url="...", api_key="..."))
-```
-
-本地验证 Python 侧：
-
-```sh
-cd python/sdk && uv run --with pytest pytest -q
-```
-
-## 7. 测试环境补充（可选）
-
-```sh
-pnpm test                    # 全量 vitest（无需额外环境）
-pnpm run test:e2e            # 真实 API e2e：需 GLKJ_API_KEY，无密钥自动跳过
-pnpm run test:snapshot       # Web UI 快照回放（无需浏览器）
-pnpm run test:web            # 浏览器 e2e：需先装 Playwright Chromium
-```
-
-Playwright 浏览器安装：
+浏览器 e2e 需要安装 Playwright Chromium：
 
 ```sh
 node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium --only-shell
 ```
 
-Linux 下若报缺共享库（如 `libnspr4.so`、`libnss3`），需系统管理员安装：
-`sudo apt install libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2`
+Linux 缺少 `libnspr4.so`、`libnss3.so` 等 Chromium 系统库时，应由系统管理员安装相应依赖后再运行浏览器 e2e；这与 GLKJ 应用构建本身无关。
 
-## 8. 常见问题
+## 7. npm 打包与私有 Registry 发布
+
+### 7.1 单个 CLI tarball 的边界
+
+以下命令会生成 CLI tarball：
+
+```sh
+pnpm run build
+pnpm --filter @deepseek-ai/dsh pack
+```
+
+产物通常位于仓库根目录，例如 `deepseek-ai-dsh-<version>.tgz`。它仅包含 CLI 本身的构建入口和配置，不是能从公共 npm 独立安装的 GLKJ 完整产品。由于内部兼容包名与上游重叠，单包安装会把依赖解析到公共 npm 的上游版本，导致运行时导出不匹配。
+
+### 7.2 团队私有 Registry 的完整发布
+
+仅由发布管理员在受控环境执行。完整交付需要将同一版本的 dsh family、vendor 依赖和 Landlock entry 一起打包、验证并发布；不要只上传 CLI tarball。
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run release:verify --family dsh
+pnpm run build
+pnpm run release:pack --family dsh --out dist/npm
+pnpm run release:pack --family vendor --out dist/npm-vendor
+
+# 还需要纳入由正式发布流程构建的 dist/npm-landlock。
+pnpm run release:verify-packed-install \
+  --family dsh \
+  --from dist/npm \
+  --from dist/npm-vendor \
+  --from dist/npm-landlock
+```
+
+通过验证的 tarball 输出于 `dist/npm/` 等目录。完成公司的版本、tag、Registry 权限和发布审批流程后，才可执行：
+
+```sh
+pnpm run release:publish --family dsh --from dist/npm
+```
+
+消费端必须配置公司的私有 Registry，再安装完整包族提供的 `@deepseek-ai/dsh` 并以 `glh web` 启动。不要把发布凭据、Registry token 或 API Key 写进文档、shell 历史、仓库或构建日志。
+
+## 8. Python SDK 与单文件运行时（可选）
+
+Python SDK 适合 SDK 集成和无人值守 agent。正式 runtime target 是：
+
+- `node24-linux-x64`
+- `node24-linux-arm64`
+- `node24-macos-arm64`
+
+Python agent runtime 当前不支持 Windows。SDK 用户需要 Python ≥ 3.10，安装匹配的 runtime wheel 后不需要系统 Node。
+
+构建 Linux x64 runtime：
+
+```sh
+pnpm exec tsx scripts/build-exe-for-python-sdk.ts \
+  --targets=node24-linux-x64
+```
+
+产物为：
+
+```text
+dist-exe/dsh-jsonrpc-agent-pkg-linux-x64
+```
+
+脚本会构建项目、准备 runtime dependency closure，并同步 executable 到 Python runtime 包。构建 wheel 的正式步骤与平台矩阵见 `python/development.zh.md` 和 Python release workflow；不要用旧的 `node22-*` target 示例。
+
+SDK 使用者参考 `python/sdk/README.zh.md`。运行的 agent 默认能够执行 shell 并写入 workspace，必须使用隔离 workspace 或容器并限制凭据权限。
+
+## 9. 排障速查
 
 | 现象 | 处理 |
 | --- | --- |
-| `tsc` 报找不到 `scripts/oxlint-contract-*.ts` | 删除根目录 `*.tsbuildinfo` 后重试（陈旧增量缓存） |
-| 启动后模型请求失败/404 | `GLKJ_BASE_URL` 仍是占位地址，改为公司网关（BRANDING.md 1.4） |
-| `pnpm install` 后 subprocess 测试失败 | 重跑 `pnpm install` 恢复 node-pty 补丁与包链接 |
-| exe 运行时报 `DSH_CORDIS_CONFIG` 之类的旧变量名 | 运行时二进制是改造前构建的，重跑第 6 节的构建命令 |
-| 浏览器 e2e 全部失败 | 未安装 Playwright Chromium 或缺系统库（第 7 节） |
+| `frontend dist not built` | 在仓库根目录运行 `pnpm run build`。 |
+| 编辑器提示尚未选择模型 | 先配置供应商，然后在会话中显式选择模型。 |
+| 上游返回 `404 status code (no body)` | 修正自定义模型供应商的协议/Base URL/路径；不是本地 `/api` 路由 404。 |
+| 本地 3080 空响应 404 | 等待 `glh web:` 就绪行后再访问，确认没有连接到其他端口或已退出的进程。 |
+| 端口冲突 | 用 `node apps/cli/lib/bin.js web --port <port>` 或开发模式中的 `pnpm glh web --port <port>`。 |
+| 单 tarball 全局安装失败 | 改用源码构建部署，或发布完整同版本包族至私有 Registry。 |
+| 浏览器 e2e 无法启动 | 安装 Playwright Chromium，并让系统管理员补齐所需共享库。 |
 
-## 9. 速查
+## 10. 命令速查
 
 ```sh
-pnpm install                          # ① 装依赖
-pnpm glh web                          # ② 开发直跑
-pnpm run build                        # ③ 构建
-node apps/cli/lib/bin.js web          # ④ 构建产物直跑（已验证：HTTP 200，标题 GLKJ Harness）
-pnpm --filter @deepseek-ai/dsh pack   # ⑤ 打 npm tarball（分发方式见第 5 节警告）
+# 源码安装与构建
+pnpm install --frozen-lockfile
+pnpm run build
+
+# 开发环境（两个终端）
+pnpm glh web
+pnpm run dev:web
+
+# 构建后的生产入口
+node apps/cli/lib/bin.js web
+
+# 生产打包管理员：完整 dsh package family
+pnpm run release:pack --family dsh --out dist/npm
 ```
