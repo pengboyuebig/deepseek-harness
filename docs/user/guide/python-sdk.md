@@ -17,8 +17,8 @@ This tutorial is the programmatic alternative to the Web UI. It installs the pub
 Clone the repository for its runnable example, create a virtual environment, and install the SDK with its same-version bundled runtime:
 
 ```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+git clone https://git.glkj.example.com/glkj/harness.git
+cd harness
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install deepseek-harness-sdk
@@ -28,13 +28,13 @@ The installed runtime needs no system Node.js. Repository contributors who need 
 
 ## Run the checked-in example
 
-Set the credential in the environment. Set `DEEPSEEK_BASE_URL` as well when the model is served by an OpenAI-compatible proxy rather than the default DeepSeek endpoint.
+Set the credential in the environment. Set `GLKJ_BASE_URL` as well when the model is served by an OpenAI-compatible proxy rather than the default DeepSeek endpoint.
 
 ```sh
-export DEEPSEEK_API_KEY=sk-your-key-here
-# export DEEPSEEK_BASE_URL=http://127.0.0.1:8000/v1
-# export DSH_MODEL=deepseek-v4-flash
-# export DSH_SYSTEM_PROMPT='You are a helpful software engineer assistant.'
+export GLKJ_API_KEY=sk-your-key-here
+# export GLKJ_BASE_URL=http://127.0.0.1:8000/v1
+# export GLH_MODEL=deepseek-v4-flash
+# export GLH_SYSTEM_PROMPT='You are a helpful software engineer assistant.'
 ```
 
 Run one task against an isolated workspace and session directory:
@@ -84,14 +84,14 @@ print(result.final_response)
 
 | Property | Value |
 |---|---|
-| System prompt | `DSH_SYSTEM_PROMPT`, falling back to `You are a helpful software engineer assistant.` |
-| Model in `minimal.py` | `--model`, then `DSH_MODEL`, then `deepseek-v4-flash` |
+| System prompt | `GLH_SYSTEM_PROMPT`, falling back to `You are a helpful software engineer assistant.` |
+| Model in `minimal.py` | `--model`, then `GLH_MODEL`, then `deepseek-v4-flash` |
 | Model-facing tools | Persistent `bash` and `str_replace_editor` only |
 | Bash timeout | 300 seconds |
 | Editor output limit | 16,000 characters |
 | Context compaction | Disabled |
 | Filesystem | Bare local backend; absolute editor paths may address any path visible to the runtime process |
-| Session persistence | Uncompressed JSONL under `DSH_SESSION_ROOT` |
+| Session persistence | Uncompressed JSONL under `GLH_SESSION_ROOT` |
 
 The composition omits harness identity, workspace prompt text, skills, one-shot Bash, task tools, compaction, and every other model-facing plugin. Sandbox-policy facts are logged as runtime user context rather than appended to the system prompt.
 

@@ -24,7 +24,7 @@ const t: ModelsSectionInjected['t'] = key => en[key]
 const OPENAI_TARGET = { provider: 'openai', displayName: 'openai' }
 const openaiCopy = (template: string): string => providerCopy(template, OPENAI_TARGET)
 const GLKJ_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
-const deepSeekCopy = (template: string): string => providerCopy(template, GLKJ_TARGET)
+const glkjCopy = (template: string): string => providerCopy(template, GLKJ_TARGET)
 
 /** Open one row's capacity disclosure (1-based, as the labels read). */
 function expandRow(position: number): void {
@@ -221,7 +221,7 @@ async function mountFirstRun(overrides: Parameters<typeof scriptedFace>[0] = {})
  */
 async function mountDeepSeekCard(overrides: Parameters<typeof scriptedFace>[0] = {}) {
   const mounted = await mountSection(overrides)
-  fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+  fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
   return mounted
 }
 
@@ -256,7 +256,7 @@ describe('ModelsSection', () => {
     const missing = screen.getByRole('img', { name: en.credentialMissing })
     expect(missing.closest('li')?.textContent).toContain('DeepSeek')
     // The card is still one click away.
-    fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+    fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
     expect(screen.getByLabelText(en.keyInput)).toBeTruthy()
   })
 
@@ -1219,7 +1219,7 @@ describe('ModelsSection', () => {
     expect(screen.getAllByRole('img', { name: en.credentialMissing })
       .some(dot => dot.closest('li')?.textContent?.includes('DeepSeek') === true)).toBe(true)
     // Its card reopens through Edit, which closes the add card as any row does.
-    fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+    fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
     expect(screen.getAllByLabelText(en.keyInput)).toHaveLength(1)
     expect(screen.queryByLabelText(en.provider)).toBeNull()
   })

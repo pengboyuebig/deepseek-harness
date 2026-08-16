@@ -65,13 +65,13 @@ Host 与 Client 保持两个 aggregate program，是因为两侧在相同键下�
 
 ```sh
 tsc -b tsconfig.host.json
-tsdown --env.DSH_BUILD_FACE host
+tsdown --env.GLH_BUILD_FACE host
 tsc -b tsconfig.client.json
-tsdown --env.DSH_BUILD_FACE client
+tsdown --env.GLH_BUILD_FACE client
 pnpm run build:web
 ```
 
-两次 tsdown 都使用同一组完整 workspace 匹配，不扫描构建产物来发现 Client 包，也不维护 Host/Client 包过滤表。包内 tsdown 配置根据 `DSH_BUILD_FACE` 决定当前阶段的入口：普通 Client 插件在 Client 阶段同时生成 Node loader 与 browser bundle；`api-remotes` 通过 `hostPhase: true` 提前生成 Host 入口，再在 Client 阶段只生成 browser bundle。tsdown 只消费 `lib/types` 中由前置 tsc 发射的 JavaScript。
+两次 tsdown 都使用同一组完整 workspace 匹配，不扫描构建产物来发现 Client 包，也不维护 Host/Client 包过滤表。包内 tsdown 配置根据 `GLH_BUILD_FACE` 决定当前阶段的入口：普通 Client 插件在 Client 阶段同时生成 Node loader 与 browser bundle；`api-remotes` 通过 `hostPhase: true` 提前生成 Host 入口，再在 Client 阶段只生成 browser bundle。tsdown 只消费 `lib/types` 中由前置 tsc 发射的 JavaScript。
 
 Typert 只在 Host tsdown 中以 `tsconfig.host.json` 为种子运行。它分析 Host 类型并生成 Host 反射产物及 Host-for-Client Remote 投影；Client tsdown 不启动 Typert。`pnpm run typecheck` 因此先执行完整 Host lib 阶段，再运行 Client tsc；`pnpm run build` 继续执行 Client tsdown 和 Web 构建。该顺序的决策记录见 [API Remotes 生成约定构建 Note](../.agents/notes/implemented/process/2026-08-08-api-remotes-generated-contract-build.md)。
 
@@ -92,11 +92,11 @@ pnpm run build
 真实的 DeepSeek 适配器和需要密钥的 agent 演示从环境变量或仓库根目录一个被 gitignore 的 `.env` 文件读取凭证：
 
 ```sh
-DEEPSEEK_API_KEY=sk-...
-DEEPSEEK_BASE_URL=https://... # optional
+GLKJ_API_KEY=sk-...
+GLKJ_BASE_URL=https://... # optional
 ```
 
-`DEEPSEEK_BASE_URL` 可选，默认为公开 API。请勿提交真实凭证。未设置 `DEEPSEEK_API_KEY` 时，真实 API 的 e2e 套件会自动跳过。
+`GLKJ_BASE_URL` 可选，默认为公开 API。请勿提交真实凭证。未设置 `GLKJ_API_KEY` 时，真实 API 的 e2e 套件会自动跳过。
 
 ### Git 集成
 
@@ -132,10 +132,10 @@ keyless [CI 工作流](../.github/workflows/ci.yml) 将独立门禁分组到若�
 pnpm run build
 ```
 
-单次运行的 Headless coding agent 需要环境变量或仓库根目录 `.env` 中的 `DEEPSEEK_API_KEY`：
+单次运行的 Headless coding agent 需要环境变量或仓库根目录 `.env` 中的 `GLKJ_API_KEY`：
 
 ```sh
-pnpm dsh --profile headless "summarize this workspace"
+pnpm glh --profile headless "summarize this workspace"
 ```
 
 自指的 cordis 演示可以检查并修改其实时插件运行时，并需要相同的凭证（默认 `web`，也可用 `acp`）：
@@ -144,7 +144,7 @@ pnpm dsh --profile headless "summarize this workspace"
 pnpm run demo:cordis
 ```
 
-ACP 自动化服务器通过 JSON-RPC stdio 提供全新 agent 会话，同样需要 `DEEPSEEK_API_KEY`：
+ACP 自动化服务器通过 JSON-RPC stdio 提供全新 agent 会话，同样需要 `GLKJ_API_KEY`：
 
 ```sh
 pnpm run demo:acp

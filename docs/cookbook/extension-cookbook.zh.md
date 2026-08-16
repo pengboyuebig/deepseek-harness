@@ -92,7 +92,7 @@ export function apply(ctx: Context) {
 
 ## 可运行的组装示例
 
-可运行叶子从 `examples/*/cordis.yml` 加载各自的插件树；根目录的 `demo:*` 脚本和这些叶子目录是权威清单。产品 `dsh` 启动器负责 Web 和一次性 headless 执行，ACP 叶子使用 [`@deepseek-ai/dsh-acp-demo`](../../packages/examples/acp-demo)，JSON-RPC 叶子使用 [`@deepseek-ai/dsh-sdk-jsonrpc-demo`](../../packages/examples/jsonrpc-demo)。headless 快照叶节点显式挂载 [`@deepseek-ai/dsh-agent-spine-demo`](../../packages/examples/agent-spine-demo) 和 JSONL 持久化，再通过示例自有的测试 fixture（测试前置数据）驱动这些组件，而不是通过已交付的 app 包。
+可运行叶子从 `examples/*/cordis.yml` 加载各自的插件树；根目录的 `demo:*` 脚本和这些叶子目录是权威清单。产品 `glh` 启动器负责 Web 和一次性 headless 执行，ACP 叶子使用 [`@deepseek-ai/dsh-acp-demo`](../../packages/examples/acp-demo)，JSON-RPC 叶子使用 [`@deepseek-ai/dsh-sdk-jsonrpc-demo`](../../packages/examples/jsonrpc-demo)。headless 快照叶节点显式挂载 [`@deepseek-ai/dsh-agent-spine-demo`](../../packages/examples/agent-spine-demo) 和 JSONL 持久化，再通过示例自有的测试 fixture（测试前置数据）驱动这些组件，而不是通过已交付的 app 包。
 
 ## 功能→机制映射
 

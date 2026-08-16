@@ -17,8 +17,8 @@
 克隆仓库以使用其中的可运行示例，创建虚拟环境，并安装 SDK 及其同版本内置运行时：
 
 ```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+git clone https://git.glkj.example.com/glkj/harness.git
+cd harness
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install deepseek-harness-sdk
@@ -28,13 +28,13 @@ python -m pip install deepseek-harness-sdk
 
 ## 运行仓库内置示例
 
-请在环境中设置凭据。如果模型不是由默认 DeepSeek 端点提供，而是通过 OpenAI 兼容代理提供，还需要设置 `DEEPSEEK_BASE_URL`。
+请在环境中设置凭据。如果模型不是由默认 DeepSeek 端点提供，而是通过 OpenAI 兼容代理提供，还需要设置 `GLKJ_BASE_URL`。
 
 ```sh
-export DEEPSEEK_API_KEY=sk-your-key-here
-# export DEEPSEEK_BASE_URL=http://127.0.0.1:8000/v1
-# export DSH_MODEL=deepseek-v4-flash
-# export DSH_SYSTEM_PROMPT='You are a helpful software engineer assistant.'
+export GLKJ_API_KEY=sk-your-key-here
+# export GLKJ_BASE_URL=http://127.0.0.1:8000/v1
+# export GLH_MODEL=deepseek-v4-flash
+# export GLH_SYSTEM_PROMPT='You are a helpful software engineer assistant.'
 ```
 
 针对隔离的 workspace 和会话目录运行一个任务：
@@ -84,14 +84,14 @@ print(result.final_response)
 
 | 属性 | 值 |
 |---|---|
-| 系统提示词 | `DSH_SYSTEM_PROMPT`；未设置时使用 `You are a helpful software engineer assistant.` |
-| `minimal.py` 使用的模型 | `--model`，其次为 `DSH_MODEL`，最后为 `deepseek-v4-flash` |
+| 系统提示词 | `GLH_SYSTEM_PROMPT`；未设置时使用 `You are a helpful software engineer assistant.` |
+| `minimal.py` 使用的模型 | `--model`，其次为 `GLH_MODEL`，最后为 `deepseek-v4-flash` |
 | 面向模型的工具 | 仅持久 `bash` 与 `str_replace_editor` |
 | Bash 超时 | 300 秒 |
 | 编辑器输出上限 | 16,000 个字符 |
 | 上下文压缩 | 已关闭 |
 | 文件系统 | 裸本地后端；编辑器使用绝对路径，可以访问运行时进程可见的任何路径 |
-| 会话持久化 | `DSH_SESSION_ROOT` 下未压缩的 JSONL |
+| 会话持久化 | `GLH_SESSION_ROOT` 下未压缩的 JSONL |
 
 该组合省略了 harness 身份、workspace 提示词文本、skill（技能）、一次性 Bash、任务工具、上下文压缩和其他所有面向模型的插件。沙箱策略事实记录为运行时用户上下文，而不会追加到系统提示词中。
 

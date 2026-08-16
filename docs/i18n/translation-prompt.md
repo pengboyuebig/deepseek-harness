@@ -248,9 +248,9 @@ Below are representative examples of common problems and their corrections. Foll
 - Good: `面向开发者：请先阅读开发指南`（"开发者"自然，且中文里冒号在此处更自然）
 
 ### Code block comments — NEVER translate
-- Source code block contains: `# full-screen TUI coding agent (needs DEEPSEEK_API_KEY)`
-- Bad: `# 全屏 TUI coding agent（需要 DEEPSEEK_API_KEY）`
-- Good: `# full-screen TUI coding agent (needs DEEPSEEK_API_KEY)` (keep exactly as-is, byte-for-byte)
+- Source code block contains: `# full-screen TUI coding agent (needs GLKJ_API_KEY)`
+- Bad: `# 全屏 TUI coding agent（需要 GLKJ_API_KEY）`
+- Good: `# full-screen TUI coding agent (needs GLKJ_API_KEY)` (keep exactly as-is, byte-for-byte)
 
 ### Language switcher — flip direction
 - Source file (English) has: `English | [中文](README.zh.md)`

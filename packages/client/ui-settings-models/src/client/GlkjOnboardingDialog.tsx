@@ -16,10 +16,10 @@ import { onboardingReadiness } from './store.ts'
 import { ProviderEditor } from './ProviderEditor.tsx'
 import type { en } from './locales.ts'
 import { OnboardingModal } from './OnboardingModal.tsx'
-import styles from './DeepSeekOnboardingDialog.module.css'
+import styles from './GlkjOnboardingDialog.module.css'
 
-/** Registration-side dependencies of {@link DeepSeekOnboardingDialog}. */
-export interface DeepSeekOnboardingInjected {
+/** Registration-side dependencies of {@link GlkjOnboardingDialog}. */
+export interface GlkjOnboardingInjected {
   hooks: {
     /** Shared Models-page join state, bound by the slot renderer. */
     models: SnapshotStore<ModelsSettingsState>
@@ -33,8 +33,8 @@ export interface DeepSeekOnboardingInjected {
 }
 
 /** Slot owner props plus the feature's injected dependencies. */
-export type DeepSeekOnboardingDialogProps =
-  PropsRuntime<'settings.onboarding'> & InjectFace<DeepSeekOnboardingInjected>
+export type GlkjOnboardingDialogProps =
+  PropsRuntime<'settings.onboarding'> & InjectFace<GlkjOnboardingInjected>
 
 /* v8 ignore next 3 -- closed-union defaults only defend future source widening */
 function assertNever(_value: never): never {
@@ -47,7 +47,7 @@ function assertNever(_value: never): never {
  * @param props - settings-shell owner state and Models feature dependencies.
  * @returns the onboarding modal or null when onboarding needs no intervention.
  */
-export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): ReactNode {
+export function GlkjOnboardingDialog(props: GlkjOnboardingDialogProps): ReactNode {
   const { complete, controller, useModels, api, t } = props
   const state = useModels(snapshot => snapshot)
   const readiness = onboardingReadiness(state)

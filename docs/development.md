@@ -65,13 +65,13 @@ The root build follows the generated dependency order:
 
 ```sh
 tsc -b tsconfig.host.json
-tsdown --env.DSH_BUILD_FACE host
+tsdown --env.GLH_BUILD_FACE host
 tsc -b tsconfig.client.json
-tsdown --env.DSH_BUILD_FACE client
+tsdown --env.GLH_BUILD_FACE client
 pnpm run build:web
 ```
 
-Both tsdown passes use the same complete workspace match. They neither scan build artifacts to discover Client packages nor maintain a Host/Client package filter list. Package-local tsdown configs select entries for the current phase through `DSH_BUILD_FACE`: an ordinary Client plugin produces both its Node loader and browser bundle during the Client phase; `api-remotes` uses `hostPhase: true` to produce its Host entry early and only its browser bundle during the Client phase. Tsdown consumes only the JavaScript emitted to `lib/types` by the preceding tsc phase.
+Both tsdown passes use the same complete workspace match. They neither scan build artifacts to discover Client packages nor maintain a Host/Client package filter list. Package-local tsdown configs select entries for the current phase through `GLH_BUILD_FACE`: an ordinary Client plugin produces both its Node loader and browser bundle during the Client phase; `api-remotes` uses `hostPhase: true` to produce its Host entry early and only its browser bundle during the Client phase. Tsdown consumes only the JavaScript emitted to `lib/types` by the preceding tsc phase.
 
 Typert runs only during Host tsdown, seeded by `tsconfig.host.json`. It analyzes Host types and generates both Host reflection artifacts and the Host-for-Client Remote projection; Client tsdown does not start Typert. Consequently, `pnpm run typecheck` runs the complete Host lib phase before Client tsc, while `pnpm run build` continues through Client tsdown and the Web build. The [API Remotes generated-contract build note](../.agents/notes/implemented/process/2026-08-08-api-remotes-generated-contract-build.md) records this ordering decision.
 
@@ -92,11 +92,11 @@ pnpm run build
 The real DeepSeek adapter and key-backed agent demos read credentials from the environment or from a gitignored `.env` at the repo root:
 
 ```sh
-DEEPSEEK_API_KEY=sk-...
-DEEPSEEK_BASE_URL=https://... # optional
+GLKJ_API_KEY=sk-...
+GLKJ_BASE_URL=https://... # optional
 ```
 
-`DEEPSEEK_BASE_URL` is optional and defaults to the public API. Never commit real credentials. The real-API e2e suites self-skip when `DEEPSEEK_API_KEY` is not set.
+`GLKJ_BASE_URL` is optional and defaults to the public API. Never commit real credentials. The real-API e2e suites self-skip when `GLKJ_API_KEY` is not set.
 
 ### Git integrations
 
@@ -132,10 +132,10 @@ Run the repository build separately before using these source-checkout demos:
 pnpm run build
 ```
 
-The one-shot Headless coding agent needs `DEEPSEEK_API_KEY` in the environment or repo-root `.env`:
+The one-shot Headless coding agent needs `GLKJ_API_KEY` in the environment or repo-root `.env`:
 
 ```sh
-pnpm dsh --profile headless "summarize this workspace"
+pnpm glh --profile headless "summarize this workspace"
 ```
 
 The self-referential cordis demo can inspect and modify its live plugin runtime and needs the same credentials (`web` by default, or `acp`):
@@ -144,7 +144,7 @@ The self-referential cordis demo can inspect and modify its live plugin runtime 
 pnpm run demo:cordis
 ```
 
-The ACP automation server exposes fresh agent sessions over JSON-RPC stdio and also needs `DEEPSEEK_API_KEY`:
+The ACP automation server exposes fresh agent sessions over JSON-RPC stdio and also needs `GLKJ_API_KEY`:
 
 ```sh
 pnpm run demo:acp

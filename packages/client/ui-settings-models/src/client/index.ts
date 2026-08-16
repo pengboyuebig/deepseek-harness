@@ -18,8 +18,8 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import { ModelsSection } from './ModelsSection.tsx'
 import type { ModelsSectionInjected } from './ModelsSection.tsx'
-import { DeepSeekOnboardingDialog } from './DeepSeekOnboardingDialog.tsx'
-import type { DeepSeekOnboardingInjected } from './DeepSeekOnboardingDialog.tsx'
+import { GlkjOnboardingDialog } from './GlkjOnboardingDialog.tsx'
+import type { GlkjOnboardingInjected } from './GlkjOnboardingDialog.tsx'
 import { WelcomeNotice } from './WelcomeNotice.tsx'
 import type { WelcomeNoticeInjected } from './WelcomeNotice.tsx'
 import { refreshWelcomeIfLoaded, WelcomeNoticeStore } from './welcome-store.ts'
@@ -79,7 +79,7 @@ export function apply(ctx: ClientContext): void {
     api: connection.api,
     t,
   })
-  const deepSeekOnboardingInjected = (): DeepSeekOnboardingInjected => ({
+  const glkjOnboardingInjected = (): GlkjOnboardingInjected => ({
     controller,
     hooks: { models: controller.store },
     api: connection.api,
@@ -132,6 +132,6 @@ export function apply(ctx: ClientContext): void {
     name: 'settings.onboarding',
     id: 'deepseek-official',
     order: 0,
-    inject: deepSeekOnboardingInjected,
-  }, DeepSeekOnboardingDialog))
+    inject: glkjOnboardingInjected,
+  }, GlkjOnboardingDialog))
 }

@@ -7,7 +7,7 @@ import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
 import { TestRemote, usePinnedBrowserLanguages } from '@deepseek-ai/dsh-client-test-runtime'
 import { apply, inject, refreshIfLoaded } from '@deepseek-ai/dsh-client-ui-settings-models/client'
 import { ModelsSection } from '../src/client/ModelsSection.tsx'
-import { DeepSeekOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
+import { GlkjOnboardingDialog } from '../src/client/GlkjOnboardingDialog.tsx'
 import { WelcomeNotice } from '../src/client/WelcomeNotice.tsx'
 
 // The service reads its initial locale from the browser; these specs assert
@@ -67,14 +67,14 @@ describe('ui-settings-models apply', () => {
       component: WelcomeNotice,
       options: { id: 'welcome-notice', order: -100 },
     })
-    const deepSeek = onboarding.find(entry => entry.options.id === 'deepseek-official')!
-    expect(deepSeek.component).toBe(DeepSeekOnboardingDialog)
-    expect(deepSeek.options).toMatchObject({ id: 'deepseek-official', order: 0 })
-    const deepSeekInjected = (
-      deepSeek.inject as unknown as () => import('../src/client/DeepSeekOnboardingDialog.tsx').DeepSeekOnboardingInjected
+    const glkj = onboarding.find(entry => entry.options.id === 'deepseek-official')!
+    expect(glkj.component).toBe(GlkjOnboardingDialog)
+    expect(glkj.options).toMatchObject({ id: 'deepseek-official', order: 0 })
+    const glkjInjected = (
+      glkj.inject as unknown as () => import('../src/client/GlkjOnboardingDialog.tsx').GlkjOnboardingInjected
     )()
-    expect(deepSeekInjected.hooks.models).toBe(injected.controller.store)
-    expect(deepSeekInjected.api).toBeDefined()
+    expect(glkjInjected.hooks.models).toBe(injected.controller.store)
+    expect(glkjInjected.api).toBeDefined()
 
     const after = await bench()
     await after.ctx.plugin({ inject: [...inject], apply }).await()
@@ -196,7 +196,7 @@ describe('pushed invalidations', () => {
       .find(candidate => candidate.options.id === 'deepseek-official')!
     const injected = (
       entry.inject as unknown as
-      () => import('../src/client/DeepSeekOnboardingDialog.tsx').DeepSeekOnboardingInjected
+      () => import('../src/client/GlkjOnboardingDialog.tsx').GlkjOnboardingInjected
     )()
     injected.controller.store.update((state) => { state.status = 'ready' })
     const load = vi.spyOn(injected.controller, 'load').mockResolvedValue()
