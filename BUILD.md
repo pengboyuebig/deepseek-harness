@@ -84,25 +84,37 @@ pnpm --filter @deepseek-ai/dsh pack
 # 产物示例：./deepseek-ai-dsh-0.1.0-rc.5.tgz（内含 lib/*.js 与 config/）
 ```
 
-目标机器上安装（Node ≥ 22 即可，无需 pnpm/源码）：
+### ⚠️ 重要：不要直接 `npm install -g <tarball>`
+
+本分支保留了上游包名 `@deepseek-ai/dsh-*`（品牌只改用户可见层，见
+BRANDING.md「有意保留」）。npm 公共仓库上的同名依赖是**上游 DeepSeek 版本**
+（旧导出名），tarball 安装时会从 registry 拉上游依赖，启动即报
+`does not provide an export named 'GLH_...'` 崩溃——已实测验证。
+
+### 正确的分发方式（三选一）
+
+**方式 A：随源码仓库分发（最简单，已验证可用）**
+
+目标机器克隆本仓库并 `pnpm install && pnpm run build` 后，直接运行构建产物：
 
 ```sh
-npm install -g ./deepseek-ai-dsh-0.1.0-rc.5.tgz
-# 安装后直接使用全局命令
+node apps/cli/lib/bin.js web            # 等价于 pnpm glh web，但走构建产物
+node apps/cli/lib/bin.js --profile headless "任务描述"
+```
+
+**方式 B：私有 registry 发布全家桶（团队规模化推荐）**
+
+把 workspace 内全部 `@deepseek-ai/dsh-*` 包（版本号需整体高于上游，例如
+`0.1.0-rc.5` → 用私有版本段）发布到 Verdaccio/Nexus，团队机器配置：
+
+```sh
+npm config set registry https://你的私服地址/
+npm install -g @deepseek-ai/dsh
 glh web
-glh --profile headless "任务描述"
-glh -V
 ```
 
-免安装试用（直接从 tarball 执行，不落入全局）：
-
-```sh
-npm exec --package=./deepseek-ai-dsh-0.1.0-rc.5.tgz -- glh web
-```
-
-> 说明：包名仍为上游的 `@deepseek-ai/dsh`（品牌改造只改了用户可见层，
-> 见 BRANDING.md「有意保留」一节）。私有分发建议搭 Verdaccio/Nexus 私服
-> 后 `npm publish` 该 tarball，团队即可 `npx @deepseek-ai/dsh web`。
+**方式 C：Python 单文件运行时**（完全无 Node 依赖，见第 6 节），适合
+只跑无人值守 agent 的场景。
 
 ## 6. Python SDK 运行时打包（可选）
 
@@ -171,7 +183,6 @@ Linux 下若报缺共享库（如 `libnspr4.so`、`libnss3`），需系统管理
 pnpm install                          # ① 装依赖
 pnpm glh web                          # ② 开发直跑
 pnpm run build                        # ③ 构建
-node apps/cli/lib/bin.js web          # ④ 构建产物直跑
-pnpm --filter @deepseek-ai/dsh pack   # ⑤ 打 npm tarball
-npm install -g <tarball> && glh web   # ⑥ 目标机安装使用
+node apps/cli/lib/bin.js web          # ④ 构建产物直跑（已验证：HTTP 200，标题 GLKJ Harness）
+pnpm --filter @deepseek-ai/dsh pack   # ⑤ 打 npm tarball（分发方式见第 5 节警告）
 ```

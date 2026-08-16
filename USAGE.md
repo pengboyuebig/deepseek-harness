@@ -11,15 +11,10 @@ GLKJ Harness（命令 `glh`）是基于 DeepSeek Harness 定制的插件化智�
 
 ## 2. 快速开始
 
-### 通过 npm 运行（无需克隆仓库）
+### 从仓库运行（推荐）
 
-```sh
-npx @deepseek-ai/dsh web
-```
-
-启动后浏览器访问 `http://127.0.0.1:3080` 进入 Web UI。
-
-### 从源码运行
+> 注意：不要 `npx @deepseek-ai/dsh web`——npm 公共仓库上该包名是上游
+> DeepSeek 版本（旧品牌），本分支的获取方式见下，详见 [BUILD.md](BUILD.md)。
 
 ```sh
 git clone <GLKJ-repo-url>
@@ -28,6 +23,9 @@ pnpm install
 pnpm run build
 pnpm glh web
 ```
+
+启动后浏览器访问 `http://127.0.0.1:3080` 进入 Web UI（开发调试可跳过
+`pnpm run build`，`pnpm glh web` 直跑源码）。
 
 ## 3. 常用命令
 
