@@ -58,7 +58,7 @@ function injectedOf(entry: { inject?: (() => object) | undefined }): object {
   return injected
 }
 beforeEach(() => {
-  vi.stubEnv('DSH_CLIENT_VERSION', '0.0.0-test')
+  vi.stubEnv('GLH_CLIENT_VERSION', '0.0.0-test')
   vi.stubGlobal('screen', { width: 1512, height: 982 })
   vi.stubGlobal('devicePixelRatio', 2)
 })

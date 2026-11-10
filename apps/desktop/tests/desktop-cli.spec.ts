@@ -29,7 +29,7 @@ it.each(['system-bin', undefined])('dispatches with bundled pnpm when PATH is %s
       args: ['--expose-internals', join(support, 'primary-runtime', 'dependencies', 'pnpm', 'bin', 'pnpm.mjs')],
       env: {
         ELECTRON_RUN_AS_NODE: '1',
-        DSH_DESKTOP_NODE_EXECUTABLE: process.execPath,
+        GLH_DESKTOP_NODE_EXECUTABLE: process.execPath,
         PATH: `${join(support, 'bin')}${delimiter}${path ?? ''}`,
       },
     },

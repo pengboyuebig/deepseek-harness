@@ -133,7 +133,7 @@ it.for(['unavailable', 'approved', 'missing-pnpm'] as const)('reports the %s plu
   const address = server.address()
   if (address === null || typeof address === 'string') throw new Error('model fixture has no TCP address')
   const env = profileEnvironment(root, `http://127.0.0.1:${address.port}`)
-  env.DSH_PERMISSION_MODE = scenario === 'missing-pnpm' ? 'danger-full-access' : 'workspace-write'
+  env.GLH_PERMISSION_MODE = scenario === 'missing-pnpm' ? 'danger-full-access' : 'workspace-write'
   if (scenario === 'missing-pnpm') {
     for (const key of Object.keys(env)) if (key.toLowerCase() === 'path') Reflect.deleteProperty(env, key)
     env.PATH = root

@@ -23,7 +23,7 @@ An ordinary Session's composer uploads each image draft as soon as it is added, 
 - Sending an image message transfers only references, and the normalization cost moves to the moment the image is added.
 - Per-image refusals such as an undecodable or oversized image surface when the image is added: the thumbnail names the refusal instead of offering a retry, and Enter repeats it. The model's image-input check and the per-message image count and byte limits still apply at send.
 - Commands accept only file receipts, so a command submission that carries an image waits for the image upload like a message and then encodes the image inline: the image is stored a second time, and its unused receipt lasts until its Session ends.
-- Removing an image while it uploads cancels the upload, and a cancelled upload receives no receipt; an image whose storage had already begun, or whose upload had finished, stays under `DSH_HOME`, which never deletes attachments. On a remote Host the bytes reach the server as soon as the user adds the image.
+- Removing an image while it uploads cancels the upload, and a cancelled upload receives no receipt; an image whose storage had already begun, or whose upload had finished, stays under `GLH_HOME`, which never deletes attachments. On a remote Host the bytes reach the server as soon as the user adds the image.
 - Staged image receipts share the generic files' in-memory lifetime: a Host restart between adding and sending surfaces `FILE_NOT_STAGED`, and the user adds the image again.
 - Image drafts, like file drafts, are not restored after a page reload or after their Session's client scope is released.
 

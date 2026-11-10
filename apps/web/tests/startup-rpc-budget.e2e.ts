@@ -55,7 +55,7 @@ describe('startup RPC budget', () => {
         const refs = body.payload.args.refs
         credentials.push(refs)
         // Models requests batch references; the Web Search card asks for this one key.
-        if (refs.length === 1 && refs[0] === 'DEEPSEEK_API_KEY') {
+        if (refs.length === 1 && refs[0] === 'GLKJ_API_KEY') {
           webSearchRequests.add(request)
           credentialStarted.resolve(undefined)
         }

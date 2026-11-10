@@ -23,7 +23,7 @@ Archived: 2026-09-04
 
 用磁盘查找而不是 `import.meta.resolve`，有两个理由。它便宜：只要注册了 ESM loader hook，每一次解析器调用就变成一次到 hooks 线程的同步往返，在源码启动所用的 `tsx` hook 下实测命中 2ms、未命中 5ms，而裸 Node 分别是 0.055ms 与 0.032ms——每次名单读取要背上 238ms 的解析器时间，而同样这 135 行磁盘走法只要 0.7ms。它也是唯一问得到「宿主」的：`import.meta.resolve` 的 `parentURL` 参数只在 `--experimental-import-meta-resolve` 下生效，而没有任何启动方式传它，因此它是相对调用方模块解析的，回答的是关于本包而不是关于部署的问题。真正认显式 parent 的是 Loader 的内部解析器，而它的 `resolveSync` 在 Node 22 与 24 上签名不同。Node 内建模块在磁盘查找之前直接短路。
 
-磁盘走法放弃了什么：只有经由 loader hook 才能解析的包——import map，或根本没有 `node_modules` 的目录树——会被报为损坏。任何受支持的安装都不会产出这种情况，因为 `dsh plugin install` 会把每个插件装在名单旁边。
+磁盘走法放弃了什么：只有经由 loader hook 才能解析的包——import map，或根本没有 `node_modules` 的目录树——会被报为损坏。任何受支持的安装都不会产出这种情况，因为 `glh plugin install` 会把每个插件装在名单旁边。
 
 **只有一个分类器决定一行在哪里解析。** `src/specifier.ts` 拥有这个划分——`cordis:` 内建、preset 相对、绝对文件、包名——挂载的 import 覆写与发现过程的检查都读它。若发现过程按一个基准解析、而挂载按另一个基准 import，那一行会被报告为健康，然后加载失败。
 

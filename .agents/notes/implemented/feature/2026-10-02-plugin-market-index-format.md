@@ -58,13 +58,13 @@ The market reuses npm's package names, versions, ranges, distribution tags, and 
           "version": "0.2.0-rc.2",
           "publishTimestamp": 1790476800,
           "source": { "type": "npm" },
-          "engines": { "dsh": ">=0.2.0 <0.3.0" }
+          "engines": { "glh": ">=0.2.0 <0.3.0" }
         },
         {
           "version": "0.2.0-rc.1",
           "publishTimestamp": 1789872000,
           "source": { "type": "npm" },
-          "engines": { "dsh": "0.2.0 - 0.2.4 || >=0.3.0 <0.4.0" }
+          "engines": { "glh": "0.2.0 - 0.2.4 || >=0.3.0 <0.4.0" }
         }
       ]
     },
@@ -83,7 +83,7 @@ The market reuses npm's package names, versions, ranges, distribution tags, and 
             "commit": "3f9c2e1d8a4b6c0e7f1a2b3c4d5e6f708192a3b4",
             "path": "packages/foo"
           },
-          "engines": { "dsh": "*" }
+          "engines": { "glh": "*" }
         }
       ]
     }
@@ -136,7 +136,7 @@ Category, label, and sort-key ids are non-empty strings. Readers look ids up as 
 | `version` | yes | Exact version parsed by npm's `node-semver`; preserve the complete string, including Git build metadata. The exact string is unique within the plugin. |
 | `publishTimestamp` | yes | Integer Unix timestamp in seconds, in `[0, 10^11)`. |
 | `source` | yes | Where `version` is installed from; see below. |
-| `engines` | yes | Object containing `dsh`. |
+| `engines` | yes | Object containing `glh`. |
 | `engines.dsh` | yes | Non-blank valid npm SemVer range declared in the source manifest; copied unchanged. `*` explicitly declares support for any DSH version. |
 
 A relative `icon` reference resolves against the index URL, as an HTML image reference resolves against its page. For an index at `https://market.example/dsh/index.json`, `"icon": "icons/foo.svg"` names `https://market.example/dsh/icons/foo.svg`. A generator can therefore publish the index and its icon files as one directory on any static host without knowing the final URL. Absolute icon URLs on other origins must use `https:`; the same-origin allowance lets an `http:` index on a loopback or intranet host serve its own icons. Readers resolve the reference when they read the index, so clients receive absolute URLs.

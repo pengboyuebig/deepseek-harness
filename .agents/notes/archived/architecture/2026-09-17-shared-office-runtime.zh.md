@@ -11,7 +11,7 @@ SDK 部署需要与 Desktop 相同的 Office 创作库，同时将解释器 payl
 
 ## 决策
 
-[`tool-workspace-dependencies`](../../../../packages/skill/tool-workspace-dependencies/README.zh.md) 持有清单校验、解释器路径、安装逻辑和模型查询。它保留在 skill 组中，与 Office 工作流消费者相邻：payload 服务于这些工作流，本包不提供 workspace 实体服务。Desktop 引用本包并保留首次使用时复制安装。打包的 SDK profile 通过载体默认路径启用查询和 Office skills；`DSH_PRIMARY_RUNTIME` 覆盖该路径，空字符串表示禁用。它原位读取 payload。公共 base 与 `sdk-minimal` 不会隐式启用 Office。
+[`tool-workspace-dependencies`](../../../../packages/skill/tool-workspace-dependencies/README.zh.md) 持有清单校验、解释器路径、安装逻辑和模型查询。它保留在 skill 组中，与 Office 工作流消费者相邻：payload 服务于这些工作流，本包不提供 workspace 实体服务。Desktop 引用本包并保留首次使用时复制安装。打包的 SDK profile 通过载体默认路径启用查询和 Office skills；`GLH_PRIMARY_RUNTIME` 覆盖该路径，空字符串表示禁用。它原位读取 payload。公共 base 与 `sdk-minimal` 不会隐式启用 Office。
 
 [共享构建入口](../../../../scripts/primary-runtime/prepare.ts) 持有 Desktop 目标与 GNU/Linux x64/ARM64 的下载锁、解压和本机冒烟检查。Desktop 提供输出路径和发布版本，要求包含 Node.js 与 pnpm，并应用签名专用子进程环境。其他载体选择自己的输出目录，也可构建 Python-only payload。现有 `desktopVersion` 清单字段保留名字并记录载体发布版本；`payloadDigest` 区分锁定输入与组件选择。
 

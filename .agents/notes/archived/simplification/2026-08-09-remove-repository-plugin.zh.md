@@ -13,7 +13,7 @@ repository 插件路径与 profile 组合包路径重复实现了第三方包的
 
 ## 决策
 
-DeepSeek Harness 只保留一种独立的外部插件分发路径：可安装的 profile 组合包。`dsh plugin --profile <name> add <package-or-git-spec>` 将依赖记录到 profile 包中，安装的包通过声明 `dsh.bundle.patch` 提供自己的 patch 层。包管理器负责获取源、管理版本和依赖、运行构建生命周期，并维护锁文件。组合包 patch 负责选择 Cordis 插件并提供完整的插件配置。
+GLKJ Harness 只保留一种独立的外部插件分发路径：可安装的 profile 组合包。`glh plugin --profile <name> add <package-or-git-spec>` 将依赖记录到 profile 包中，安装的包通过声明 `dsh.bundle.patch` 提供自己的 patch 层。包管理器负责获取源、管理版本和依赖、运行构建生命周期，并维护锁文件。组合包 patch 负责选择 Cordis 插件并提供完整的插件配置。
 
 移除 `@deepseek-ai/dsh-repository-plugin` 包、`.dsh-plugin` 编写格式、`dsh-plugin-prepare` 可执行文件、生成的包装层、不可变 repository 缓存、base 中的 `repository-plugins` 配置项，以及专用 GitHub 验收流水线。vendor 中未再使用的 `@cordisjs/plugin-loader/repository` 子路径及其随附的 pnpm 依赖，也随唯一消费方一并移除。现有 repository 缓存目录只是不会再产生作用的用户数据；DSH 既不会读取，也不会删除这些目录。
 
@@ -34,7 +34,7 @@ DeepSeek Harness 只保留一种独立的外部插件分发路径：可安装的
 ## 后果
 
 - 第三方包统一使用一种安装与组合模型，采用普通依赖声明和完整的 patch 层插件配置。
-- 安装或更新外部组合包时，必须显式通过 `dsh plugin` 执行包管理器操作，而不是编辑受监听的源列表。用户 patch 的 HMR（热模块替换）仍可配置已安装组合包所提供的配置项。
+- 安装或更新外部组合包时，必须显式通过 `glh plugin` 执行包管理器操作，而不是编辑受监听的源列表。用户 patch 的 HMR（热模块替换）仍可配置已安装组合包所提供的配置项。
 - 安装 profile 时，宿主机的 `PATH` 中必须提供 `pnpm`。对于显式的包管理操作，这一要求可以接受，并且可避免仅为配置阶段激活而随产品交付已移除缓存所使用的固定版本包管理器运行时。
 - `.dsh-plugin` 包和现有 repository 源列表 patch 停止工作。用户仍可自行删除其缓存文件，但系统不会迁移或自动删除这些文件。
 - 专用 pnpm 运行时、准备工作可执行文件、包装层生成器、Git 凭据 CI 设置、repository 缓存和 repository 专用测试全部消失。
@@ -42,4 +42,4 @@ DeepSeek Harness 只保留一种独立的外部插件分发路径：可安装的
 
 ## 测试
 
-静态门禁会拒绝残留的包、配置、文档、图和 workspace 引用。现有 `dsh plugin` 已构建 CLI（命令行界面）验收测试覆盖 profile 初始化、包管理器安装、组合包发现和层调和。声明式、相对于包解析的 skill 与 MCP 组合包资源仍是本移除层中已明确记录的覆盖缺口。
+静态门禁会拒绝残留的包、配置、文档、图和 workspace 引用。现有 `glh plugin` 已构建 CLI（命令行界面）验收测试覆盖 profile 初始化、包管理器安装、组合包发现和层调和。声明式、相对于包解析的 skill 与 MCP 组合包资源仍是本移除层中已明确记录的覆盖缺口。

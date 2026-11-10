@@ -17,8 +17,8 @@
     - id: replay
       name: '@deepseek-ai/dsh-llm-replay'
       config:
-        file: !!js process.env.DSH_SNAPSHOT_FILE
-        overrideFile: !!js process.env.DSH_SNAPSHOT_OVERRIDE
+        file: !!js process.env.GLH_SNAPSHOT_FILE
+        overrideFile: !!js process.env.GLH_SNAPSHOT_OVERRIDE
 
     # Publish the persisted agent before the driver selects the single root.
     - id: resumed-agent
@@ -31,5 +31,5 @@
 - id: sandbox-policy
   inject: []
   config:
-    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+    mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
     workspaceRoot: !!js process.cwd()

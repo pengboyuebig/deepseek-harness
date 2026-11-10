@@ -13,7 +13,7 @@ Status: implemented
 web 能力 seam 的每个角色各负责逐步骤检查的一部分：
 
 - **Service Definition。** `WebSearchProvider` 与 `WebFetchProvider` 有一个可选的 `ready(llmProvider)`，回答为该对话路由上的模型请求发起的操作是否有可发送的凭据。它只检查配置，不发起网络调用。`ctx.web.searchReady(llmProvider?)` 与 `ctx.web.fetchReady(llmProvider?)` 按与 `search()`、`fetch()` 相同的规则解析提供方并返回其回答。没有 `ready()` 的提供方视为就绪；选择失败时回答 true，因为对应操作会把该失败报告为结构化 `WebError`。
-- **Service Provider。** 每个 DeepSeek 提供方都按其操作解析凭据的顺序检查凭据。`dsh-web-search-deepseek` 在 `deepseek-account` 路由上检查 `ctx.deepseekAccount.resolveToken()` 是否为其 Messages 端点返回 token，然后检查其字面 `apiKey` 或 `apiKeyEnv` 引用。`dsh-web-deepseek-api` 的 Search 与 Fetch API 提供方解析与操作相同的方案（[凭据解析](2026-10-29-web-provider-selection.zh.md)）：在 YAML 中设置了单独字段的能力只检查其 `*ApiKeyEnv` 下的密钥；否则，在账号路由上且账号模型路由已挂载时，该路由 `/v1/tools` 基础地址的 token 算数，然后是 `deepseek-official` 路由的密钥，没有该路由时为 `DEEPSEEK_API_KEY`。`ctx.credentials.describe()` 报告其引用已配置时（没有该服务时，启动环境中存在该变量），密钥即算存在；这些存在性检查由[共享凭据函数](../../../../packages/llm/llm-deepseek/src/credential.ts)执行。读取账号 token 或凭据存储失败时回答 false，因为操作会在该次读取上失败，而不会尝试下一种凭据。提供方不点名任何工具或提示词段落。
+- **Service Provider。** 每个 DeepSeek 提供方都按其操作解析凭据的顺序检查凭据。`dsh-web-search-deepseek` 在 `deepseek-account` 路由上检查 `ctx.deepseekAccount.resolveToken()` 是否为其 Messages 端点返回 token，然后检查其字面 `apiKey` 或 `apiKeyEnv` 引用。`dsh-web-deepseek-api` 的 Search 与 Fetch API 提供方解析与操作相同的方案（[凭据解析](2026-10-29-web-provider-selection.zh.md)）：在 YAML 中设置了单独字段的能力只检查其 `*ApiKeyEnv` 下的密钥；否则，在账号路由上且账号模型路由已挂载时，该路由 `/v1/tools` 基础地址的 token 算数，然后是 `deepseek-official` 路由的密钥，没有该路由时为 `GLKJ_API_KEY`。`ctx.credentials.describe()` 报告其引用已配置时（没有该服务时，启动环境中存在该变量），密钥即算存在；这些存在性检查由[共享凭据函数](../../../../packages/llm/llm-deepseek/src/credential.ts)执行。读取账号 token 或凭据存储失败时回答 false，因为操作会在该次读取上失败，而不会尝试下一种凭据。提供方不点名任何工具或提示词段落。
 - **Consumer。** `dsh-tool-web` 注册 `web_search` 与 `web_fetch` 时各带一个[步骤激活条件](../../../../packages/core/tools/README.zh.md#conditional-tools)，以该步骤模型选择的路由询问 `ctx.web.searchReady()` 与 `ctx.web.fetchReady()`。agent loop 在组装该步骤之前解析各条件，因此声明的工具、`tool:web_search` 与 `tool:web_fetch` 提示词段落、PTC 程序绑定与派发都读取同一个准入集合。
 
 路由只决定是否先检查账号 token 再检查 API 密钥，这发生在 `deepseek-account` 路由上；API 密钥在每条路由上都算数，因此只要配置了 DeepSeek 密钥，使用其他提供方模型的对话也会获得 DeepSeek Web 工具。在 YAML 中设置了单独字段的 Search 或 Fetch API 能力不看路由，恰在其自身密钥已配置时就绪。
@@ -36,7 +36,7 @@ web 能力 seam 的每个角色各负责逐步骤检查的一部分：
 
 **只在 DeepSeek 账号路由上提供搜索。** 账号 token 只对官方端点签发，因此网关的密钥不可能到达 DeepSeek。但所有发行 profile 的默认路由都是 `deepseek-official`，搜索会因此默认关闭，连官方 API 密钥的情况也一并关闭。
 
-**除非搜索有自己的密钥，否则不向其他提供方的对话提供这些工具。** 其他模型对话中的搜索会由 DeepSeek 密钥计费，但 DeepSeek 搜索本就是该密钥付费使用的服务之一，配置了它的用户也期望无论用哪个模型对话，搜索都能用。Search 与 Fetch API 发送聊天路由自己的密钥，设置页把旧版 Messages 搜索的密钥存在 `apiKeyEnv` 指向的引用下，默认是聊天路由也在读取的 `DEEPSEEK_API_KEY`，因此撤下工具会让已配置的密钥无法服务其他模型；再加一个开放这些路由的 `routes` 配置项，只会让用户多找一样东西。
+**除非搜索有自己的密钥，否则不向其他提供方的对话提供这些工具。** 其他模型对话中的搜索会由 DeepSeek 密钥计费，但 DeepSeek 搜索本就是该密钥付费使用的服务之一，配置了它的用户也期望无论用哪个模型对话，搜索都能用。Search 与 Fetch API 发送聊天路由自己的密钥，设置页把旧版 Messages 搜索的密钥存在 `apiKeyEnv` 指向的引用下，默认是聊天路由也在读取的 `GLKJ_API_KEY`，因此撤下工具会让已配置的密钥无法服务其他模型；再加一个开放这些路由的 `routes` 配置项，只会让用户多找一样东西。
 
 **比较官方聊天路由的端点与 Web 端点，二者不同时撤下工具。** 这能让网关的密钥远离 DeepSeek，但也会让经代理或开发端点对话、而密钥能被 Web 端点接受的用户失去网页工具。Search 与 Fetch API 改为从其所发送密钥的路由的 origin 推导端点，因此密钥与端点来自同一条路由；旧版 Messages 搜索保留自己的端点，网关用户的搜索会在那里失败。
 

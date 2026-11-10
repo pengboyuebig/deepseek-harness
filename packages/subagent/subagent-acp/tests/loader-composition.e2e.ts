@@ -59,7 +59,7 @@ describe('ACP subagent cwd inheritance through the production profile', () => {
       libBinScript: driver,
       configPath,
       tsconfigPath: repoTsconfig,
-      env: { DSH_TEST_MOCK_ACP_SERVER: mockServer },
+      env: { GLH_TEST_MOCK_ACP_SERVER: mockServer },
       inspect: async (cwd) => {
         // The child reports realpaths; canonicalize the temp workspace to match.
         workspace = realpathSync(cwd)
@@ -84,8 +84,8 @@ describe('ACP subagent cwd inheritance through the production profile', () => {
       configPath,
       tsconfigPath: repoTsconfig,
       env: {
-        DSH_TEST_MOCK_ACP_SERVER: mockServer,
-        DSH_TEST_ACP_MODE: 'diagnostic',
+        GLH_TEST_MOCK_ACP_SERVER: mockServer,
+        GLH_TEST_ACP_MODE: 'diagnostic',
       },
       inspect: async (cwd) => {
         const logs = await jsonlFiles(join(cwd, '.sessions'))

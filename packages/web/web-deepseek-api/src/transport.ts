@@ -298,7 +298,7 @@ async function resolveApiKey(options: DeepSeekWebAuth, signal?: AbortSignal): Pr
   const resolved = resolveApiKey === undefined ? undefined : await resolveCredential(resolveApiKey, signal)
   if (resolved !== undefined && resolved.length > 0) return resolved
   throw new WebError(
-    options.missingKeyMessage ?? `DeepSeek web access has no API key for "${options.apiKeyEnv ?? 'DEEPSEEK_API_KEY'}"`,
+    options.missingKeyMessage ?? `DeepSeek web access has no API key for "${options.apiKeyEnv ?? 'GLKJ_API_KEY'}"`,
     'WEB_PROVIDER_CREDENTIAL_MISSING',
   )
 }

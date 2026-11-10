@@ -77,8 +77,8 @@ describe.skipIf(!existsSync(join(root, 'apps/cli/lib/bin.js')))('Official option
     await mkdir(workspace)
     const home = join(temporary, 'home')
     const values = {
-      DSH_HOME: home, DSH_AGENTS_HOME: join(temporary, 'agents'), DSH_BUNDLED_SKILL_DIR: join(temporary, 'skills'),
-      DSH_TELEMETRY_DISABLED: '1', TMUX: '', TMUX_PANE: '',
+      GLH_HOME: home, GLH_AGENTS_HOME: join(temporary, 'agents'), GLH_BUNDLED_SKILL_DIR: join(temporary, 'skills'),
+      GLH_TELEMETRY_DISABLED: '1', TMUX: '', TMUX_PANE: '',
     }
     originalEnvironment = Object.fromEntries(Object.keys(values).map(key => [key, process.env[key]]))
     Object.assign(process.env, values)
@@ -265,13 +265,13 @@ describe.skipIf(!existsSync(join(root, 'apps/cli/lib/bin.js')))('Official option
       (request) => {
         terminalId = /started terminal session (pty-\d+)/.exec(JSON.stringify(request.messages))?.[1]
         return toolCallResponse('terminal-set', 'terminal_send', {
-          sessionId: id(), text: process.platform === 'win32' ? "$env:DSH_OPTIONAL = 'TERMINAL_BUNDLE_OK'" : 'export DSH_OPTIONAL=TERMINAL_BUNDLE_OK',
+          sessionId: id(), text: process.platform === 'win32' ? "$env:GLH_OPTIONAL = 'TERMINAL_BUNDLE_OK'" : 'export GLH_OPTIONAL=TERMINAL_BUNDLE_OK',
         })
       },
       () => toolCallResponse('terminal-write', 'terminal_send', {
         sessionId: id(), text: process.platform === 'win32'
-          ? `Set-Content -NoNewline -Path '${target.replaceAll("'", "''")}' -Value $env:DSH_OPTIONAL`
-          : `printf '%s' "$DSH_OPTIONAL" > ${JSON.stringify(target)}`,
+          ? `Set-Content -NoNewline -Path '${target.replaceAll("'", "''")}' -Value $env:GLH_OPTIONAL`
+          : `printf '%s' "$GLH_OPTIONAL" > ${JSON.stringify(target)}`,
       }),
       () => toolCallResponse('terminal-close', 'terminal_close', { sessionId: id() }),
       textResponse('TERMINAL_DONE'),

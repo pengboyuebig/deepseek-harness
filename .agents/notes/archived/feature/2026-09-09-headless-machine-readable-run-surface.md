@@ -7,7 +7,7 @@ English | [中文](2026-09-09-headless-machine-readable-run-surface.zh.md)
 
 ## Problem
 
-`dsh --profile headless` serves a human terminal: the task arrives only through argv, stdout carries one final assistant message, provider reasoning streams to stderr, and every run creates a fresh random session. [Headless is a direct core entry point](../../archived/architecture/2026-08-09-headless-direct-core-entry-point.md) owns that transport and completion contract; [headless reasoning progress](../../archived/feature/2026-08-21-headless-reasoning-progress.md) owns the stderr projection.
+`glh --profile headless` serves a human terminal: the task arrives only through argv, stdout carries one final assistant message, provider reasoning streams to stderr, and every run creates a fresh random session. [Headless is a direct core entry point](../../archived/architecture/2026-08-09-headless-direct-core-entry-point.md) owns that transport and completion contract; [headless reasoning progress](../../archived/feature/2026-08-21-headless-reasoning-progress.md) owns the stderr projection.
 
 A supervising process that drives one headless process per wake, such as an external agent runtime, needs three things that contract does not provide. It needs the task over a private pipe rather than argv, because a long prompt exceeds the argument limit and argv is visible to other processes. It needs a machine-readable stream that separates assistant text, reasoning, tool calls and results, turn boundaries, and usage, because scraping stderr yields only reasoning and the final stdout line yields no tool activity. It needs an exact session identity it can pass back on the next wake, because a fresh random session per process makes continuity impossible.
 
@@ -28,7 +28,7 @@ The product change is confined to `packages/bundle/headless`: `src/startup.ts`, 
 ### Command-line contract
 
 ```text
-dsh --profile headless [--json] [--session-id <id>] [<task>... | -]
+glh --profile headless [--json] [--session-id <id>] [<task>... | -]
 ```
 
 Task resolution order: joined positionals, then `-`, then piped stdin. A whitespace-only positional is a usage error on its own, even when stdin is not a terminal, so an accidental blank argument never consumes a pipe; a task that is absent entirely is a usage error only when stdin is a terminal. A lone `-` is the only stdin marker: mixing it with other task words is a usage error instead of a task that starts with a dash. A piped task is sent verbatim, trailing newline included. In `--json` mode every usage error — including commander's own grammar rejections such as an unknown option or a missing option value — writes the `error` event before the process exits, because the runner never mounts to write it; the event message omits commander's `error: ` prefix so one event type carries one message shape.

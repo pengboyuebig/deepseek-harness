@@ -1,4 +1,4 @@
-# TypeScript SDK snapshot-record patch over `dsh --profile sdk`.
+# TypeScript SDK snapshot-record patch over `glh --profile sdk`.
 
 # The fixture corpus must not depend on the developer's personal skill roots.
 # Ordinary product launches retain the sdk profile's default skill discovery.
@@ -17,7 +17,7 @@
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: !!js dshHomePath('sessions')
-    compression: !!js "process.env.DSH_SNAPSHOT === undefined ? 'zstd' : 'none'"
+    compression: !!js "process.env.GLH_SNAPSHOT === undefined ? 'zstd' : 'none'"
 
 - id: tool-subagent
   name: '@deepseek-ai/dsh-tool-subagent'

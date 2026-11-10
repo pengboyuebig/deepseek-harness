@@ -123,7 +123,7 @@ describe('repository build steps', () => {
   })
 
   it('applies the environment overlay to every step', () => {
-    const environment = { DSH_CLIENT_TITLE: 'Title', DSH_BUILD_CLIENT_PROFILE: undefined }
+    const environment = { GLH_CLIENT_TITLE: 'Title', GLH_BUILD_CLIENT_PROFILE: undefined }
     for (const gate of buildGates(root, 'complete', environment)) expect(gate.env).toEqual(environment)
   })
 })

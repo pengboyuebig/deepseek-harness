@@ -40,7 +40,7 @@ vi.mock('electron', () => ({
   },
 }))
 
-beforeEach(() => { vi.stubEnv('DSH_CLIENT_VERSION', '1.2.3') })
+beforeEach(() => { vi.stubEnv('GLH_CLIENT_VERSION', '1.2.3') })
 afterEach(() => {
   state.views.length = 0; state.sessions.length = 0; state.loadFailure = undefined; state.loadBarrier = undefined
   vi.clearAllMocks(); vi.unstubAllEnvs()

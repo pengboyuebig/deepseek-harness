@@ -1,6 +1,6 @@
 """Run a short SDK session, close immediately, and try restoring its history.
 
-Requires an installed SDK/runtime and DEEPSEEK_API_KEY. Run this file directly.
+Requires an installed SDK/runtime and GLKJ_API_KEY. Run this file directly.
 The temporary Harness home is retained for inspection.
 """
 

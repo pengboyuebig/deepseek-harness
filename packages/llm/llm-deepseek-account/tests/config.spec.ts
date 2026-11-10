@@ -4,7 +4,7 @@ import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
 import { Config, plainAccountOptions, resolveAccountOptions } from '../src/config.ts'
 
 it('derives the listing endpoint from the Messages origin and applies the cache defaults', () => {
-  expect(resolveAccountOptions({}).catalog).toEqual({ url: 'https://api.deepseek.com/models', timeoutMs: 5_000, maxAgeMs: 600_000 })
+  expect(resolveAccountOptions({}).catalog).toEqual({ url: 'https://api.glkj.example.com/models', timeoutMs: 5_000, maxAgeMs: 600_000 })
   expect(resolveAccountOptions({ baseURL: 'http://127.0.0.1:9/anthropic' }).catalog.url).toBe('http://127.0.0.1:9/models')
 })
 

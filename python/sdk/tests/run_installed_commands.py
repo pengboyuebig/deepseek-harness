@@ -46,9 +46,9 @@ def main() -> int:
     """Verify wheel imports, then run every selected regression without repository pytest configuration."""
     tests = Path(__file__).resolve().parent
     smoke = runpy.run_path(tests.parents[2] / "scripts/smoke-python-runtime.py")
-    for name in ("PYTHONPATH", "DSH_RUNTIME_MODE", "PYTEST_ADDOPTS", "PYTEST_PLUGINS"):
+    for name in ("PYTHONPATH", "GLH_RUNTIME_MODE", "PYTEST_ADDOPTS", "PYTEST_PLUGINS"):
         os.environ.pop(name, None)
-    os.environ["DSH_COMMANDS_TEST_RUNTIME"] = "installed"
+    os.environ["GLH_COMMANDS_TEST_RUNTIME"] = "installed"
     os.environ["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
     previous_cwd = Path.cwd()
     with tempfile.TemporaryDirectory(prefix="dsh-sdk-native-") as temporary:

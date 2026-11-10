@@ -10,7 +10,7 @@ The `deepseek-official` route offered whatever its `models` setting held, and th
 
 ## Decision
 
-- [`llm-deepseek-api-key`](../../../../packages/llm/llm-deepseek-api-key/README.md) follows `GET https://api.deepseek.com/models`, authenticated with the API key in `x-api-key`, only while the Messages origin is `https://api.deepseek.com` and `models` equals the built-in catalog. Any other endpoint or catalog sends no listing request.
+- [`llm-deepseek-api-key`](../../../../packages/llm/llm-deepseek-api-key/README.md) follows `GET https://api.glkj.example.com/models`, authenticated with the API key in `x-api-key`, only while the Messages origin is `https://api.glkj.example.com` and `models` equals the built-in catalog. Any other endpoint or catalog sends no listing request.
 - Loading, refresh, fallback, merging, and the client-version gate are the [account route's](2026-09-24-deepseek-account-remote-model-catalog.md): a first access waits up to `modelsTimeoutMs`, a listing older than `modelsMaxAgeMs` refreshes in the background on the next access, a failure keeps the last good listing or the built-in catalog, and the cache lives in memory, keyed by endpoint and key fingerprint.
 - A customized `models` list wins whole: it replaces the catalog and stops listing requests. A list is customized when it resolves differently from the built-in catalog, because the schema default materializes an absent `models` as the built-in list and the Models page shows that default as its inherited rows.
 - Switching between a customized catalog and the listing invalidates the cache from a `loader/volatile-update` listener, so Restore defaults reloads the listing on the next access even when the cached listing is fresh.

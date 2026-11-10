@@ -1,6 +1,6 @@
 ---
 name: dsh-session-projection
-description: Use when creating, extending, or reviewing a DeepSeek Harness session projection, or migrating session-derived recovery state to one.
+description: Use when creating, extending, or reviewing a GLKJ Harness session projection, or migrating session-derived recovery state to one.
 ---
 
 # Session Projection Rules

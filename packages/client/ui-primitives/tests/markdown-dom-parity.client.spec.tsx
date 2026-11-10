@@ -169,7 +169,7 @@ const CORPUS: Record<string, string> = {
     '',
     '[relative dropped](/settings) and [js dropped](javascript:alert(1)) and [upper kept](HTTPS://example.com).',
     '',
-    '<https://deepseek.com> and bare autolink https://autolink.example.com literal.',
+    '<https://glkj.example.com> and bare autolink https://autolink.example.com literal.',
     '',
     '中文 https://autolink.example.com/a。后文 ends before CJK punctuation.',
     '',

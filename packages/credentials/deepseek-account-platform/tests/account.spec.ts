@@ -30,7 +30,7 @@ async function fixture(
   requestHeaders: Record<string, string> = {},
   rewriteBrowserOrigin = false,
   accountRequestHeaders: Record<string, string> = {},
-  inferenceOrigin = 'https://api.deepseek.com',
+  inferenceOrigin = 'https://api.glkj.example.com',
   beforeAccount?: (ctx: Context, origin: string) => Promise<void>,
   embeddedPageDist = '',
   desktopPlatform: 'darwin' | 'win32' | null = null,
@@ -267,7 +267,7 @@ it('stores a grant before redirecting, restores account presence, and signs out 
   await f.account.getProfile(clientMetadata())
   expect(await f.account.getPlatformSession()).toEqual({ origin: f.origin, userId: 'test-user', token: 'dsh_mock_test',
     requestHeaders: {} })
-  expect(await f.account.resolveToken('https://api.deepseek.com')).toBeUndefined()
+  expect(await f.account.resolveToken('https://api.glkj.example.com')).toBeUndefined()
   await f.account.signOut(clientMetadata())
   expect((await f.account.getState()).status).toBe('signed-out')
   expect(await f.account.getPlatformSession()).toBeNull()
@@ -300,8 +300,8 @@ it('allows real account credentials only on the exact official HTTPS origin', as
   await f.ctx.credentials.modifyRecord(credentialKey('deepseek-account-platform', 'default'), () => Promise.resolve({
     kind: 'grant', payload: { version: 1, issuer: 'https://platform.deepseek.com', token: 'test-account-token' },
   }))
-  expect(await f.account.resolveToken('https://api.deepseek.com/v1')).toBe('test-account-token')
-  for (const url of ['http://api.deepseek.com', 'https://api.deepseek.com.evil.test', 'https://api.deepseek.com:8443', 'https://user@api.deepseek.com']) {
+  expect(await f.account.resolveToken('https://api.glkj.example.com/v1')).toBe('test-account-token')
+  for (const url of ['http://api.deepseek.com', 'https://api.glkj.example.com.evil.test', 'https://api.glkj.example.com:8443', 'https://user@api.deepseek.com']) {
     expect(await f.account.resolveToken(url)).toBeUndefined()
   }
 })
@@ -425,7 +425,7 @@ it('publishes sign-out only after local grant removal and refuses token resoluti
   const observed: string[] = []
   f.ctx.on('deepseek-account/signed-out', () => { observed.push('signed-out') })
   const pending = f.account.signOut(clientMetadata())
-  expect(await f.account.resolveToken('https://api.deepseek.com')).toBeUndefined()
+  expect(await f.account.resolveToken('https://api.glkj.example.com')).toBeUndefined()
   await pending
   expect(observed).toEqual(['signed-out'])
   expect((await f.account.getState()).status).toBe('signed-out')
@@ -827,7 +827,7 @@ it('sends a development grant only to its configured inference origin', async ()
   await fetch(f.callback(), { redirect: 'manual' })
   await f.wait('succeeded')
   expect(await f.account.resolveToken('http://inference.example.test:8094/api')).toBe('test-account-token')
-  for (const url of ['https://api.deepseek.com', 'http://inference.example.test:8095/api',
+  for (const url of ['https://api.glkj.example.com', 'http://inference.example.test:8095/api',
     'https://inference.example.test:8094/api', 'http://user@inference.example.test:8094/api']) {
     expect(await f.account.resolveToken(url)).toBeUndefined()
   }
@@ -1088,14 +1088,14 @@ it.each([{ kind: 'api-key' as const, key: 'wrong-kind' }, { kind: 'grant' as con
     await expect(f.account.getState()).rejects.toThrow('account: storage')
     await expect(f.account.getProfile(clientMetadata())).rejects.toThrow('account: storage')
     await expect(f.account.getPlatformSession()).rejects.toThrow('account: storage')
-    await expect(f.account.resolveToken('https://api.deepseek.com')).rejects.toThrow('account: storage')
+    await expect(f.account.resolveToken('https://api.glkj.example.com')).rejects.toThrow('account: storage')
     await expect(f.account.signOut(clientMetadata())).rejects.toThrow('account: storage')
   },
 )
 
 it('returns no credentials when signed out or disposed', async () => {
   const f = await fixture()
-  expect(await f.account.resolveToken('https://api.deepseek.com')).toBeUndefined()
+  expect(await f.account.resolveToken('https://api.glkj.example.com')).toBeUndefined()
   expect(await f.account.getPlatformSession()).toBeNull()
   await f.account.cancelSignIn('missing' as import('@deepseek-ai/dsh-deepseek-account').SignInAttemptId)
   await f.dispose()
@@ -1119,7 +1119,7 @@ it('never sends a development issuer grant to official inference', async () => {
   await f.ctx.credentials.modifyRecord(credentialKey('deepseek-account-platform', 'default'), () => Promise.resolve({
     kind: 'grant', payload: { version: 1, token: 'real-token', issuer: f.origin },
   }))
-  expect(await f.account.resolveToken('https://api.deepseek.com')).toBeUndefined()
+  expect(await f.account.resolveToken('https://api.glkj.example.com')).toBeUndefined()
 })
 
 it('merges account cookies when there are no base cookies', async () => {

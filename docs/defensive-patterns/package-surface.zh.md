@@ -192,7 +192,7 @@ python3 -c "import json,glob,collections; c=collections.Counter(); [c.update([r]
 
 - 判定条件：改动是否新增 `resolve` 钩子，包括包装既有钩子、改写同一批 specifier 的等价写法？
 - 边界：本条只管能否新增钩子；解析、热更新与插件管理三者的职责划分另行治理，并不因此允许新增钩子。
-- 唯一的解析路径是 `dsh` 源码启动注册的 tsx ESM 钩子，其理由见[源码启动 Agent Note](../../.agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.zh.md)。
+- 唯一的解析路径是 `glh` 源码启动注册的 tsx ESM 钩子，其理由见[源码启动 Agent Note](../../.agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.zh.md)。
 - 例外：只有上述两个前置条件，且都要记录在改动上。
 
 确有新的解析需求时的合规路径，按顺序。

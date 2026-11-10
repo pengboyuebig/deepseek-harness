@@ -13,7 +13,7 @@ Status: implemented
 ## 决策
 
 - 检查读取 `packages/*/*/package.json`，experimental 包与正式包遵守完全相同的规则，不设组级豁免，依赖区段检查也没有其他针对实验包的例外。
-- verifier 同时扫描包自己的 Host 侧 worker 和子进程入口，识别依据是包 `tsdown.config.ts` 声明的构建入口。`readHostBuildEntries` import 这份配置，在 `host` 和 `client` 两个构建 face（`DSH_BUILD_FACE`）下各求值一次默认导出并取并集，保留 platform 不是 browser、源码不在 `src/client/` 下的 entry。不靠猜源码写法。配置只能异步 import，所以 verifier 的状态读取是 async。
+- verifier 同时扫描包自己的 Host 侧 worker 和子进程入口，识别依据是包 `tsdown.config.ts` 声明的构建入口。`readHostBuildEntries` import 这份配置，在 `host` 和 `client` 两个构建 face（`GLH_BUILD_FACE`）下各求值一次默认导出并取并集，保留 platform 不是 browser、源码不在 `src/client/` 下的 entry。不靠猜源码写法。配置只能异步 import，所以 verifier 的状态读取是 async。
 - 受影响的实验包清单和 lockfile 符合策略；从 `peerDependencies` 或 `dependencies` 移走的每一项都确认过不是运行时必需。cot-translation 对 translator 的 `TranslationError` 做 `instanceof` 判断，需要同一个类实例，因此 `peerRequiredHostExports` 收录了这个导出。
 - 纯 Host 的实验包与正式包一样，只有列入 `hostPackages` 才受检查。是否扩大到全部纯 Host 包，另行决定。
 - 本决定部分取代[发布依赖面](2026-08-26-published-dependency-faces.zh.md)的选包覆盖范围，该 Note 的选包段落链接回本 Note；它的其余决定保持有效。

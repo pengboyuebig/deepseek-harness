@@ -13,7 +13,7 @@ Issue #4573 就是这个问题在生产里的形态。当本包经 `dependencies
 
 ## Decision
 
-Out-of-tree 插件包，凡是跨实例同一性要紧的宿主运行时，一律写成匹配的 `peerDependencies` 与 `devDependencies`，绝不写进 `dependencies`。Profile 的 pnpm 配置是 `nodeLinker: hoisted` 加 `autoInstallPeers: false`，这类 peer 不会装进 profile；导入走到 `$DSH_HOME/profiles/node_modules` 时，由运行时解析（runtime resolution）的拦截层提供安装里的那一份实例（[解析顺序](2026-09-19-profile-resolution-lookup-order.zh.md)）。
+Out-of-tree 插件包，凡是跨实例同一性要紧的宿主运行时，一律写成匹配的 `peerDependencies` 与 `devDependencies`，绝不写进 `dependencies`。Profile 的 pnpm 配置是 `nodeLinker: hoisted` 加 `autoInstallPeers: false`，这类 peer 不会装进 profile；导入走到 `$GLH_HOME/profiles/node_modules` 时，由运行时解析（runtime resolution）的拦截层提供安装里的那一份实例（[解析顺序](2026-09-19-profile-resolution-lookup-order.zh.md)）。
 
 `@deepseek-ai/dsh-scope` 的同一性既在读取者 `scopeOf`、`carrierKeyOf`、`scopeTarget` 上，也在写入者 `createScope` 上：标记由写入者铸造，再由读取者比较。`@deepseek-ai/dsh-mcp-client` 同属这一类，因为它在线的 `serverName` 保留表是模块级的，第二份副本会为同一命名空间保留第二张表。因此 `@deepseek-ai/dsh-experimental-browser-use-runtime` 把两者声明为 peer（并补匹配的 dev 条目），只把不携带实例内状态的 `@deepseek-ai/schemastery` 留在运行时依赖里。
 

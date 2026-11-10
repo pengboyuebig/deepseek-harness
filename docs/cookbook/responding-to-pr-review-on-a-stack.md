@@ -18,7 +18,7 @@ Review comments may target several PRs in a dependent stack (`A ← B ← C …`
 2. Map each accepted finding to its originating PR and fix it there.
 3. Propagate the fixed layer through every affected child in order:
    - **Merge-forward:** merge the fixed parent branch into its child, validate the child, and continue upward. Preserve each in-progress checkpoint.
-   - **Native cascading rebase:** use `gh stack rebase`, validate the rewritten layers, then publish with `gh stack push`; or use `gh stack sync`, which may publish first and therefore requires immediate post-sync validation under [dsh-pre-push-checks](../../.agents/skills/dsh-pre-push-checks/SKILL.md).
+   - **Native cascading rebase:** use `gh stack rebase`, validate the rewritten layers, then publish with `gh stack push`; or use `gh stack sync`, which may publish first and therefore requires immediate post-sync validation under [glh-pre-push-checks](../../.agents/skills/glh-pre-push-checks/SKILL.md).
 4. Treat delegated fixes as trust-but-verify: a sub-agent's report describes intent, not necessarily what landed. Re-run the gates yourself on the actual tree, and for a regression guard, prove it FAILS on the unfixed code (introduce the regression, watch red, revert) — a guard that passes both ways guards nothing. A sub-agent that reframes a problem as already handled is a signal to dig in personally.
 5. Reply in the review thread (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not as a top-level comment, stating the fix and the current commit or head that carries it.
 6. After any rewritten push, re-read unresolved threads, approvals, mergeability, and checks. A force-pushed commit OID or outdated inline anchor is not current evidence that the finding remains resolved.

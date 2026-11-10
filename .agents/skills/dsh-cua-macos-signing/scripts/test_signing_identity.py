@@ -159,7 +159,7 @@ class DevelopmentSigningTests(unittest.TestCase):
         home = self.root / "user"
         with patch.object(Path, "home", return_value=home):
             for value in ("", str(self.root / "custom-dsh-home")):
-                with patch.dict(signing.os.environ, {"DSH_HOME": value}):
+                with patch.dict(signing.os.environ, {"GLH_HOME": value}):
                     self.assertEqual(signing.default_directory(), home / ".cua-macos-keys/dev")
         self.assertFalse(home.exists())
 

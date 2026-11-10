@@ -66,11 +66,11 @@ The model sees tools under the fixed `mcp__cua-driver-mcp__` namespace. Tool nam
 
 ### Verify an installed driver
 
-From the repository root, opt into the live compatibility test with the absolute path of a Cua Driver executable. It discovers tools, calls `check_permissions` with `prompt: false`, and verifies teardown. On macOS, `--direct` runs the runtime in the MCP process using the launching host's permissions; omit `DSH_COMPUTER_USE_MCP_ARGS` to use the default `["mcp"]` arguments.
+From the repository root, opt into the live compatibility test with the absolute path of a Cua Driver executable. It discovers tools, calls `check_permissions` with `prompt: false`, and verifies teardown. On macOS, `--direct` runs the runtime in the MCP process using the launching host's permissions; omit `GLH_COMPUTER_USE_MCP_ARGS` to use the default `["mcp"]` arguments.
 
 ```sh
-DSH_COMPUTER_USE_MCP_EXECUTABLE=/absolute/path/to/cua-driver \
-DSH_COMPUTER_USE_MCP_ARGS='["mcp","--direct"]' \
+GLH_COMPUTER_USE_MCP_EXECUTABLE=/absolute/path/to/cua-driver \
+GLH_COMPUTER_USE_MCP_ARGS='["mcp","--direct"]' \
 pnpm run test:e2e packages/experimental/computer-use-cua-driver-mcp/tests/installed-driver.e2e.ts
 ```
 

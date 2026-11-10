@@ -1,7 +1,7 @@
 import * as Protocol from '@deepseek-ai/dsh-llm-deepseek'
 /**
- * Real Messages round trips require credentials; tool replacement also accepts DEEPSEEK_BASE_URL.
- * System-update checks additionally require DEEPSEEK_IN_HISTORY_MODEL.
+ * Real Messages round trips require credentials; tool replacement also accepts GLKJ_BASE_URL.
+ * System-update checks additionally require GLKJ_IN_HISTORY_MODEL.
  */
 import { randomUUID } from 'node:crypto'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -26,7 +26,7 @@ import { DeepSeekFilesClient } from '../src/files-api.ts'
 import { MESSAGES_FILES_BETA } from '../src/messages-api.ts'
 import { assemble, options, user, sourceModuleLoader } from './helpers.ts'
 
-const IN_HISTORY_MODEL = process.env.DEEPSEEK_IN_HISTORY_MODEL
+const IN_HISTORY_MODEL = process.env.GLKJ_IN_HISTORY_MODEL
 const cleanups: (() => Promise<unknown>)[] = []
 afterEach(async () => {
   while (cleanups.length) await cleanups.pop()!()
@@ -36,7 +36,7 @@ afterEach(async () => {
 async function boot(models?: Messages.Options['models'], baseURL = Protocol.PUBLIC_BASE_URL) {
   const home = await mkdtemp(join(tmpdir(), 'dsh-messages-e2e-'))
   cleanups.push(() => rm(home, { recursive: true, force: true }))
-  vi.stubEnv('DSH_HOME', home)
+  vi.stubEnv('GLH_HOME', home)
   const ctx = new Context()
   cleanups.push(() => ctx.fiber.dispose())
   await ctx.plugin(LlmRuntime)
@@ -49,10 +49,10 @@ async function boot(models?: Messages.Options['models'], baseURL = Protocol.PUBL
 }
 const tool = { name: 'lookup_value', description: 'Read the requested value. Always call this tool to obtain a value.', parameters: { type: 'object', properties: { key: { type: 'string' } }, required: ['key'] } }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('DeepSeek Messages real API', () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('DeepSeek Messages real API', () => {
   it.each(['together', 'separate', 'initially empty'])('calls a tool added to an empty set, updates=%s', async (mode) => {
     const model = 'deepseek-flash'
-    const ctx = await boot([{ id: model, toolUpdate: 'addition-only' }], process.env.DEEPSEEK_BASE_URL ?? Protocol.PUBLIC_BASE_URL)
+    const ctx = await boot([{ id: model, toolUpdate: 'addition-only' }], process.env.GLKJ_BASE_URL ?? Protocol.PUBLIC_BASE_URL)
     const updates = mode === 'initially empty' ? [] : [createDeveloperMessage({ source: { kind: 'tool-registry' }, content: [
       { type: 'tool-removal', toolName: 'old_lookup' },
       ...mode !== 'together' ? [] : [{ type: 'tool-addition' as const, toolName: tool.name }],
@@ -100,7 +100,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)('DeepSeek Messages real API', () 
     const uploads: string[] = []
     const bodies: string[] = []
     const files = new DeepSeekFilesClient({
-      baseURL: Protocol.PUBLIC_BASE_URL, headers: { 'x-api-key': process.env.DEEPSEEK_API_KEY as string }, fetch: fetchImpl,
+      baseURL: Protocol.PUBLIC_BASE_URL, headers: { 'x-api-key': process.env.GLKJ_API_KEY as string }, fetch: fetchImpl,
     })
     const ownedFiles = new Set<ReturnType<typeof Protocol.DeepSeekFileId>>()
     cleanups.push(async () => {

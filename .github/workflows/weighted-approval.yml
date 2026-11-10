@@ -46,8 +46,8 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
         with:
-          client-id: ${{ vars.DSH_APPROVAL_APP_CLIENT_ID }}
-          private-key: ${{ secrets.DSH_APPROVAL_APP_PRIVATE_KEY }}
+          client-id: ${{ vars.GLH_APPROVAL_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GLH_APPROVAL_APP_PRIVATE_KEY }}
           owner: deepseek-harness
           repositories: deepseek-harness
           permission-checks: write
@@ -56,7 +56,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DECISION_TOKEN: ${{ steps.decision-token.outputs.token }}
-          DECISION_APP_SLUG: ${{ vars.DSH_APPROVAL_APP_SLUG }}
+          DECISION_APP_SLUG: ${{ vars.GLH_APPROVAL_APP_SLUG }}
           GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: node .github/review-ownership/check-approval.mjs pending
       # SECURITY: dependency setup runs in the status-writing job.
@@ -74,7 +74,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DECISION_TOKEN: ${{ steps.decision-token.outputs.token }}
-          DECISION_APP_SLUG: ${{ vars.DSH_APPROVAL_APP_SLUG }}
+          DECISION_APP_SLUG: ${{ vars.GLH_APPROVAL_APP_SLUG }}
           GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: node .github/review-ownership/check-approval.mjs
       - name: Publish approval setup failure
@@ -82,6 +82,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DECISION_TOKEN: ${{ steps.decision-token.outputs.token }}
-          DECISION_APP_SLUG: ${{ vars.DSH_APPROVAL_APP_SLUG }}
+          DECISION_APP_SLUG: ${{ vars.GLH_APPROVAL_APP_SLUG }}
           GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: node .github/review-ownership/check-approval.mjs error

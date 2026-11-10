@@ -44,7 +44,7 @@ type ProviderList = { search: ProviderEntry[]; fetch: ProviderEntry[] }
 type ProviderResponse = { ok: true; value: ProviderList } | { ok: false; error: RemoteError }
 
 /** The legacy key's default reference. */
-const LEGACY_KEY = 'DEEPSEEK_API_KEY'
+const LEGACY_KEY = 'GLKJ_API_KEY'
 
 function remoteApi(configured: boolean | Record<string, boolean>) {
   const answer = (ref: string) => typeof configured === 'boolean' ? configured : configured[ref] ?? false

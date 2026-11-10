@@ -136,7 +136,7 @@ async function configuredPool(pool: 'stock' | 'diagnostic', outcome: 'exit' | 'p
     id: `fork-${pool}`, label: 'fork fixture', displayCommand: 'Vitest pool fixture',
     command: process.execPath,
     args: [resolve('node_modules/vitest/vitest.mjs'), 'run', '--config', 'scripts/fixtures/coverage-fork.config.ts'],
-    env: { DSH_TEST_FORK_POOL: pool, DSH_TEST_FORK_OUTCOME: outcome, DSH_TEST_FORK_CACHE: cacheDir },
+    env: { GLH_TEST_FORK_POOL: pool, GLH_TEST_FORK_OUTCOME: outcome, GLH_TEST_FORK_CACHE: cacheDir },
   }, AbortSignal.any([signal, controller.signal]))
   let settled = false
   cleanups.push(async () => {

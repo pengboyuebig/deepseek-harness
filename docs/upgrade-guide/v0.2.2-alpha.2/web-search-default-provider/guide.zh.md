@@ -16,4 +16,4 @@ description: "交付的 Search 默认值从旧版 Messages 搜索改为 DeepSeek
 ## 迁移
 
 1. 要继续使用旧版 Messages 搜索，在 `@deepseek-ai/dsh-web` 条目的 `config` 中设置 `searchProvider: deepseek-official`，或在「网页搜索与获取」设置页的「网页搜索提供方」菜单中选择 DeepSeek（旧版）。确认：该菜单显示 DeepSeek（旧版），且每次搜索都会向会话日志追加一个 `web/deepseek-search-llm-request` 事件。
-2. 挂载过 Exa 或 Perplexity 的部署：从 `cordis.yml` 或 profile 补丁中删除 `@deepseek-ai/dsh-web-search-exa` 或 `@deepseek-ai/dsh-web-search-perplexity` 条目；若 `EXA_API_KEY` 或 `PERPLEXITY_API_KEY` 不再被其他地方使用，一并移除；再把 `searchProvider` 设为 `deepseek-search-api` 或 `deepseek-official`，或删除该字段以采用默认值。确认：`dsh` 启动时没有这两个包的加载错误，「网页搜索提供方」菜单显示所选提供方，且搜索返回结果。
+2. 挂载过 Exa 或 Perplexity 的部署：从 `cordis.yml` 或 profile 补丁中删除 `@deepseek-ai/dsh-web-search-exa` 或 `@deepseek-ai/dsh-web-search-perplexity` 条目；若 `EXA_API_KEY` 或 `PERPLEXITY_API_KEY` 不再被其他地方使用，一并移除；再把 `searchProvider` 设为 `deepseek-search-api` 或 `deepseek-official`，或删除该字段以采用默认值。确认：`glh` 启动时没有这两个包的加载错误，「网页搜索提供方」菜单显示所选提供方，且搜索返回结果。

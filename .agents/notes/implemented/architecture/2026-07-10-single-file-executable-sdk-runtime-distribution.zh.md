@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-DeepSeek Harness 需要为 Python 库专门提供一种无需安装 Node、可直接在目标平台运行的 SDK 分发形态：一个单文件可执行程序（下称 exe），通过 stdio 提供 JSON-RPC 对外服务接口（`HarnessSdkJsonRpcServer`，Python SDK 的对端），且实际启动的插件与配置完全由 exe 外部输入的 `cordis.yml` 决定。
+GLKJ Harness 需要为 Python 库专门提供一种无需安装 Node、可直接在目标平台运行的 SDK 分发形态：一个单文件可执行程序（下称 exe），通过 stdio 提供 JSON-RPC 对外服务接口（`HarnessSdkJsonRpcServer`，Python SDK 的对端），且实际启动的插件与配置完全由 exe 外部输入的 `cordis.yml` 决定。
 
 - 与 Python SDK 通信的 JSON-RPC 协议已经过验证
 - 需要提供一种让 `cordis.yml` 加载所有插件（ES 模块）的标准方式
@@ -21,15 +21,15 @@ exe 使用 [@yao-pkg/pkg](https://github.com/yao-pkg/pkg)（vercel/pkg 归档后
 
 `--sea` 要求构建目标 ≥ node22，exe 统一以 node24 为构建目标；每次 pkg 调用只打包一个构建目标，多平台各调用一次。
 
-`@yao-pkg/pkg` 是精确钉版的根 `devDependency`，经 `pnpm exec pkg` 调用，并以 [`patches/@yao-pkg__pkg@6.21.0.patch`](../../../../patches/@yao-pkg__pkg@6.21.0.patch) 移除 SEA bootstrap 中的 `patchChildProcess` 调用。未打补丁时，pkg 会把 spawn 的 `node` 命令——包括 `-c`/`/c` 标志后的命令串，恰是 Bash 工具的 `bash -c` 形态——改写为 exe 自身，并向每个子进程环境注入 `PKG_EXECPATH`，模型下发的 `node --version` 会静默启动 dsh CLI；Node 自身的 SEA 层没有这种改写，且 SEA 二进制永远启动内嵌应用、无法充当纯 Node。移除该调用后，子进程像普通进程一样经 PATH 解析 `node`（无 Node 的机器如实报 command not found），子进程环境不再出现 `PKG_EXECPATH`，以 `process.execPath` 绝对路径 spawn 的重入不受影响，worker 线程本来就未应用该钩子，`process.pkg` 侧车选择也不受影响。
+`@yao-pkg/pkg` 是精确钉版的根 `devDependency`，经 `pnpm exec pkg` 调用，并以 [`patches/@yao-pkg__pkg@6.21.0.patch`](../../../../patches/@yao-pkg__pkg@6.21.0.patch) 移除 SEA bootstrap 中的 `patchChildProcess` 调用。未打补丁时，pkg 会把 spawn 的 `node` 命令——包括 `-c`/`/c` 标志后的命令串，恰是 Bash 工具的 `bash -c` 形态——改写为 exe 自身，并向每个子进程环境注入 `PKG_EXECPATH`，模型下发的 `node --version` 会静默启动 glh CLI；Node 自身的 SEA 层没有这种改写，且 SEA 二进制永远启动内嵌应用、无法充当纯 Node。移除该调用后，子进程像普通进程一样经 PATH 解析 `node`（无 Node 的机器如实报 command not found），子进程环境不再出现 `PKG_EXECPATH`，以 `process.execPath` 绝对路径 spawn 的重入不受影响，worker 线程本来就未应用该钩子，`process.pkg` 侧车选择也不受影响。
 
 同一补丁还把 SEA bootstrap 的原生插件解包改成原子写入。VFS 内的插件首次 `dlopen` 时，pkg 的 `patchDlopen` 会把该插件所在的包目录整棵拷到 `$PKG_NATIVE_CACHE_PATH/pkg/<.node 文件的 sha256>/`（默认 `~/.cache/pkg/...`），这是同一个 exe 的所有并发进程共用的按用户目录；上游用 `writeFileSync` 直接写目标路径，会把另一个进程可能已经映射的文件截断，并让该进程的 `existsSync`/哈希比对读到写了一半的文件。因此并发首次启动在 Linux 上以 SIGBUS 崩溃，在 macOS 上对 sharp 的 libvips 报 `ERR_DLOPEN_FAILED: Library not loaded`（#4664）。补丁让三处写入都经过同目录临时文件加 `renameSync`，于是缓存路径要么不存在、要么完整，每个进程都在加载前走完自己的拷贝，相同内容的并发 rename 不需要锁。缓存位置、哈希键与逐文件比对均未改变，通过 `PKG_NATIVE_CACHE_PATH` 按实例隔离缓存的消费方照常工作；worker 线程只定义该钩子而从不安装。 实测（linux-x64、node24 构建目标、pkg 6.21.0，一个加载 sharp 及其 18 MB libvips 库的探针，16 个进程对同一个空缓存并发首次启动，跑五轮）：改动前 80 个进程中 39 个以 SIGBUS 崩溃，改动后 80 个全部正常，且无残留临时文件。
 
-术语提醒：pkg 的 `/snapshot` VFS 与本仓库测试体系的「快照」（ACP（Agent Client Protocol）回放预期输出、`$DSH_SNAPSHOT`）无关，本文用「VFS」指前者。
+术语提醒：pkg 的 `/snapshot` VFS 与本仓库测试体系的「快照」（ACP（Agent Client Protocol）回放预期输出、`$GLH_SNAPSHOT`）无关，本文用「VFS」指前者。
 
-### 对外服务接口是 dsh 应用中的插件
+### 对外服务接口是 glh 应用中的插件
 
-确定性服务接口由打包后的 `dsh` 应用选择为插件：
+确定性服务接口由打包后的 `glh` 应用选择为插件：
 
 - [`packages/sdk/server`](../../../../packages/sdk/server/README.zh.md)（`@deepseek-ai/dsh-sdk-jsonrpc-server`）：纯协议插件；执行 `apply` 时，在进程 stdio 上挂载 `HarnessSdkJsonRpcServer` 与按行分隔的 JSON-RPC 传输层，资源释放走 `ctx.effect()`。是否提供服务由 `cordis.yml` 决定；未挂载该插件的配置会启动一个不提供此服务的合法进程。协议级退出归插件所有（应答并确保 `shutdown` 响应发送完毕后，对根运行时执行 dispose（资源释放），让待处理的持久化操作完成，再调用 `exit(0)`；HMR（热模块替换）式卸载只停止服务，不退出进程）。
 - [`apps/cli`](../../../../apps/cli/README.zh.md)（`@deepseek-ai/dsh`）：打包后的应用入口；其 `sdk` profile 挂载 `dsh-sdk-jsonrpc-server`，CLI 负责环境分层、profile 组合、stdin／signal 关闭与进程退出。
@@ -54,11 +54,11 @@ CI 使用 [`.github/workflows/build-exe-for-python-sdk.yml`](../../../../.github
 
 ### Python SDK 分发：双载体，exe 用于生产，`node` 用于开发
 
-Python SDK 位于 [`python/`](../../../../python/README.zh.md)：`python/sdk` 是客户端，`python/sdk-runtime` 是运行时载体包。运行时包的数据目录包含构建注入的平台可执行文件及其必需的 `-rg` 伴随文件、轻量下载元数据与 Office skills 和可选的 macOS helper，以及供仓库开发使用的构建注入 `runtime/node/` 闭包树。`resolve_bundled_launch_args()` 默认选择可执行文件；显式设置 `DSH_RUNTIME_MODE=node` 会在系统 Node 24.9 或更高版本上运行 `runtime/node/runtime-bootstrap.mjs`。node 载体从不进入 wheel 分发，两种载体都不使用检入的完整 `cordis.yml`。
+Python SDK 位于 [`python/`](../../../../python/README.zh.md)：`python/sdk` 是客户端，`python/sdk-runtime` 是运行时载体包。运行时包的数据目录包含构建注入的平台可执行文件及其必需的 `-rg` 伴随文件、轻量下载元数据与 Office skills 和可选的 macOS helper，以及供仓库开发使用的构建注入 `runtime/node/` 闭包树。`resolve_bundled_launch_args()` 默认选择可执行文件；显式设置 `GLH_RUNTIME_MODE=node` 会在系统 Node 24.9 或更高版本上运行 `runtime/node/runtime-bootstrap.mjs`。node 载体从不进入 wheel 分发，两种载体都不使用检入的完整 `cordis.yml`。
 
 [`scripts/build-python-release.py`](../../../../scripts/build-python-release.py) 从仓库根目录的 `package.json` 读取权威的 `X.Y.Z` 或预发布版本，把预发布版本转换为 PEP 440 写法，并以该 wheel 包版本暂存两个包，让 `deepseek-harness-sdk` 精确依赖匹配版本的 `deepseek-harness-runtime-bin`。可选的 `python-v<repository-version>` 发布标签只是一项一致性断言，与仓库版本不同时会被拒绝；源码 `pyproject.toml` 中的开发占位版本从不决定发布版本。暂存过程还会把仓库许可证放入两个 wheel 包，并把第三方声明放入内置运行时 wheel 包。SDK 是 `py3-none-any` wheel 包；每个只提供 wheel 包的运行时包都包含一个 exe、轻量资源元数据与 skills 及架构匹配的 ripgrep 伴随文件，macOS wheel 包还包含与其架构匹配的 spawn helper。运行时 wheel 包使用 `py3-none-manylinux_2_28_x86_64`、`py3-none-manylinux_2_28_aarch64`、`py3-none-macosx_14_0_arm64`、`py3-none-macosx_14_0_x86_64` 或 `py3-none-win_amd64`；Hatch 钩子拒绝 sdist、通用标签、混合平台载荷、伴随文件缺失或多余，以及不支持的平台。两个 macOS 标签都会特意声明保守的 14.0 安装下限：打包后的 Node 24 可执行文件声明 macOS 13.5，x64 PTY helper 声明 10.7，但发布验证只按照 14.0 wheel 声明证明完整载荷，不会把各组件实测的最低版本承诺为受支持宿主。两个 macOS wheel 包仍按架构分别发布，不发布 universal2 wheel 包。
 
-Python 客户端使用所选 profile（默认 `sdk`）、有序 patch 文件和显式 Harness home 启动打包后的 `dsh` 命令。Profile 负责 JSON-RPC 服务和应用组合；缺失 home、profile、bundle、patch 或 server 配置项都会失败，不存在外部完整配置回退。
+Python 客户端使用所选 profile（默认 `sdk`）、有序 patch 文件和显式 Harness home 启动打包后的 `glh` 命令。Profile 负责 JSON-RPC 服务和应用组合；缺失 home、profile、bundle、patch 或 server 配置项都会失败，不存在外部完整配置回退。
 
 ### 命名血统
 

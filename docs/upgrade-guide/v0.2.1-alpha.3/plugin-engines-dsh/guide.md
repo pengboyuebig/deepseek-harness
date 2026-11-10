@@ -18,4 +18,4 @@ The `incompatible-version` refusal record that the plugin manager returns to cli
 1. If your package declares `engines.dsh`, make that range cover every DSH release the package supports, because DSH peer ranges no longer widen or narrow it. Remove `engines.dsh` to keep peer-based checking.
 2. Replace `workspace:` values in `engines.dsh` with a semantic version range.
 3. Read `requirements` instead of `peers` from `IncompatiblePlugin` and `PluginCompatibility`.
-4. Confirm by installing the package with `dsh plugin --profile <profile> add <package@version>` or the plugin manager: a mismatch names `engines.dsh` or the peer package in the refusal.
+4. Confirm by installing the package with `glh plugin --profile <profile> add <package@version>` or the plugin manager: a mismatch names `engines.dsh` or the peer package in the refusal.

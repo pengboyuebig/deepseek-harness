@@ -7,7 +7,7 @@ import { Context, FiberState } from '@deepseek-ai/cordis'
 import AgentRegistry from '@deepseek-ai/dsh-agent'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { DeepSeekAccount } from '@deepseek-ai/dsh-deepseek-account'
-import { DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
+import { GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
 import WebRuntime from '@deepseek-ai/dsh-web'
@@ -31,7 +31,7 @@ vi.mock('@deepseek-ai/dsh-llm-deepseek-api-key', async (importOriginal) => {
 type Operation = 'search' | 'fetch'
 
 const OPERATIONS: readonly Operation[] = ['search', 'fetch']
-const OFFICIAL = 'https://api.deepseek.com/v1/tools'
+const OFFICIAL = 'https://api.glkj.example.com/v1/tools'
 const ROUTE = 'https://route.deepseek.test/v1/tools'
 const ACCOUNT = 'https://account.deepseek.test/v1/tools'
 const OWN = 'https://own.deepseek.test/api/v1/tools'
@@ -79,7 +79,7 @@ async function mount(setup: Setup): Promise<{ ctx: Context; sent: () => Sent[] }
   vi.stubGlobal('fetch', fetchMock)
   const ctx = new Context()
   mounted.push(ctx)
-  ctx.provide(DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([{ source: 'process', values: setup.environment ?? {} }]))
+  ctx.provide(GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([{ source: 'process', values: setup.environment ?? {} }]))
   if (setup.account !== undefined) ctx.provide('deepseekAccount', setup.account as DeepSeekAccount)
   if (setup.credentials !== undefined) ctx.provide('credentials', setup.credentials as never)
   if (setup.routes !== undefined) provideRoutes(ctx, setup.routes)
@@ -134,16 +134,16 @@ const bothRoutes = [officialRoute(), accountRoute()]
 describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', (operation) => {
   it('sends only the account token to the account route origin, asking for that endpoint', async () => {
     const asked: string[] = []
-    const { ctx, sent } = await mount({ routes: bothRoutes, account: signedIn(asked), environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ routes: bothRoutes, account: signedIn(asked), environment: { GLKJ_API_KEY: 'chat-key' } })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(true)
     await operate(ctx, operation, 'deepseek-account')
     expect(sent()).toEqual([{ endpoint: `${ACCOUNT}/${operation}`, authorization: null, token: 'account-token' }])
     expect(asked).toEqual([ACCOUNT, `${ACCOUNT}/${operation}`])
   })
 
-  it('derives the account endpoint from DEEPSEEK_BASE_URL', async () => {
+  it('derives the account endpoint from GLKJ_BASE_URL', async () => {
     const { ctx, sent } = await mount({
-      routes: [accountRoute({})], account: signedIn(), environment: { DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic' },
+      routes: [accountRoute({})], account: signedIn(), environment: { GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic' },
     })
     await operate(ctx, operation, 'deepseek-account')
     expect(sent()).toEqual([{ endpoint: `https://internal.deepseek.test/v1/tools/${operation}`, authorization: null, token: 'account-token' }])
@@ -164,7 +164,7 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
     ['no account service is mounted', undefined],
   ])('sends the API key to the API-key endpoint when %s', async (_label, account) => {
     const { ctx, sent } = await mount({
-      routes: bothRoutes, ...account === undefined ? {} : { account }, environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      routes: bothRoutes, ...account === undefined ? {} : { account }, environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(true)
     await operate(ctx, operation, 'deepseek-account')
@@ -177,8 +177,8 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(false)
     await expect(operate(ctx, operation, 'deepseek-account')).rejects.toMatchObject({
       code: 'WEB_PROVIDER_CREDENTIAL_MISSING',
-      message: `DeepSeek ${subject} API uses the DeepSeek API key, and no key is configured for "DEEPSEEK_API_KEY". Guide the`
-        + ' user to add the DeepSeek API key on the Models page or export "DEEPSEEK_API_KEY" in the launching environment, or'
+      message: `DeepSeek ${subject} API uses the DeepSeek API key, and no key is configured for "GLKJ_API_KEY". Guide the`
+        + ' user to add the DeepSeek API key on the Models page or export "GLKJ_API_KEY" in the launching environment, or'
         + ' to sign in to DeepSeek and chat on the DeepSeek account model provider.',
     })
     expect(sent()).toEqual([])
@@ -186,7 +186,7 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
 
   it('sends the API key without asking the account when the account route is not mounted', async () => {
     const asked: string[] = []
-    const { ctx, sent } = await mount({ routes: [officialRoute()], account: signedIn(asked), environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ routes: [officialRoute()], account: signedIn(asked), environment: { GLKJ_API_KEY: 'chat-key' } })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(true)
     await operate(ctx, operation, 'deepseek-account')
     expect(sent()).toEqual([{ endpoint: `${ROUTE}/${operation}`, authorization: 'Bearer chat-key', token: null }])
@@ -198,7 +198,7 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
     const asked: string[] = []
     const { ctx, sent } = await mount({
       routes: [officialRoute(), accountRoute({ thinking: 'disabled', reasoningEffort: 'high' })],
-      account: signedIn(asked), environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      account: signedIn(asked), environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(false)
     await expect(operate(ctx, operation, 'deepseek-account')).rejects.toMatchObject({
@@ -216,17 +216,17 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
   it('sends the account token while the mounted API-key route settings do not resolve', async () => {
     const { ctx, sent } = await mount({
       routes: [officialRoute({ thinking: 'disabled', reasoningEffort: 'high' }), accountRoute()],
-      account: signedIn(), environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      account: signedIn(), environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(true)
     await operate(ctx, operation, 'deepseek-account')
     expect(sent()).toEqual([{ endpoint: `${ACCOUNT}/${operation}`, authorization: null, token: 'account-token' }])
   })
 
-  it('fails instead of sending DEEPSEEK_API_KEY when there is no sign-in and the API-key route settings do not resolve', async () => {
+  it('fails instead of sending GLKJ_API_KEY when there is no sign-in and the API-key route settings do not resolve', async () => {
     const { ctx, sent } = await mount({
       routes: [officialRoute({ thinking: 'disabled', reasoningEffort: 'high' }), accountRoute()],
-      account: { resolveToken: async () => undefined }, environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      account: { resolveToken: async () => undefined }, environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(false)
     await expect(operate(ctx, operation, 'deepseek-account')).rejects.toMatchObject({ code: 'WEB_PROVIDER_MISCONFIGURED' })
@@ -236,7 +236,7 @@ describe.each(OPERATIONS)('%s in a conversation on the DeepSeek account route', 
   it('is not ready and fails without trying the key when the account grant cannot be read', async () => {
     const { ctx, sent } = await mount({
       routes: bothRoutes, account: { resolveToken: () => Promise.reject(new Error('grant unreadable')) },
-      environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(false)
     await expect(operate(ctx, operation, 'deepseek-account')).rejects.toMatchObject({
@@ -251,7 +251,7 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
 
   it.each(others)('sends the key of the DeepSeek API-key route to its origin for route %s, never the account token', async (route) => {
     const asked: string[] = []
-    const { ctx, sent } = await mount({ routes: bothRoutes, account: signedIn(asked), environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ routes: bothRoutes, account: signedIn(asked), environment: { GLKJ_API_KEY: 'chat-key' } })
     expect(await ready(ctx, operation, route)).toBe(true)
     await operate(ctx, operation, route)
     expect(sent()).toEqual([{ endpoint: `${ROUTE}/${operation}`, authorization: 'Bearer chat-key', token: null }])
@@ -263,11 +263,11 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
     for (const route of others) expect(await ready(ctx, operation, route)).toBe(false)
   })
 
-  it('sends the key under the route apiKeyEnv to the origin DEEPSEEK_BASE_URL names, from the credential store', async () => {
+  it('sends the key under the route apiKeyEnv to the origin GLKJ_BASE_URL names, from the credential store', async () => {
     const { ctx, sent } = await mount({
       routes: [officialRoute({ apiKeyEnv: 'TEAM_KEY' })],
       credentials: { describe: async (ref: string) => ({ configured: ref === 'TEAM_KEY' }), resolve: async (ref: string) => ref === 'TEAM_KEY' ? { value: 'team-key' } : undefined },
-      environment: { DEEPSEEK_API_KEY: 'chat-key', DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic' },
+      environment: { GLKJ_API_KEY: 'chat-key', GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic' },
     })
     expect(await ready(ctx, operation, 'deepseek-official')).toBe(true)
     await operate(ctx, operation, 'deepseek-official')
@@ -279,10 +279,10 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
     ['the route entry is not active', [{ provider: 'deepseek-official', config: { apiKeyEnv: 'TEAM_KEY' }, state: FiberState.DISPOSED }]],
     ['another package registers the route', [{ provider: 'deepseek-official', config: { apiKeyEnv: 'TEAM_KEY' }, name: '@example/other-llm' }]],
     ['the route settings are nested', [{ provider: 'deepseek-official', config: { apiKeyEnv: 'TEAM_KEY' }, settingsPath: ['routes', 'official'] }]],
-  ])('sends DEEPSEEK_API_KEY to the official base when %s', async (_label, routes) => {
+  ])('sends GLKJ_API_KEY to the official base when %s', async (_label, routes) => {
     const { ctx, sent } = await mount({
       ...routes === undefined ? {} : { routes },
-      environment: { DEEPSEEK_API_KEY: 'chat-key', TEAM_KEY: 'team-key', DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic' },
+      environment: { GLKJ_API_KEY: 'chat-key', TEAM_KEY: 'team-key', GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic' },
     })
     expect(await ready(ctx, operation, 'deepseek-official')).toBe(true)
     await operate(ctx, operation, 'deepseek-official')
@@ -302,7 +302,7 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
     const subject = operation === 'search' ? 'Search' : 'Fetch'
     const { ctx, sent } = await mount({
       routes: [officialRoute({ apiKeyEnv: 'TEAM_KEY', ...config })],
-      environment: { DEEPSEEK_API_KEY: 'chat-key', TEAM_KEY: 'team-key' },
+      environment: { GLKJ_API_KEY: 'chat-key', TEAM_KEY: 'team-key' },
     })
     for (const route of ['deepseek-official', 'moonshotai', undefined]) {
       expect(await ready(ctx, operation, route)).toBe(false)
@@ -320,7 +320,7 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
   it('uses its own endpoint settings while the mounted route settings do not resolve', async () => {
     const { ctx, sent } = await mount({
       config: { [`${operation}BaseURL`]: OWN },
-      routes: [officialRoute({ thinking: 'disabled', reasoningEffort: 'high' })], environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      routes: [officialRoute({ thinking: 'disabled', reasoningEffort: 'high' })], environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-official')).toBe(true)
     await operate(ctx, operation, 'deepseek-official')
@@ -333,7 +333,7 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
   })
 
   it('follows a route change at the next operation', async () => {
-    const { ctx, sent } = await mount({ environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ environment: { GLKJ_API_KEY: 'chat-key' } })
     await operate(ctx, operation)
     provideRoutes(ctx, [officialRoute({ baseURL: 'https://next.deepseek.test/anthropic' })])
     await operate(ctx, operation)
@@ -342,7 +342,7 @@ describe.each(OPERATIONS)('%s in any other conversation', (operation) => {
 
   it('names the model provider base URL and the own fields in endpoint guidance', async () => {
     const subject = operation === 'search' ? 'Search' : 'Fetch'
-    const { ctx } = await mount({ routes: [officialRoute()], environment: { DEEPSEEK_API_KEY: 'chat-key' }, status: 404 })
+    const { ctx } = await mount({ routes: [officialRoute()], environment: { GLKJ_API_KEY: 'chat-key' }, status: 404 })
     await expect(operate(ctx, operation)).rejects.toMatchObject({
       code: 'WEB_PROVIDER_ERROR',
       message: 'DeepSeek API error (HTTP 404)\n\n'
@@ -366,7 +366,7 @@ describe.each(OPERATIONS)('%s with its own endpoint settings', (operation) => {
   ])('uses %s on every conversation route and never the account token', async (_label, config, expected) => {
     const asked: string[] = []
     const { ctx, sent } = await mount({
-      config, routes: bothRoutes, account: signedIn(asked), environment: { DEEPSEEK_API_KEY: 'chat-key', OWN_KEY: 'own-key' },
+      config, routes: bothRoutes, account: signedIn(asked), environment: { GLKJ_API_KEY: 'chat-key', OWN_KEY: 'own-key' },
     })
     for (const route of ['deepseek-account', 'deepseek-official', 'moonshotai']) {
       expect(await ready(ctx, operation, route)).toBe(true)
@@ -378,7 +378,7 @@ describe.each(OPERATIONS)('%s with its own endpoint settings', (operation) => {
 
   it('is not ready without its key, despite a sign-in and the route key', async () => {
     const { ctx, sent } = await mount({
-      config: { [apiKeyEnv]: 'OWN_KEY' }, routes: bothRoutes, account: signedIn(), environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      config: { [apiKeyEnv]: 'OWN_KEY' }, routes: bothRoutes, account: signedIn(), environment: { GLKJ_API_KEY: 'chat-key' },
     })
     expect(await ready(ctx, operation, 'deepseek-account')).toBe(false)
     await expect(operate(ctx, operation, 'deepseek-account')).rejects.toMatchObject({
@@ -392,14 +392,14 @@ describe.each(OPERATIONS)('%s with its own endpoint settings', (operation) => {
 
   it('treats empty values as unset and follows the conversation', async () => {
     const { ctx, sent } = await mount({
-      config: { [baseURL]: '', [apiKeyEnv]: '' }, routes: bothRoutes, account: signedIn(), environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      config: { [baseURL]: '', [apiKeyEnv]: '' }, routes: bothRoutes, account: signedIn(), environment: { GLKJ_API_KEY: 'chat-key' },
     })
     await operate(ctx, operation, 'deepseek-account')
     expect(sent()).toEqual([{ endpoint: `${ACCOUNT}/${operation}`, authorization: null, token: 'account-token' }])
   })
 
   it('reports an unparseable base URL as an unavailable provider', async () => {
-    const { ctx, sent } = await mount({ config: { [baseURL]: 'not a url' }, environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ config: { [baseURL]: 'not a url' }, environment: { GLKJ_API_KEY: 'chat-key' } })
     await expect(operate(ctx, operation)).rejects.toMatchObject({ code: 'WEB_PROVIDER_CONFIGURED_UNAVAILABLE' })
     expect(sent()).toEqual([])
   })
@@ -408,7 +408,7 @@ describe.each(OPERATIONS)('%s with its own endpoint settings', (operation) => {
 describe('independent capabilities', () => {
   it('resolves Search from its own settings while Fetch follows the conversation', async () => {
     const { ctx, sent } = await mount({
-      config: { searchBaseURL: OWN }, routes: bothRoutes, account: signedIn(), environment: { DEEPSEEK_API_KEY: 'chat-key' },
+      config: { searchBaseURL: OWN }, routes: bothRoutes, account: signedIn(), environment: { GLKJ_API_KEY: 'chat-key' },
     })
     await operate(ctx, 'search', 'deepseek-account')
     await operate(ctx, 'fetch', 'deepseek-account')
@@ -419,14 +419,14 @@ describe('independent capabilities', () => {
   })
 
   it('reports one capability not ready while the other is ready', async () => {
-    const { ctx } = await mount({ config: { fetchApiKeyEnv: 'UNSET_KEY' }, routes: [officialRoute()], environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx } = await mount({ config: { fetchApiKeyEnv: 'UNSET_KEY' }, routes: [officialRoute()], environment: { GLKJ_API_KEY: 'chat-key' } })
     expect([await ready(ctx, 'search', undefined), await ready(ctx, 'fetch', undefined)]).toEqual([true, false])
   })
 })
 
 describe('route resolver failures', () => {
   it('reports a thrown non-Error value as its string', async () => {
-    const { ctx, sent } = await mount({ routes: [officialRoute()], environment: { DEEPSEEK_API_KEY: 'chat-key' } })
+    const { ctx, sent } = await mount({ routes: [officialRoute()], environment: { GLKJ_API_KEY: 'chat-key' } })
     resolverThrow.value = 'route resolver unavailable'
     const failure = operate(ctx, 'search', 'deepseek-official')
     await expect(failure).rejects.toMatchObject({ code: 'WEB_PROVIDER_MISCONFIGURED' })
@@ -447,7 +447,7 @@ describe('stored settings', () => {
   })
 
   it.each(OPERATIONS)('ignores removed fields when a %s runs', async (operation) => {
-    const { ctx, sent } = await mount({ config: removed, environment: { DEEPSEEK_API_KEY: 'chat-key', LEGACY_KEY: 'legacy-env-key' } })
+    const { ctx, sent } = await mount({ config: removed, environment: { GLKJ_API_KEY: 'chat-key', LEGACY_KEY: 'legacy-env-key' } })
     await operate(ctx, operation)
     expect(sent()).toEqual([{ endpoint: `${OFFICIAL}/${operation}`, authorization: 'Bearer chat-key', token: null }])
   })

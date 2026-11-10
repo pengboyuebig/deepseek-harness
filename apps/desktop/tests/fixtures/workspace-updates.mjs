@@ -13,7 +13,7 @@ import { fixture } from './workspace-update-adapters.mjs'
 import { DesktopUpdateHttpExecutor } from '../../lib/types/updates/electron-updater/http-executor.js'
 import { desktopUpdateReadyConfirmation, resolveDesktopLocale } from '../../lib/types/locale.js'
 
-const root = process.env.DSH_WORKSPACE_UPDATE_ROOT
+const root = process.env.GLH_WORKSPACE_UPDATE_ROOT
 assert.ok(root)
 const interactive = process.argv.includes('--interactive')
 const application = join(root, 'app')
@@ -29,8 +29,8 @@ const hooks = registerHooks({ resolve(specifier, context, next) {
 } })
 const server = await createUpdateServer()
 server.select('healthy', '0.1.6-nightly.1')
-process.env.DSH_DESKTOP_APP_ID = 'com.deepseek.qualification'
-process.env.DSH_DESKTOP_MANDATORY_UPDATE_CONFIG = JSON.stringify({ origin: new URL(server.url).origin,
+process.env.GLH_DESKTOP_APP_ID = 'com.deepseek.qualification'
+process.env.GLH_DESKTOP_MANDATORY_UPDATE_CONFIG = JSON.stringify({ origin: new URL(server.url).origin,
   allowedPageOrigins: ['https://downloads.example.com'], intervalMs: 600_000, timeoutMs: 5000, maxBackoffMs: 600_000, jitter: 0 })
 const config = join(root, 'app-update.yml')
 await writeFile(config, 'updaterCacheDirName: private-workspace-cache\n')
@@ -122,7 +122,7 @@ async function windowAt(url) {
 }
 async function control(action) {
   const { url } = JSON.parse(await readFile(join(root, 'host-control.json'), 'utf8'))
-  const response = await fetch(`${url}/${action}`, { method: 'POST', headers: { 'x-qualification-token': process.env.DSH_WORKSPACE_UPDATE_TOKEN } })
+  const response = await fetch(`${url}/${action}`, { method: 'POST', headers: { 'x-qualification-token': process.env.GLH_WORKSPACE_UPDATE_TOKEN } })
   assert.equal(response.status, 200, response.status === 200 ? undefined : await response.text())
   return response.json()
 }

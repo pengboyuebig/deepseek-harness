@@ -11,7 +11,7 @@ Archived: 2026-09-30
 
 ## 决策
 
-验证优先保留各工作流/引用组内最新的运行。[CI](../../../../.github/workflows/ci.yml)、[CI master](../../../../.github/workflows/ci-master.yml)、[真实 API e2e](../../../../.github/workflows/e2e.yml)，以及无凭据的 [dsh](../../../../.github/workflows/release.yml) 和 [vendor](../../../../.github/workflows/release-vendor.yml) 打包验证，均在 `${{ github.workflow }}-${{ github.ref }}` 组中使用 `cancel-in-progress: true`。不同 PR 引用和不同工作流不会相互取消。事件类型不参与分组：CI master 中的 master 推送与手动基准测试可以相互取代，e2e 的推送、定时运行和手动运行也可以在同一引用上相互取代。
+验证优先保留各工作流/引用组内最新的运行。[CI](../../../../.github/workflows/ci.yml)、[CI master](../../../../.github/workflows/ci-master.yml)、[真实 API e2e](../../../../.github/workflows/e2e.yml)，以及无凭据的 [glh](../../../../.github/workflows/release.yml) 和 [vendor](../../../../.github/workflows/release-vendor.yml) 打包验证，均在 `${{ github.workflow }}-${{ github.ref }}` 组中使用 `cancel-in-progress: true`。不同 PR 引用和不同工作流不会相互取消。事件类型不参与分组：CI master 中的 master 推送与手动基准测试可以相互取代，e2e 的推送、定时运行和手动运行也可以在同一引用上相互取代。
 
 [可复用 Python 运行时构建器](../../../../.github/workflows/build-exe-for-python-sdk.yml)使用 `${{ !inputs.release }}`。其 `build-single-exe-${{ github.workflow }}-${{ github.ref }}` 组与调用方的组保持区分，调用方工作流名称将普通 CI 与发布所属的构建隔离。发布所属的构建获得豁免，因为它们属于一次有意发起的发布事务。发布、部署和元数据工作流保留各自的策略；本决策不会不加区分地对所有工作流应用取消。
 

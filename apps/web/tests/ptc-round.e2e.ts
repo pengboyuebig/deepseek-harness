@@ -1,6 +1,6 @@
 // PTC mode browser round trip with nested sub-calls and details selection.
-// Record: DSH_SNAPSHOT=record writes the current Session generation, then a keyless
-// DSH_SNAPSHOT=refresh regenerates ui.expected.md.
+// Record: GLH_SNAPSHOT=record writes the current Session generation, then a keyless
+// GLH_SNAPSHOT=refresh regenerates ui.expected.md.
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'

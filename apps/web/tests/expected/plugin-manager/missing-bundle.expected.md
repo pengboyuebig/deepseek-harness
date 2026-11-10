@@ -6,7 +6,7 @@
 - text: 异常 未安装
 - paragraph:
   - code: "@fixture/missing-bundle"
-- status: "原因: dsh: cannot resolve profile bundle \"@fixture/missing-bundle\" from the dsh installation or {{home}}/profiles/scaffold; run 'dsh plugin --profile scaffold install' if its dependency is not installed"
+- status: "原因: glh: cannot resolve profile bundle \"@fixture/missing-bundle\" from the glh installation or {{home}}/profiles/scaffold; run 'glh plugin --profile scaffold install' if its dependency is not installed"
 - heading "来源信息" [level=4]
 - term: 代码来源
 - definition: 未安装

@@ -54,7 +54,7 @@ class ScriptedAdapter extends LlmAdapter {
 }
 
 it('never falls back to an API key while signed out', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'fixture-api-key')
+  vi.stubEnv('GLKJ_API_KEY', 'fixture-api-key')
   const ctx = new Context()
   contexts.push(ctx)
   await ctx.plugin(LlmRuntime)
@@ -181,7 +181,7 @@ it('does not infer a provider while the first request is still being prepared', 
 
 
 it('never borrows an account token for a missing API key', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', '')
+  vi.stubEnv('GLKJ_API_KEY', '')
   const ctx = new Context()
   contexts.push(ctx)
   const resolveToken = vi.fn(async (_url: string) => 'fixture-account-token')
@@ -248,18 +248,18 @@ it('cancels an account child without stopping its API-key parent', async () => {
 })
 
 it('lists each DeepSeek route only when its own credential is present', async () => {
-  vi.stubEnv('DEEPSEEK_BASE_URL', 'https://api.deepseek.com')
-  vi.stubEnv('DEEPSEEK_API_KEY', '')
+  vi.stubEnv('GLKJ_BASE_URL', 'https://api.glkj.example.com')
+  vi.stubEnv('GLKJ_API_KEY', '')
   vi.stubGlobal('fetch', vi.fn((input: string | URL | Request) => Promise.resolve(listingRequest(input) ?? new Response(null, { status: 500 }))))
   const ctx = await harness()
   let token: string | undefined
-  ctx.provide('deepseekAccount', { resolveToken: async (url: string) => new URL(url).origin === 'https://api.deepseek.com' ? token : undefined } as DeepSeekAccount)
+  ctx.provide('deepseekAccount', { resolveToken: async (url: string) => new URL(url).origin === 'https://api.glkj.example.com' ? token : undefined } as DeepSeekAccount)
   expect(await ctx.llm.listModels('deepseek-account')).toEqual([])
   expect(await ctx.llm.listModels('deepseek-official')).toEqual([])
   token = 'fixture-account-token'
   expect(await ctx.llm.listModels('deepseek-account')).not.toHaveLength(0)
   expect(await ctx.llm.listModels('deepseek-official')).toEqual([])
-  vi.stubEnv('DEEPSEEK_API_KEY', 'fixture-key')
+  vi.stubEnv('GLKJ_API_KEY', 'fixture-key')
   expect(await ctx.llm.listModels('deepseek-official')).not.toHaveLength(0)
   token = undefined
   expect(await ctx.llm.listModels('deepseek-account')).toEqual([])

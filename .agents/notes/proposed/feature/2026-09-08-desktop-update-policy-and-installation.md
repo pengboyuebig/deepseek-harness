@@ -6,7 +6,7 @@ English | [中文](2026-09-08-desktop-update-policy-and-installation.zh.md)
 
 ## Problem
 
-Desktop usually runs a local dsh server, so remote business errors cannot reliably deliver mandatory-update policy. Users need automatic discovery, user-initiated downloads, visible preparation state, and separate restart approval that accounts for running tasks.
+Desktop usually runs a local glh server, so remote business errors cannot reliably deliver mandatory-update policy. Users need automatic discovery, user-initiated downloads, visible preparation state, and separate restart approval that accounts for running tasks.
 
 ## Proposal
 

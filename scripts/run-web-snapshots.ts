@@ -8,10 +8,10 @@ const serialFiles = [
   // Recorded SVG streaming retains live heartbeat assertions; reserve its browser CPU budget.
   'apps/web/tests/present-svg.e2e.ts',
 ]
-const workerRaw = process.env.DSH_WEB_SNAPSHOT_WORKERS
+const workerRaw = process.env.GLH_WEB_SNAPSHOT_WORKERS
 const workers = Number.parseInt(workerRaw ?? '', 10)
 if (!Number.isSafeInteger(workers) || workers < 1 || String(workers) !== workerRaw) {
-  throw new Error(`DSH_WEB_SNAPSHOT_WORKERS must be a positive integer, got ${JSON.stringify(workerRaw)}.`)
+  throw new Error(`GLH_WEB_SNAPSHOT_WORKERS must be a positive integer, got ${JSON.stringify(workerRaw)}.`)
 }
 const invocation = pnpmInvocation(['exec', 'vitest', 'run', '--config', 'vitest.web.config.ts'])
 let serialStatus = 0

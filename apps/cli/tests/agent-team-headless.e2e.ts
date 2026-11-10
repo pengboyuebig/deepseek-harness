@@ -20,7 +20,7 @@ describe('dsh run with Agent Teams enabled', () => {
   it('runs two teammates, sibling messages, dependent tasks, waiting, and final aggregation', async () => {
     const cwd = await mkdtemp(join(tmpdir(), 'dsh-agent-team-headless-'))
     try {
-      const home = join(cwd, '.dsh')
+      const home = join(cwd, '.glh')
       const sessions = join(home, 'sessions')
       const profileDir = join(home, 'profiles', 'headless')
       await mkdir(profileDir, { recursive: true })
@@ -54,10 +54,10 @@ describe('dsh run with Agent Teams enabled', () => {
         configArgs: ['--profile', 'headless', '请先运行 workflow 检查，再使用 Agent Teams 把调研和实现拆给两个 teammate，等待完成后汇总。'],
         tsconfigPath,
         env: {
-          DSH_HOME: home,
-          DSH_AGENTS_HOME: join(cwd, '.agents'),
-          DSH_TELEMETRY_DISABLED: '1',
-          DEEPSEEK_API_KEY: '',
+          GLH_HOME: home,
+          GLH_AGENTS_HOME: join(cwd, '.agents'),
+          GLH_TELEMETRY_DISABLED: '1',
+          GLKJ_API_KEY: '',
           NODE_OPTIONS: [
             process.env.NODE_OPTIONS,
             '--disable-warning=ExperimentalWarning',

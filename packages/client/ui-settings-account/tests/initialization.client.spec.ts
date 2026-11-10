@@ -8,7 +8,7 @@ afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs() })
 
 it.each(['accepted', 'refused', 'disconnected', 'pending'] as const)('initializes account models and keeps reading account state: %s', async (outcome) => {
   vi.stubGlobal('dshDesktop', {})
-  vi.stubEnv('DSH_CLIENT_VERSION', '0.0.0-test')
+  vi.stubEnv('GLH_CLIENT_VERSION', '0.0.0-test')
   const log = vi.spyOn(console, 'error').mockImplementation(() => {})
   const observed: { status: string | undefined; failed: boolean | undefined }[] = []
   const abort = new AbortController()

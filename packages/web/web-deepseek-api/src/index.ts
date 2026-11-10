@@ -4,7 +4,7 @@
  * auxiliary model request. `web.searchProvider` and `web.fetchProvider` select them. Each capability follows the
  * DeepSeek credential of the conversation: a Session whose latest model request used the `deepseek-account` route sends
  * the account token to that route's origin, and every other operation sends the API key of the DeepSeek API-key route
- * to that route's origin, or `DEEPSEEK_API_KEY` to the official base without that route. An operation that needs a
+ * to that route's origin, or `GLKJ_API_KEY` to the official base without that route. An operation that needs a
  * mounted route whose settings do not resolve fails instead of changing its endpoint or credential. A capability with
  * its own `*BaseURL` or `*ApiKeyEnv` uses only that endpoint and key instead
  * ([rationale](../../../../.agents/notes/implemented/architecture/2026-10-29-web-provider-selection.md#credential-resolution)).
@@ -31,14 +31,14 @@ import type { Session } from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-web'
 import { DeepSeekFetchApiProvider } from './fetch.ts'
 import {
-  DEEPSEEK_DEFAULT_COUNT, DEEPSEEK_SEARCH_REQUESTS_PER_SECOND, DEEPSEEK_WEB_API_BASE_URL, DeepSeekSearchApiProvider,
+  GLKJ_DEFAULT_COUNT, GLKJ_SEARCH_REQUESTS_PER_SECOND, GLKJ_WEB_API_BASE_URL, DeepSeekSearchApiProvider,
 } from './search.ts'
 import type { DeepSeekWebAuth, DeepSeekWebGuidance } from './transport.ts'
 
-export { DEEPSEEK_FETCH_API_PROVIDER_ID, DeepSeekFetchApiProvider } from './fetch.ts'
+export { GLKJ_FETCH_API_PROVIDER_ID, DeepSeekFetchApiProvider } from './fetch.ts'
 export type { DeepSeekFetchApiOptions } from './fetch.ts'
 export {
-  DEEPSEEK_DEFAULT_COUNT, DEEPSEEK_SEARCH_API_PROVIDER_ID, DEEPSEEK_SEARCH_REQUESTS_PER_SECOND, DEEPSEEK_WEB_API_BASE_URL,
+  GLKJ_DEFAULT_COUNT, GLKJ_SEARCH_API_PROVIDER_ID, GLKJ_SEARCH_REQUESTS_PER_SECOND, GLKJ_WEB_API_BASE_URL,
   DeepSeekSearchApiProvider, mapSearchResponse,
 } from './search.ts'
 export type { DeepSeekSearchApiOptions } from './search.ts'
@@ -71,20 +71,20 @@ export interface Config {
    * official base applies.
    */
   searchBaseURL: Volatile<string | undefined>
-  /** Own Search API credential reference. With only {@link searchBaseURL} set, `DEEPSEEK_API_KEY` applies. */
+  /** Own Search API credential reference. With only {@link searchBaseURL} set, `GLKJ_API_KEY` applies. */
   searchApiKeyEnv: Volatile<string | undefined>
   /**
    * Own Fetch API base including its path prefix; `/fetch` is appended. With only {@link fetchApiKeyEnv} set, the
    * official base applies.
    */
   fetchBaseURL: Volatile<string | undefined>
-  /** Own Fetch API credential reference. With only {@link fetchBaseURL} set, `DEEPSEEK_API_KEY` applies. */
+  /** Own Fetch API credential reference. With only {@link fetchBaseURL} set, `GLKJ_API_KEY` applies. */
   fetchApiKeyEnv: Volatile<string | undefined>
 }
 
 export const Config = z.object({
-  count: z.number().step(1).min(1).max(50).default(DEEPSEEK_DEFAULT_COUNT).volatile(),
-  searchRequestsPerSecond: z.number().step(1).min(1).default(DEEPSEEK_SEARCH_REQUESTS_PER_SECOND).volatile(),
+  count: z.number().step(1).min(1).max(50).default(GLKJ_DEFAULT_COUNT).volatile(),
+  searchRequestsPerSecond: z.number().step(1).min(1).default(GLKJ_SEARCH_REQUESTS_PER_SECOND).volatile(),
   sendOriginalQuestion: z.boolean().default(true).volatile(),
   searchBaseURL: z.string().volatile(),
   searchApiKeyEnv: z.string().role('credential-ref').volatile(),
@@ -122,7 +122,7 @@ interface InvalidRoute {
 const TOOLS_PATH = '/v1/tools'
 
 /** Credential reference of the official DeepSeek API key. */
-const DEEPSEEK_API_KEY = credentialRef('DEEPSEEK_API_KEY')
+const GLKJ_API_KEY = credentialRef('GLKJ_API_KEY')
 
 /** Provider id of the DeepSeek account route. */
 const ACCOUNT_PROVIDER = 'deepseek-account'
@@ -210,8 +210,8 @@ function resolvePlan(
   const ownBaseURL = nonEmpty(own.baseURL), ownRef = nonEmpty(own.ref)
   if (ownBaseURL !== undefined || ownRef !== undefined) {
     return {
-      capability, kind: 'custom', baseURL: ownBaseURL ?? DEEPSEEK_WEB_API_BASE_URL,
-      key: ownRef === undefined ? DEEPSEEK_API_KEY : credentialRef(ownRef),
+      capability, kind: 'custom', baseURL: ownBaseURL ?? GLKJ_WEB_API_BASE_URL,
+      key: ownRef === undefined ? GLKJ_API_KEY : credentialRef(ownRef),
     }
   }
   const official = officialRoute(ctx)
@@ -224,8 +224,8 @@ function resolvePlan(
         : undefined
   return {
     capability, kind: 'session',
-    baseURL: officialValid === undefined ? DEEPSEEK_WEB_API_BASE_URL : toolsBase(officialValid.baseURL),
-    key: officialValid?.apiKeyEnv ?? DEEPSEEK_API_KEY,
+    baseURL: officialValid === undefined ? GLKJ_WEB_API_BASE_URL : toolsBase(officialValid.baseURL),
+    key: officialValid?.apiKeyEnv ?? GLKJ_API_KEY,
     ...account === undefined || 'invalid' in account ? {} : { account: { baseURL: toolsBase(account.baseURL) } },
     ...invalid === undefined ? {} : { invalid },
   }

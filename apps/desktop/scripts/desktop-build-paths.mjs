@@ -18,8 +18,8 @@ export function resolveDesktopBuildTarget(
   hostPlatform = process.platform,
   hostArch = process.arch,
 ) {
-  const platform = env.DSH_DESKTOP_TARGET_PLATFORM ?? env.npm_config_platform ?? hostPlatform
-  const arch = env.DSH_DESKTOP_TARGET_ARCH ?? env.npm_config_arch
+  const platform = env.GLH_DESKTOP_TARGET_PLATFORM ?? env.npm_config_platform ?? hostPlatform
+  const arch = env.GLH_DESKTOP_TARGET_ARCH ?? env.npm_config_arch
     ?? (platform === 'win32' || platform === 'win' ? 'x64' : hostArch)
   const os = platform === 'darwin' ? 'mac' : platform === 'win32' || platform === 'win' ? 'win' : platform
   const target = `${os}-${arch}`
@@ -43,9 +43,9 @@ function assertSupportedTarget(target) {
  */
 export function desktopTargetBuildPaths(target, environment = process.env) {
   assertSupportedTarget(target)
-  const cacheRoot = environment.DSH_DESKTOP_PACKAGE_CACHE_DIR ?? BUILD_ROOT
+  const cacheRoot = environment.GLH_DESKTOP_PACKAGE_CACHE_DIR ?? BUILD_ROOT
   if (!cacheRoot.trim() || !isAbsolute(cacheRoot) || cacheRoot.includes('\0')) {
-    throw new Error('desktop package: DSH_DESKTOP_PACKAGE_CACHE_DIR must be a nonempty absolute directory')
+    throw new Error('desktop package: GLH_DESKTOP_PACKAGE_CACHE_DIR must be a nonempty absolute directory')
   }
   const root = join(BUILD_ROOT, 'targets', target)
   const packed = join(root, 'packed')

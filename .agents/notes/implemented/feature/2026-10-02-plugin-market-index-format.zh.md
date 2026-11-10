@@ -58,13 +58,13 @@ DSH 只能从用户已知的 spec 安装第三方组合包（bundle）：npm 包
           "version": "0.2.0-rc.2",
           "publishTimestamp": 1790476800,
           "source": { "type": "npm" },
-          "engines": { "dsh": ">=0.2.0 <0.3.0" }
+          "engines": { "glh": ">=0.2.0 <0.3.0" }
         },
         {
           "version": "0.2.0-rc.1",
           "publishTimestamp": 1789872000,
           "source": { "type": "npm" },
-          "engines": { "dsh": "0.2.0 - 0.2.4 || >=0.3.0 <0.4.0" }
+          "engines": { "glh": "0.2.0 - 0.2.4 || >=0.3.0 <0.4.0" }
         }
       ]
     },
@@ -83,7 +83,7 @@ DSH 只能从用户已知的 spec 安装第三方组合包（bundle）：npm 包
             "commit": "3f9c2e1d8a4b6c0e7f1a2b3c4d5e6f708192a3b4",
             "path": "packages/foo"
           },
-          "engines": { "dsh": "*" }
+          "engines": { "glh": "*" }
         }
       ]
     }
@@ -136,7 +136,7 @@ DSH 只能从用户已知的 spec 安装第三方组合包（bundle）：npm 包
 | `version` | 是 | npm 的 `node-semver` 解析的精确版本；保留完整字符串，包括 Git 版本编译信息。精确字符串在插件内唯一。 |
 | `publishTimestamp` | 是 | 以秒为单位的整数 Unix 时间戳，取值范围为 `[0, 10^11)`。 |
 | `source` | 是 | `version` 的安装来源；见下文。 |
-| `engines` | 是 | 包含 `dsh` 的对象。 |
+| `engines` | 是 | 包含 `glh` 的对象。 |
 | `engines.dsh` | 是 | 源 manifest 声明的非空白、有效 npm SemVer 范围；原样复制。`*` 显式声明支持任意 DSH 版本。 |
 
 相对的 `icon` 引用相对于索引 URL 解析，与 HTML 图片引用相对于所在页面解析的方式相同。对于位于 `https://market.example/dsh/index.json` 的索引，`"icon": "icons/foo.svg"` 指向 `https://market.example/dsh/icons/foo.svg`。因此，生成器可以把索引和图标文件作为一个目录发布到任意静态主机，无需知道最终 URL。指向其他源的绝对图标 URL 必须使用 `https:`；同源规则允许位于 loopback 或内网主机上的 `http:` 索引提供自己的图标。读取器在读取索引时解析该引用，因此客户端收到的是绝对 URL。

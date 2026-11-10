@@ -104,7 +104,7 @@ export interface WorkerHostOptions {
   readonly cmdlineArgs?: readonly string[]
   /** Port named on the default command line; defaults to {@link DEFAULT_PORT}. */
   readonly port?: number
-  /** Environment for the process shim; `DSH_HOME` defaults to `<root>/home`. */
+  /** Environment for the process shim; `GLH_HOME` defaults to `<root>/home`. */
   readonly env?: Readonly<Record<string, string>>
   /**
    * Image manifest path; defaults to `<root>/config/vfs-manifest.json`. Its
@@ -186,7 +186,7 @@ export function createWorkerHost(options: WorkerHostOptions): WorkerHost {
   const start = async (): Promise<void> => {
     try {
       const home = join(root, IMAGE_HOME_DIRECTORY)
-      const processShim = installProcessGlobal({ cwd: root, env: { DSH_HOME: home, HOME: home, ...options.env } })
+      const processShim = installProcessGlobal({ cwd: root, env: { GLH_HOME: home, HOME: home, ...options.env } })
 
       const [bytes, overlays] = await Promise.all([
         readImage(options.image),
@@ -223,8 +223,8 @@ export function createWorkerHost(options: WorkerHostOptions): WorkerHost {
 
       const require = loader.requireFrom(root)
       const appBoot = require('@deepseek-ai/dsh-app-boot') as AppBootFace
-      const { DSH_LAUNCH_ENVIRONMENT_KEY } = require('@deepseek-ai/dsh-launch-environment') as {
-        DSH_LAUNCH_ENVIRONMENT_KEY: string
+      const { GLH_LAUNCH_ENVIRONMENT_KEY } = require('@deepseek-ai/dsh-launch-environment') as {
+        GLH_LAUNCH_ENVIRONMENT_KEY: string
       }
       const cmdline = require('@deepseek-ai/dsh-cmdline') as {
         provideCmdline(ctx: unknown, host: {
@@ -240,7 +240,7 @@ export function createWorkerHost(options: WorkerHostOptions): WorkerHost {
       const profileConfig = join(profile.dir, 'cordis.yml')
       const ctx = await appBoot.boot(BIN_NAME, profileConfig, patches, async (hostCtx) => {
         hostCtx.provide('profileContext', profile)
-        hostCtx.provide(DSH_LAUNCH_ENVIRONMENT_KEY, environment)
+        hostCtx.provide(GLH_LAUNCH_ENVIRONMENT_KEY, environment)
         installLogSink(hostCtx, require)
         // Package lookup without a runtime resolution: the Worker loader owns
         // module resolution, so only manifest lookup over the image applies.
@@ -443,7 +443,7 @@ function prepareProfile(
   const profile: ProfileContext = {
     name: loaded.name, dir: loaded.dir, patchPath: loaded.patchPath, installAnchor, cwd: root, home,
     startedBundles: loaded.layers.map(layer => layer.packageName),
-    overlays: [], telemetryDisabledEnv: env.DSH_TELEMETRY_DISABLED,
+    overlays: [], telemetryDisabledEnv: env.GLH_TELEMETRY_DISABLED,
   }
   return { patches: appBoot.readProfilePatches(BIN_NAME, profile, loaded), profile, environment }
 }

@@ -86,11 +86,11 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
   const adapter = new ReviewAdapter()
 
   beforeAll(async () => {
-    previousPort = process.env.DSH_GITHUB_WEBHOOK_PORT
-    previousSecret = process.env.DSH_GITHUB_WEBHOOK_SECRET
+    previousPort = process.env.GLH_GITHUB_WEBHOOK_PORT
+    previousSecret = process.env.GLH_GITHUB_WEBHOOK_SECRET
     const port = await freePort()
-    process.env.DSH_GITHUB_WEBHOOK_PORT = String(port)
-    process.env.DSH_GITHUB_WEBHOOK_SECRET = SECRET
+    process.env.GLH_GITHUB_WEBHOOK_PORT = String(port)
+    process.env.GLH_GITHUB_WEBHOOK_SECRET = SECRET
     webhookOrigin = `http://127.0.0.1:${String(port)}`
     scaffold = await launchWebScaffold({
       extraOverlayPath: OVERLAY,
@@ -116,10 +116,10 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
   afterAll(async () => {
     await browser?.close()
     await scaffold?.close()
-    if (previousPort === undefined) Reflect.deleteProperty(process.env, 'DSH_GITHUB_WEBHOOK_PORT')
-    else process.env.DSH_GITHUB_WEBHOOK_PORT = previousPort
-    if (previousSecret === undefined) Reflect.deleteProperty(process.env, 'DSH_GITHUB_WEBHOOK_SECRET')
-    else process.env.DSH_GITHUB_WEBHOOK_SECRET = previousSecret
+    if (previousPort === undefined) Reflect.deleteProperty(process.env, 'GLH_GITHUB_WEBHOOK_PORT')
+    else process.env.GLH_GITHUB_WEBHOOK_PORT = previousPort
+    if (previousSecret === undefined) Reflect.deleteProperty(process.env, 'GLH_GITHUB_WEBHOOK_SECRET')
+    else process.env.GLH_GITHUB_WEBHOOK_SECRET = previousSecret
   })
 
   it('isolates ingress and creates a browsable Workspace Session', async () => {
@@ -139,7 +139,7 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
       repository: { full_name: 'deepseek-ai/deepseek-harness' },
       pull_request: {
         title: 'Fix session replay',
-        html_url: 'https://github.com/deepseek-ai/deepseek-harness/pull/314',
+        html_url: 'https://git.glkj.example.com/glkj/harness/pull/314',
         draft: false,
         user: { login: 'octocat' },
         base: { ref: 'master', sha: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },

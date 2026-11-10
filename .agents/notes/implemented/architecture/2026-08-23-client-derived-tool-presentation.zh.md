@@ -561,7 +561,7 @@ Host registry 允许不同 scope 为同一 tool name 提供不同定义；Sessio
 
 ## 验证命令
 
-修改本决定时使用 `dsh-pre-push-checks` 按最终 diff 选择命令；所需证据包括：
+修改本决定时使用 `glh-pre-push-checks` 按最终 diff 选择命令；所需证据包括：
 
 - Session Controller history/transport 聚焦测试；
 - ui-chat 与 ui-trajectory Tool Definition 测试；
@@ -571,7 +571,7 @@ Host registry 允许不同 scope 为同一 tool name 提供不同定义；Sessio
 - 受影响 Host/Client TypeScript face；
 - lint 与 duplication；
 - 受影响源文件 per-file 100% coverage；
-- `DSH_SNAPSHOT=replay pnpm run test:web`，不得 refresh 现有展示 golden；
+- `GLH_SNAPSHOT=replay pnpm run test:web`，不得 refresh 现有展示 golden；
 - 手写 Remote 类型与 TypeScript 检查；
 - `pnpm run doc-sync`；
 - `git diff --check`。

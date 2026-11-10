@@ -50,7 +50,7 @@ const autoIntegrationPath = fileURLToPath(new URL('../../../../../../packages/ex
 const headlessSessionExpected = join(goldensDir, 'headless-profile', 'session.expected.jsonl')
 const headlessReasoningExpected = join(goldensDir, 'headless-profile', 'reasoning.stderr.expected.txt')
 const headlessFailureExpected = join(goldensDir, 'headless-profile', 'stderr.expected.txt')
-const refreshing = process.env.DSH_SNAPSHOT === 'refresh'
+const refreshing = process.env.GLH_SNAPSHOT === 'refresh'
 /** The shipped base bundle's title output cap, which marks a title request's `max_tokens`. */
 const TITLE_MAX_TOKENS = 4096
 
@@ -309,7 +309,7 @@ describe('headless stream-json snapshots', () => {
       binScript: dshBinScript,
       configPath: autoShutdownOverlayPath,
       tsconfigPath,
-      env: { DSH_TELEMETRY_DISABLED: '1' },
+      env: { GLH_TELEMETRY_DISABLED: '1' },
     }
     const args = ['headless', '--patch', autoShutdownOverlayPath]
     let sessionId = ''
@@ -324,7 +324,7 @@ describe('headless stream-json snapshots', () => {
             'Record this wake without calling tools.',
           ],
           inspect: async () => {
-            const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+            const logs = await persistedLogs(cwd, join(cwd, '.glh', 'sessions'))
             expect(logs).toHaveLength(1)
             const log = logs[0]!
             expect(typeof log.header.id).toBe('string')
@@ -341,7 +341,7 @@ describe('headless stream-json snapshots', () => {
           type: 'final', sessionId, reason: { kind: 'completed' }, text: 'AUTO_SHUTDOWN_OK',
         })
       }
-      const beforeRejectedRestore = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!.content
+      const beforeRejectedRestore = (await persistedLogs(cwd, join(cwd, '.glh', 'sessions')))[0]!.content
       const unavailable = await runLoaderSmoke({
         ...options,
         label: 'Auto restore without its integration',
@@ -350,7 +350,7 @@ describe('headless stream-json snapshots', () => {
       })
       expect(unavailable.stderr).toContain('cannot restore preset "auto" without its active integration')
       expect(parseJsonl(unavailable.stdout).some(event => event.type === 'final')).toBe(false)
-      const afterRejectedRestore = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!.content
+      const afterRejectedRestore = (await persistedLogs(cwd, join(cwd, '.glh', 'sessions')))[0]!.content
       expect(afterRejectedRestore.startsWith(beforeRejectedRestore)).toBe(true)
       // Restore records its seed boundary before live publication validates the saved permission.
       const appended = parseJsonl(afterRejectedRestore.slice(beforeRejectedRestore.length))
@@ -370,7 +370,7 @@ describe('headless stream-json snapshots', () => {
           '--session-id', sessionId, '--permission-mode', 'read-only', 'Continue.',
         ],
         inspect: async () => {
-          const log = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!
+          const log = (await persistedLogs(cwd, join(cwd, '.glh', 'sessions')))[0]!
           const restored = parseJsonl(log.content)
           expect(restored.filter(event => event.type === 'permission/preset').at(-1)?.data)
             .toEqual({ preset: 'read-only' })
@@ -394,12 +394,12 @@ describe('headless stream-json snapshots', () => {
       binArgs: ['headless', '--patch', headlessOverlayPath, task],
       tsconfigPath,
       env: {
-        DSH_PERMISSION_MODE: 'danger-full-access',
-        DSH_TELEMETRY_DISABLED: '1',
+        GLH_PERMISSION_MODE: 'danger-full-access',
+        GLH_TELEMETRY_DISABLED: '1',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.glh', 'sessions'))
         expect(logs).toHaveLength(1)
         const actual = logs[0]
         if (actual === undefined) throw new Error('the headless profile did not persist its session')
@@ -434,12 +434,12 @@ describe('headless stream-json snapshots', () => {
       ],
       tsconfigPath,
       env: {
-        DSH_PERMISSION_MODE: 'danger-full-access',
-        DSH_TELEMETRY_DISABLED: '1',
+        GLH_PERMISSION_MODE: 'danger-full-access',
+        GLH_TELEMETRY_DISABLED: '1',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.glh', 'sessions'))
         const content = logs[0]?.content ?? ''
         const modes = parseJsonl(content).filter(event => event.type === 'sandbox/mode')
         expect(modes.at(-1)?.data).toEqual({ mode: 'workspace-write' })
@@ -473,7 +473,7 @@ describe('headless stream-json snapshots', () => {
       tsconfigPath,
       expectedExitCode: 1,
       env: {
-        DSH_TELEMETRY_DISABLED: '1',
+        GLH_TELEMETRY_DISABLED: '1',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
     })
@@ -490,8 +490,8 @@ describe('headless stream-json snapshots', () => {
     const firstTask = 'Record the first wake of the resume proof.'
     const secondTask = 'Continue from the first wake of the resume proof.'
     const env = {
-      DSH_PERMISSION_MODE: 'danger-full-access',
-      DSH_TELEMETRY_DISABLED: '1',
+      GLH_PERMISSION_MODE: 'danger-full-access',
+      GLH_TELEMETRY_DISABLED: '1',
       NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
     }
     const cwd = await mkdtemp(join(tmpdir(), 'headless-session-resume-'))
@@ -522,7 +522,7 @@ describe('headless stream-json snapshots', () => {
         tsconfigPath,
         env,
         inspect: async (inspected) => {
-          const logs = await persistedLogs(inspected, join(inspected, '.dsh', 'sessions'))
+          const logs = await persistedLogs(inspected, join(inspected, '.glh', 'sessions'))
           expect(logs).toHaveLength(1)
           const content = logs[0]?.content ?? ''
           expect(content).toContain(firstTask)
@@ -555,9 +555,9 @@ describe('headless stream-json snapshots', () => {
         '--permission-mode', 'auto', '--approval-policy', 'never', '--json', 'Run the CLI probe.',
       ],
       tsconfigPath,
-      env: { DSH_AUTO_REVIEW_TEST_MODE: mode, DSH_TELEMETRY_DISABLED: '1' },
+      env: { GLH_AUTO_REVIEW_TEST_MODE: mode, GLH_TELEMETRY_DISABLED: '1' },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.glh', 'sessions'))
         expect(logs).toHaveLength(1)
         const events = parseJsonl(logs[0]!.content)
         expect(events.find(event => event.type === 'user/message')?.data).toMatchObject({
@@ -590,7 +590,7 @@ describe('headless stream-json snapshots', () => {
       label: 'headless absent Auto integration', tempDirPrefix: 'headless-auto-absent-',
       binScript: dshBinScript, configPath: headlessOverlayPath,
       binArgs: ['--profile', 'headless', '--patch', headlessOverlayPath, '--permission-mode', 'auto', '--json', 'Do it.'],
-      tsconfigPath, expectedExitCode: 1, env: { DSH_TELEMETRY_DISABLED: '1' },
+      tsconfigPath, expectedExitCode: 1, env: { GLH_TELEMETRY_DISABLED: '1' },
     })
     const events = parseJsonl(result.stdout)
     expect(events).toHaveLength(1)
@@ -605,7 +605,7 @@ describe('headless stream-json snapshots', () => {
       const first = await runLoaderSmoke({
         label: 'headless Auto denied wake', cwd, binScript: dshBinScript, configPath: autoReviewOverlayPath,
         binArgs: [...args, '--permission-mode', 'auto', '--approval-policy', 'never', 'Run the CLI probe.'], tsconfigPath,
-        env: { DSH_AUTO_REVIEW_TEST_MODE: 'deny', DSH_TELEMETRY_DISABLED: '1' },
+        env: { GLH_AUTO_REVIEW_TEST_MODE: 'deny', GLH_TELEMETRY_DISABLED: '1' },
       })
       const sessionId = parseJsonl(first.stdout)[0]?.sessionId
       if (typeof sessionId !== 'string') throw new Error('missing Auto Session identity')
@@ -615,9 +615,9 @@ describe('headless stream-json snapshots', () => {
       const second = await runLoaderSmoke({
         label: 'headless Auto authorized wake', cwd, binScript: dshBinScript, configPath: autoReviewOverlayPath,
         binArgs: [...args, '--session-id', sessionId, 'I authorize the exact CLI probe. Retry it.'], tsconfigPath,
-        env: { DSH_AUTO_REVIEW_TEST_MODE: 'allow', DSH_TELEMETRY_DISABLED: '1' },
+        env: { GLH_AUTO_REVIEW_TEST_MODE: 'allow', GLH_TELEMETRY_DISABLED: '1' },
         inspect: async (directory) => {
-          const logs = await persistedLogs(directory, join(directory, '.dsh', 'sessions'))
+          const logs = await persistedLogs(directory, join(directory, '.glh', 'sessions'))
           expect(logs).toHaveLength(1)
           const events = parseJsonl(logs[0]!.content)
           const sources = events.filter(event => event.type === 'user/message')
@@ -645,8 +645,8 @@ describe('headless stream-json snapshots', () => {
       tsconfigPath,
       expectedExitCode: 1,
       env: {
-        DSH_CLI_MOCK_FAILURE: '1',
-        DSH_TELEMETRY_DISABLED: '1',
+        GLH_CLI_MOCK_FAILURE: '1',
+        GLH_TELEMETRY_DISABLED: '1',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
     })
@@ -669,8 +669,8 @@ describe('headless stream-json snapshots', () => {
       ],
       tsconfigPath,
       env: {
-        DSH_PERMISSION_MODE: 'danger-full-access',
-        DSH_TELEMETRY_DISABLED: '1',
+        GLH_PERMISSION_MODE: 'danger-full-access',
+        GLH_TELEMETRY_DISABLED: '1',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
     })
@@ -692,7 +692,7 @@ describe('headless stream-json snapshots', () => {
       binArgs: [retryConfigPath, prompt],
       tsconfigPath,
       env: {
-        DSH_SNAPSHOT: 'replay',
+        GLH_SNAPSHOT: 'replay',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       prepare: (cwd) => { runCwd = cwd },
@@ -733,8 +733,8 @@ describe('headless stream-json snapshots', () => {
       tsconfigPath,
       env: {
         // First-run posture: no key in the environment, none under ./.dsh.
-        DEEPSEEK_API_KEY: '',
-        DEEPSEEK_BASE_URL: '',
+        GLKJ_API_KEY: '',
+        GLKJ_BASE_URL: '',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       prepare: (cwd) => { runCwd = cwd },
@@ -752,9 +752,9 @@ describe('headless stream-json snapshots', () => {
     // environment, and stops there: configuration carries the reference, so
     // there is no literal-key escape hatch left to offer.
     expect(normalized).toContain(
-      'store DEEPSEEK_API_KEY through the credentials service (the web Models page writes it),',
+      'store GLKJ_API_KEY through the credentials service (the web Models page writes it),',
     )
-    expect(normalized).toContain('or export DEEPSEEK_API_KEY in the launching environment')
+    expect(normalized).toContain('or export GLKJ_API_KEY in the launching environment')
     expect(normalized).not.toContain('as a last resort')
   }, LOADER_SMOKE_TEST_TIMEOUT_MS)
 
@@ -773,8 +773,8 @@ describe('headless stream-json snapshots', () => {
         // A key that exists but no HTTP header can carry — the paste the
         // credential guard exists for: without it, `fetch` refuses to build
         // the header and the turn ends on a retried ByteString TypeError.
-        DEEPSEEK_API_KEY: 'sk-\u{1F600}pasted-from-a-chat-window',
-        DEEPSEEK_BASE_URL: '',
+        GLKJ_API_KEY: 'sk-\u{1F600}pasted-from-a-chat-window',
+        GLKJ_BASE_URL: '',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       prepare: (cwd) => { runCwd = cwd },
@@ -787,7 +787,7 @@ describe('headless stream-json snapshots', () => {
     // The durable failure names the reference to correct and the writer that
     // usually owns it, and stays true in a composition that mounts no Models
     // page at all.
-    expect(normalized).toContain('the API key resolved from DEEPSEEK_API_KEY contains characters')
+    expect(normalized).toContain('the API key resolved from GLKJ_API_KEY contains characters')
     expect(normalized).toContain('the web Models page writes it')
     // Neither the key nor its transport-level symptom (the ByteString error)
     // may reach the user: the code point of one character is still the key.
@@ -853,8 +853,8 @@ describe('headless stream-json snapshots', () => {
         env: {
           // Configuration carries only the reference; the key rides the
           // launching environment, which is the whole credential plane here.
-          DEEPSEEK_API_KEY: 'snapshot-key',
-          DSH_SNAPSHOT_BASE_URL: server.url,
+          GLKJ_API_KEY: 'snapshot-key',
+          GLH_SNAPSHOT_BASE_URL: server.url,
           NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
         },
       })
@@ -948,8 +948,8 @@ describe('headless stream-json snapshots', () => {
         ],
         tsconfigPath,
         env: {
-          DEEPSEEK_API_KEY: 'snapshot-key',
-          DSH_SNAPSHOT_BASE_URL: server.url,
+          GLKJ_API_KEY: 'snapshot-key',
+          GLH_SNAPSHOT_BASE_URL: server.url,
           NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
         },
       })
@@ -1003,7 +1003,7 @@ describe('headless stream-json snapshots', () => {
         prepare: cwd => writeFile(join(cwd, 'task.txt'), 'Call snapshot_ping once.\n'),
         env: {
           MOONSHOT_API_KEY: 'snapshot-key',
-          DSH_SNAPSHOT_BASE_URL: server.url,
+          GLH_SNAPSHOT_BASE_URL: server.url,
           NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
         },
       })
@@ -1108,7 +1108,7 @@ describe('headless stream-json snapshots', () => {
       tsconfigPath,
       processTimeoutMs: 60_000,
       env: {
-        DSH_SNAPSHOT: 'team',
+        GLH_SNAPSHOT: 'team',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       inspect: async (cwd) => {
@@ -1310,9 +1310,9 @@ describe('headless stream-json snapshots', () => {
       binArgs: [goalConfigPath, prompt],
       tsconfigPath,
       env: {
-        DSH_SNAPSHOT: 'replay',
-        DSH_SNAPSHOT_FILE: join(goalScenarioDir, 'session.jsonl'),
-        DSH_SNAPSHOT_OVERRIDE: join(goalScenarioDir, 'replay.override.json'),
+        GLH_SNAPSHOT: 'replay',
+        GLH_SNAPSHOT_FILE: join(goalScenarioDir, 'session.jsonl'),
+        GLH_SNAPSHOT_OVERRIDE: join(goalScenarioDir, 'replay.override.json'),
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       prepare: (cwd) => { runCwd = cwd },
@@ -1372,9 +1372,9 @@ describe('headless stream-json snapshots', () => {
       env: {
         // The override fully supplies the parent script; the child fixture
         // remains separate so replay binds it to the fresh child Session.
-        DSH_SNAPSHOT_FILE: parentReplay,
-        DSH_SNAPSHOT_OVERRIDE: parentOverride,
-        DSH_SNAPSHOT_CHILD_FILES: childReplay,
+        GLH_SNAPSHOT_FILE: parentReplay,
+        GLH_SNAPSHOT_OVERRIDE: parentOverride,
+        GLH_SNAPSHOT_CHILD_FILES: childReplay,
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       prepare: (cwd) => { runCwd = cwd },

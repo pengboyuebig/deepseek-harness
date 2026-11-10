@@ -12,7 +12,7 @@ Status: proposed
 
 附件实体和上传任务已经由 [ConversationController](../../../../packages/client/ui-conversation/src/client/service.ts) 集中管理，shell 只保留有序附件 IDs。skill（技能）选择插入普通 `/name` 文本，高亮由词表派生；文件和 Session 的原子引用则使用带来源身份的 chip。共享草稿不能只同步文字而丢失这些引用，也不需要复制附件实体。
 
-本提案细化 [#3951](https://github.com/deepseek-ai/deepseek-harness/pull/3951) 的编辑器隔离，遵循 [Client Session 与 UI 所有权](../../implemented/architecture/2026-08-20-client-session-conversation-ownership.zh.md)。Session 活跃视图、驻留状态与回收策略独立设计；[#4138](https://github.com/deepseek-ai/deepseek-harness/pull/4138) 仅作为 Host 生命周期参考。本提案不实现这些功能，也不重复 #3984 的 Conversation 组件拆分。
+本提案细化 [#3951](https://git.glkj.example.com/glkj/harness/pull/3951) 的编辑器隔离，遵循 [Client Session 与 UI 所有权](../../implemented/architecture/2026-08-20-client-session-conversation-ownership.zh.md)。Session 活跃视图、驻留状态与回收策略独立设计；[#4138](https://git.glkj.example.com/glkj/harness/pull/4138) 仅作为 Host 生命周期参考。本提案不实现这些功能，也不重复 #3984 的 Conversation 组件拆分。
 
 ## 提案
 

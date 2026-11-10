@@ -33,8 +33,8 @@ const tsconfigPath = fileURLToPath(new URL('../../../../../../tsconfig.json', im
 // The resumed-agent fixture in the shared config resumes exactly this id.
 const sessionId = SessionId('workspace-context-resume')
 const fixtureEnv = {
-  DSH_SNAPSHOT_FILE: replayFixture,
-  DSH_LOADER_SMOKE_REQUIRED_ENTRY_ID: 'resumed-agent',
+  GLH_SNAPSHOT_FILE: replayFixture,
+  GLH_LOADER_SMOKE_REQUIRED_ENTRY_ID: 'resumed-agent',
 }
 
 /** Persist one session with the given header version and events, returning its log path. */

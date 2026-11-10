@@ -18,9 +18,9 @@ import { ProviderEditor } from './ProviderEditor.tsx'
 import type {} from './slot-contract.ts'
 import type { en } from './locales.ts'
 import { OnboardingModal } from './OnboardingModal.tsx'
-import styles from './DeepSeekOnboardingDialog.module.css'
+import styles from './GlkjOnboardingDialog.module.css'
 
-/** Registration-side dependencies of {@link DeepSeekOnboardingDialog}. */
+/** Registration-side dependencies of {@link GlkjOnboardingDialog}. */
 export interface DeepSeekOnboardingInjected {
   /** Desktop-only event collection. */
   track?: TrackProductEvent
@@ -41,7 +41,7 @@ export interface DeepSeekOnboardingInjected {
 }
 
 /** Slot owner props plus the feature's injected dependencies. */
-export type DeepSeekOnboardingDialogProps =
+export type GlkjOnboardingDialogProps =
   PropsRuntime<'settings.onboarding'> & PropsRenderSlots<'settings.models.sign-in'> & InjectFace<DeepSeekOnboardingInjected>
 
 /* v8 ignore next 3 -- closed-union defaults only defend future source widening */
@@ -55,7 +55,7 @@ function assertNever(_value: never): never {
  * @param props - settings-shell owner state and Models feature dependencies.
  * @returns the onboarding modal or null when onboarding needs no intervention.
  */
-export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): ReactNode {
+export function GlkjOnboardingDialog(props: GlkjOnboardingDialogProps): ReactNode {
   const { complete, controller, useModels, operations, schema, t, renderSlot, automatic, explicit = false } = props
   const [apiKey, setApiKey] = useState(explicit)
   const state = useModels(snapshot => snapshot)

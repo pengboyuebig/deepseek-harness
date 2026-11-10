@@ -19,7 +19,7 @@ afterEach(async () => {
 })
 
 it('records the prompt and fails the request when the official endpoint has a malformed key', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'invalid\nheader')
+  vi.stubEnv('GLKJ_API_KEY', 'invalid\nheader')
   const fetch = vi.spyOn(globalThis, 'fetch')
   const ctx = new Context()
   contexts.push(ctx)

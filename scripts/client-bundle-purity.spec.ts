@@ -45,7 +45,7 @@ const REQUESTING_PACKAGE_DIR = packageDir('client/ui-conversation')
 
 function clientConfigs(dir = REQUESTING_PACKAGE_DIR) {
   return clientBundle(dir, ['lib/types/index.js'])(
-    { env: { DSH_BUILD_FACE: 'client' } },
+    { env: { GLH_BUILD_FACE: 'client' } },
   ).filter(config => config.platform === 'browser')
 }
 
@@ -54,7 +54,7 @@ describe('client bundle build faces', () => {
     const root = mkdtempSync(join(tmpdir(), 'dsh-client-manifest-'))
     onTestFinished(() => { rmSync(root, { recursive: true, force: true }) })
     writeFileSync(join(root, 'package.json'), JSON.stringify({ name: '@deepseek-ai/dsh-client-fixture' }))
-    const configs = clientBundle(root, ['lib/types/index.js'])({ env: { DSH_BUILD_FACE: 'client' } })
+    const configs = clientBundle(root, ['lib/types/index.js'])({ env: { GLH_BUILD_FACE: 'client' } })
     expect(configs.map(config => config.name)).toEqual([
       '@deepseek-ai/dsh-client-fixture', '@deepseek-ai/dsh-client-fixture/client',
     ])
@@ -78,7 +78,7 @@ describe('client bundle build faces', () => {
   it('opts shared Clients into independent Node ESM and browser factory entries', () => {
     for (const dir of ['client/connection', 'api/gateway', 'typert/registry']) {
       const configs = clientBundle(packageDir(dir), ['lib/types/index.js'], { dualClient: true })(
-        { env: { DSH_BUILD_FACE: 'client' } },
+        { env: { GLH_BUILD_FACE: 'client' } },
       )
       const node = configs.find(config => config.name?.endsWith('/client-node'))
       const browser = configs.find(config => config.name?.endsWith('/client'))
@@ -91,7 +91,7 @@ describe('client bundle build faces', () => {
       expect(configs.find(config => config.platform === 'node' && config.name?.endsWith('/client'))).toBeUndefined()
     }
     const ordinary = clientBundle(REQUESTING_PACKAGE_DIR, ['lib/types/index.js'])(
-      { env: { DSH_BUILD_FACE: 'client' } },
+      { env: { GLH_BUILD_FACE: 'client' } },
     )
     expect(ordinary.some(config => config.name?.endsWith('/client-node'))).toBe(false)
     expect(ordinary.find(config => config.platform === 'browser')?.outputOptions)
@@ -101,7 +101,7 @@ describe('client bundle build faces', () => {
   it('watches source in development and consumes emitted JavaScript in the Client build', () => {
     const bundle = clientBundle(REQUESTING_PACKAGE_DIR, ['lib/types/index.js'])
     const development = bundle({ env: {} }).find(config => config.platform === 'browser')
-    const artifact = bundle({ env: { DSH_BUILD_FACE: 'client' } })
+    const artifact = bundle({ env: { GLH_BUILD_FACE: 'client' } })
       .find(config => config.platform === 'browser')
 
     expect(development?.entry).toEqual({ client: 'src/client/index.ts' })
@@ -147,7 +147,7 @@ describe('statically linked client build modes', () => {
     try {
       if (mode === undefined) Reflect.deleteProperty(process.env, 'NODE_ENV')
       else process.env.NODE_ENV = mode
-      config = staticLinked(root, ['lib/types/client/index.js'])({ env: { DSH_BUILD_FACE: 'client' } })
+      config = staticLinked(root, ['lib/types/client/index.js'])({ env: { GLH_BUILD_FACE: 'client' } })
         .find(candidate => candidate.platform === 'browser')
     } finally {
       if (previousMode === undefined) Reflect.deleteProperty(process.env, 'NODE_ENV')
@@ -181,7 +181,7 @@ describe('client bundle dynamic imports', () => {
   it('keeps a dual Client browser chunk disjoint from its Node output', async () => {
     const root = dynamicImportFixture('dsh-dual-client-chunk-')
     const configs = clientBundle(root, ['lib/types/index.js'], { dualClient: true })(
-      { env: { DSH_BUILD_FACE: 'client' } },
+      { env: { GLH_BUILD_FACE: 'client' } },
     )
     for (const platform of ['node', 'browser'] as const) {
       const config = configs.find(config => config.name?.endsWith(platform === 'node' ? '/client-node' : '/client'))
@@ -380,7 +380,7 @@ describe('client bundle experimental input isolation', () => {
 
   function config(kind: 'static' | 'dynamic', dir = REQUESTING_PACKAGE_DIR): UserConfig {
     const configs = kind === 'static'
-      ? staticLinked(dir, ['lib/types/client/index.js'])({ env: { DSH_BUILD_FACE: 'client' } })
+      ? staticLinked(dir, ['lib/types/client/index.js'])({ env: { GLH_BUILD_FACE: 'client' } })
       : clientConfigs(dir)
     const browser = configs.find(config => config.platform === 'browser')
     if (browser === undefined) throw new Error('client config missing')

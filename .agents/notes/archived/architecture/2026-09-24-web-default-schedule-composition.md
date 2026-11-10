@@ -25,7 +25,7 @@ A Web scenario that drives a live step now logs one time-context reading per ste
 
 ## Alternatives considered
 
-**Keep the overlay and change nothing.** The shipped surface would keep contradicting the product documentation that describes the Automation tasks entry, and each consumer would keep its own copy of the three rows. The overlay also cannot satisfy the request that the default `dsh web` process exposes the page without a flag.
+**Keep the overlay and change nothing.** The shipped surface would keep contradicting the product documentation that describes the Automation tasks entry, and each consumer would keep its own copy of the three rows. The overlay also cannot satisfy the request that the default `glh web` process exposes the page without a flag.
 
 **Ship the Schedule rows without `time-context`.** The model would then have no sampling instant of its own, so an unqualified date or time in a reminder request would depend on a separate clock source; the overlay paired the two rows for that reason.
 

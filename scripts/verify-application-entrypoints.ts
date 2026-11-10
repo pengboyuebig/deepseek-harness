@@ -25,7 +25,7 @@ interface LauncherPolicy {
 
 /** Public product launcher plus the build-only WebWorker packer. */
 const MANIFEST_BIN_ALLOWLIST = new Map<string, ManifestBin>([
-  ['apps/cli/package.json', { dsh: 'lib/bin.js' }],
+  ['apps/cli/package.json', { glh: 'lib/bin.js' }],
   ['packages/experimental/webworker-packer/package.json', { 'dsh-pack-vfs-image': './bin.js' }],
 ])
 
@@ -50,7 +50,7 @@ const EXECUTABLE_SOURCE_ALLOWLIST = new Map<string, string>([
 ])
 
 /**
- * Root scripts that start an application must visibly select dsh: every `demo:*`
+ * Root scripts that start an application must visibly select glh: every `demo:*`
  * script needs a row here, and the Web start and development scripts are pinned
  * by name.
  */

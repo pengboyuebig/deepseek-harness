@@ -7,13 +7,13 @@ English | [中文](2026-09-21-creator-skills-progressive-disclosure.zh.md)
 
 ## Problem
 
-The shipped `cordis-plugin-development` skill carried three mutually exclusive recipes and a verification checklist in one 8.7 KB file, above the 8192-character threshold at which the standard preset's tool-result pruner keeps only the head and tail. Both creator skills forbade reading DSH package sources, which made the skill text the only knowledge source and left the agent guessing whenever it did not cover a case. The skills also addressed the profile as `$DSH_HOME/profiles/<profile>`, a name the agent's shell never received.
+The shipped `cordis-plugin-development` skill carried three mutually exclusive recipes and a verification checklist in one 8.7 KB file, above the 8192-character threshold at which the standard preset's tool-result pruner keeps only the head and tail. Both creator skills forbade reading DSH package sources, which made the skill text the only knowledge source and left the agent guessing whenever it did not cover a case. The skills also addressed the profile as `$GLH_HOME/profiles/<profile>`, a name the agent's shell never received.
 
 ## Decision
 
 `SKILL.md` keeps the procedure, the knowledge-source order, and an index table; recipes move to `references/` files and copyable bundles to `templates/`, all resolved through the skill's base directory that the `skill` tool already reports. A test keeps the leading file under the pruner head and checks that every referenced file exists and every template parses.
 
-Knowledge sources are ordered, never forbidden: inspection through `cordis_inspect_query`, the package README under the `packageDir` that `Config.listConfigs` resolves through the profile package lookup, then built `lib/` declarations or checkout sources when a question remains. Bundled packages resolve from the dsh installation and profile-installed ones from the profile, so skills never derive a package path from the profile directory. The shell registry exposes `DSH_PROFILE` and `DSH_PROFILE_DIR` as reserved built-ins whenever the launcher provided a profile context.
+Knowledge sources are ordered, never forbidden: inspection through `cordis_inspect_query`, the package README under the `packageDir` that `Config.listConfigs` resolves through the profile package lookup, then built `lib/` declarations or checkout sources when a question remains. Bundled packages resolve from the glh installation and profile-installed ones from the profile, so skills never derive a package path from the profile directory. The shell registry exposes `GLH_PROFILE` and `GLH_PROFILE_DIR` as reserved built-ins whenever the launcher provided a profile context.
 
 A third skill, `cordis-composition-reference`, holds the Loader patch dialect and a generated list of loadable plugin packages, freshness-gated in `doc-sync`, so procedure skills stop growing.
 

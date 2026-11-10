@@ -8,7 +8,7 @@ A bundle README leads with the profile-install path and the layer semantics; the
 
 ```yaml
 ---
-description: "What the bundle layer adds to a dsh --profile surface, for users composing or customizing a profile."
+description: "What the bundle layer adds to a glh --profile surface, for users composing or customizing a profile."
 kind: "package-bundle"
 ---
 ```
@@ -43,8 +43,8 @@ Three to five sentences and at most 100 `wc -w`-style words: what a profile gain
 The verified install path — run it against the current checkout before writing:
 
 ```text
-dsh plugin --profile <name> add @deepseek-ai/dsh-<name>
-dsh plugin --profile <name> remove @deepseek-ai/dsh-<name>
+glh plugin --profile <name> add @deepseek-ai/dsh-<name>
+glh plugin --profile <name> remove @deepseek-ai/dsh-<name>
 ```
 
 State where in-box bundles resolve from, what the reconcile step activates, and what fails when the patch declaration is missing.
@@ -98,6 +98,6 @@ None.
 
 ## Rules
 
-- **Only `dsh.bundle.patch` packages use this template.** Verify the declaration in `package.json` before classifying; the `dsh plugin` reconcile activates a layer for exactly these packages.
-- **Test the install path.** Run `dsh plugin --profile <name> add <this-package>` in a scratch profile and reproduce the documented warning, layer activation, and failure modes before writing them.
+- **Only `dsh.bundle.patch` packages use this template.** Verify the declaration in `package.json` before classifying; the `glh plugin` reconcile activates a layer for exactly these packages.
+- **Test the install path.** Run `glh plugin --profile <name> add <this-package>` in a scratch profile and reproduce the documented warning, layer activation, and failure modes before writing them.
 - Re-run `pnpm run verify-translation-pairing --write packages/<group>/<pkg>/README.md` after editing the pair.

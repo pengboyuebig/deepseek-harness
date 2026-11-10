@@ -49,8 +49,8 @@ jobs:
       run-id: ${{ steps.retained.outputs.run-id || github.run_id }}
       build-key: ${{ steps.build-inputs.outputs.build-key }}
     env:
-      DSH_PACKAGING_PRESET: ${{ inputs.preset }}
-      DSH_TELEMETRY_DISABLED: '1'
+      GLH_PACKAGING_PRESET: ${{ inputs.preset }}
+      GLH_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -62,7 +62,7 @@ jobs:
           if(!ref || (!ref.startsWith("refs/heads/") && !ref.startsWith("refs/tags/"))) throw Error("Select a trusted repository branch or release tag");
           const tag=ref.replace(/^refs\/tags\//, "");
           if(tag.startsWith("dsh-v") && tag!=="dsh-v"+JSON.parse(fs.readFileSync("package.json","utf8")).version) throw Error("Release tag must match product version");
-          if(!["test","production"].includes(process.env.DSH_PACKAGING_PRESET)) throw Error("Invalid preset");'
+          if(!["test","production"].includes(process.env.GLH_PACKAGING_PRESET)) throw Error("Invalid preset");'
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '24'

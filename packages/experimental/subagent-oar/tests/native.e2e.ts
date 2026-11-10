@@ -12,7 +12,7 @@ import { externalTestParent, startExternalActivation } from '../../../subagent/s
 import { mountWorkingDirectoryFixture } from '../../../subagent/subagent/tests/working-directory-fixture.ts'
 import * as oar from '../src/index.ts'
 
-it.skipIf(process.env.DSH_OAR_E2E !== '1').for(['codex', 'claude'])(
+it.skipIf(process.env.GLH_OAR_E2E !== '1').for(['codex', 'claude'])(
   'delegates a file task to installed %s through the registered OAR provider',
   { timeout: 180_000, retry: 0 },
   async (runtime, test) => {

@@ -21,7 +21,7 @@ import Include from '@deepseek-ai/cordis-plugin-include'
 import WebServer from '@deepseek-ai/dsh-host-webserver'
 import type { NativeCommandRunner } from '@deepseek-ai/dsh-native-command'
 import {
-  createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY, type LaunchEnvironmentLayerInput,
+  createLaunchEnvironmentSnapshot, GLH_LAUNCH_ENVIRONMENT_KEY, type LaunchEnvironmentLayerInput,
 } from '@deepseek-ai/dsh-launch-environment'
 import * as OpenInApp from '../src/index.ts'
 import { internals } from '../src/internals.ts'
@@ -66,7 +66,7 @@ async function boot(layers: readonly LaunchEnvironmentLayerInput[] = []): Promis
   ].join('\n'))
 
   context = new Context()
-  context.provide(DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot(layers))
+  context.provide(GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot(layers))
   context.baseUrl = pathToFileURL(root).href + '/'
   context.provide('connection', { requestRejection: () => trust.rejection } as never)
   // The plugin resolves PATH names through the composition's subprocess

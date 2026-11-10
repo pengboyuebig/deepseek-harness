@@ -7,7 +7,7 @@ Archived: 2026-09-30
 
 ## 问题
 
-`dsh --profile headless` 面向的是人类终端：任务只能通过 argv 传入，stdout 只输出最终一条助手消息，provider 的推理过程流式写到 stderr，而且每次运行都新建一个随机会话。[Headless is a direct core entry point](../../archived/architecture/2026-08-09-headless-direct-core-entry-point.md) 拥有那套传输与完成契约；[headless reasoning progress](../../archived/feature/2026-08-21-headless-reasoning-progress.md) 拥有 stderr 投影。
+`glh --profile headless` 面向的是人类终端：任务只能通过 argv 传入，stdout 只输出最终一条助手消息，provider 的推理过程流式写到 stderr，而且每次运行都新建一个随机会话。[Headless is a direct core entry point](../../archived/architecture/2026-08-09-headless-direct-core-entry-point.md) 拥有那套传输与完成契约；[headless reasoning progress](../../archived/feature/2026-08-21-headless-reasoning-progress.md) 拥有 stderr 投影。
 
 一个"每次唤醒起一个 headless 进程"的监督进程（例如外部 agent 运行时）需要三样该契约没有提供的东西。它需要通过私有管道而不是 argv 传入任务，因为长提示词会超出参数上限，而 argv 对其他进程可见。它需要一条机器可读的流，把助手文本、推理、工具调用与结果、轮次边界和用量区分开，因为抓取 stderr 只能拿到推理，而 stdout 最后一行拿不到任何工具活动。它需要一个精确的会话身份，以便在下一次唤醒时传回去，因为每次进程都新建随机会话意味着无法连续。
 
@@ -28,7 +28,7 @@ Archived: 2026-09-30
 ### 命令行契约
 
 ```text
-dsh --profile headless [--json] [--session-id <id>] [<task>... | -]
+glh --profile headless [--json] [--session-id <id>] [<task>... | -]
 ```
 
 任务解析顺序：拼接后的位置参数，其次是 `-`，其次是管道 stdin。只有空白的位置参数本身就属于用法错误，即使 stdin 不是终端也一样，因此误传的空白参数绝不会消费管道内容；完全缺失任务时，仅在 stdin 是终端时属于用法错误。单独的 `-` 是唯一的 stdin 标记：把它与其他任务词混用属于用法错误，而不是以连字符开头的任务。管道任务会原样发送，包括结尾换行。在 `--json` 模式下，所有用法错误——包括 commander 自身的语法拒绝，例如未知选项或选项缺少取值——都会在进程退出前写出 `error` 事件，因为 runner 从未挂载来写它；事件 message 省略 commander 的 `error: ` 前缀，使同一事件类型只承载一种消息形态。

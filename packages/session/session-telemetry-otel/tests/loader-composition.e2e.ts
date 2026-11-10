@@ -83,7 +83,7 @@ describe('session-telemetry-otel through the production headless profile', () =>
       libBinScript: driver,
       configPath,
       tsconfigPath: repoTsconfig,
-      env: { DSH_TELEMETRY_E2E_MODE: 'FULL' },
+      env: { GLH_TELEMETRY_E2E_MODE: 'FULL' },
     })
     expect(stdout + stderr).toContain('warning: 1 entry did not activate')
     expect(stdout + stderr).toContain('FULL')
@@ -152,7 +152,7 @@ describe('session-telemetry-otel through the production headless profile', () =>
       libBinScript: driver,
       configPath,
       tsconfigPath: repoTsconfig,
-      env: { DSH_TELEMETRY_E2E_FEEDBACK: 'none' },
+      env: { GLH_TELEMETRY_E2E_FEEDBACK: 'none' },
       inspect: async (cwd) => { output = await readFixtureOutput(cwd) },
     })
     expect(stderr).not.toContain('UNHANDLED')
@@ -171,7 +171,7 @@ describe('session-telemetry-otel through the production headless profile', () =>
       libBinScript: driver,
       configPath,
       tsconfigPath: repoTsconfig,
-      env: { DSH_TELEMETRY_E2E_MODE: 'DISABLED' },
+      env: { GLH_TELEMETRY_E2E_MODE: 'DISABLED' },
       inspect: async (cwd) => { output = await readFixtureOutput(cwd) },
     })
 

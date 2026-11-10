@@ -1,4 +1,4 @@
-/** Recorded ACP protocol behavior through the shipped `dsh --profile acp` interface. */
+/** Recorded ACP protocol behavior through the shipped `glh --profile acp` interface. */
 
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -19,7 +19,7 @@ function snapshotMode(value: string | undefined): SnapshotSuiteOptions['mode'] {
     case 'replay': return 'replay'
     case 'record': return 'record'
     case 'refresh': return 'refresh'
-    default: throw new Error(`unknown DSH_SNAPSHOT mode: ${value}`)
+    default: throw new Error(`unknown GLH_SNAPSHOT mode: ${value}`)
   }
 }
 
@@ -73,7 +73,7 @@ const scenarios: Scenario[] = controllerCases.map((controller) => {
       : {
           env: {
             ...manifest.environment,
-            ...(manifest.permission === undefined ? {} : { DSH_PERMISSION_MODE: manifest.permission }),
+            ...(manifest.permission === undefined ? {} : { GLH_PERMISSION_MODE: manifest.permission }),
           },
         },
   }
@@ -88,5 +88,5 @@ defineAcpSnapshotSuite({
   },
   snapshotsDir: corpusDir,
   scenarios,
-  mode: snapshotMode(process.env.DSH_SNAPSHOT),
+  mode: snapshotMode(process.env.GLH_SNAPSHOT),
 })

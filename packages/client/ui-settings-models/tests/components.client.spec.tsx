@@ -33,8 +33,8 @@ afterEach(cleanup)
 const t: ModelsSectionInjected['t'] = key => en[key]
 const OPENAI_TARGET = { provider: 'openai', displayName: 'openai' }
 const openaiCopy = (template: string): string => providerCopy(template, OPENAI_TARGET)
-const DEEPSEEK_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
-const deepSeekCopy = (template: string): string => providerCopy(template, DEEPSEEK_TARGET)
+const GLKJ_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
+const glkjCopy = (template: string): string => providerCopy(template, GLKJ_TARGET)
 
 /** Open one row's capacity disclosure (1-based, as the labels read). */
 function expandRow(position: number): void {
@@ -84,7 +84,7 @@ const DeepSeekConfig = Schema.object({
   ]),
 })
 
-const DEFAULT_DEEPSEEK_MODELS = [
+const DEFAULT_GLKJ_MODELS = [
   {
     id: 'deepseek-v4-flash',
     name: 'DeepSeek-V4-Flash',
@@ -100,13 +100,13 @@ function wireNamespaces(): SettingsNamespaceView[] {
       ns: 'llm-deepseek',
       schema: JSON.parse(JSON.stringify(DeepSeekConfig.toJSON())) as JsonValue,
       value: {
-        apiKeyEnv: 'DEEPSEEK_API_KEY',
+        apiKeyEnv: 'GLKJ_API_KEY',
         baseURL: 'https://base',
         defaultContextWindow: 1_000_000,
         maxTokens: 256_000,
-        models: DEFAULT_DEEPSEEK_MODELS,
+        models: DEFAULT_GLKJ_MODELS,
       },
-      base: { defaultContextWindow: 1_000_000, maxTokens: 256_000, models: DEFAULT_DEEPSEEK_MODELS },
+      base: { defaultContextWindow: 1_000_000, maxTokens: 256_000, models: DEFAULT_GLKJ_MODELS },
       user: { baseURL: 'https://base' },
       autoGenerate: true, applies: 'live',
       secrets: [],
@@ -146,9 +146,9 @@ function wireNamespaces(): SettingsNamespaceView[] {
         baseURL: 'https://base',
         defaultContextWindow: 1_000_000,
         maxTokens: 256_000,
-        models: DEFAULT_DEEPSEEK_MODELS,
+        models: DEFAULT_GLKJ_MODELS,
       },
-      base: { defaultContextWindow: 1_000_000, maxTokens: 256_000, models: DEFAULT_DEEPSEEK_MODELS },
+      base: { defaultContextWindow: 1_000_000, maxTokens: 256_000, models: DEFAULT_GLKJ_MODELS },
       user: {},
       autoGenerate: true, applies: 'live',
       secrets: [],
@@ -166,7 +166,7 @@ type RefusalCode = 'credential/rejected' | 'gateway/internal' | 'settings/confli
 
 /** One refusal per code, each carrying the details its own code declares. */
 const REFUSALS: { [Code in RefusalCode]: (message: string) => RemoteError<Code> } = {
-  'credential/rejected': message => new RemoteError('credential/rejected', message, { ref: 'DEEPSEEK_API_KEY' }),
+  'credential/rejected': message => new RemoteError('credential/rejected', message, { ref: 'GLKJ_API_KEY' }),
   'gateway/internal': message => new RemoteError('gateway/internal', message, {}),
   'settings/conflict': message =>
     new RemoteError('settings/conflict', message, { ns: 'llm-pi-ai', expected: 4, actual: 5 }),
@@ -356,7 +356,7 @@ async function mountFirstRun(overrides: Parameters<typeof scriptedFace>[0] = {})
  */
 async function mountDeepSeekCard(overrides: Parameters<typeof scriptedFace>[0] = {}) {
   const mounted = await mountSection(overrides)
-  fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+  fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
   return mounted
 }
 
@@ -378,7 +378,7 @@ describe('ModelsSection', () => {
     const before = controller.store.getSnapshot().namespaces.get('llm-deepseek')!
     mirror.acceptView({
       ...before,
-      value: { apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://current.example', models: DEFAULT_DEEPSEEK_MODELS },
+      value: { apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://current.example', models: DEFAULT_GLKJ_MODELS },
       user: { baseURL: 'https://current.example' },
       revision: 1,
     })
@@ -426,7 +426,7 @@ describe('ModelsSection', () => {
     const before = controller.store.getSnapshot().namespaces.get('llm-deepseek')!
     mirror.acceptView({
       ...before,
-      value: { apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: 'https://recovered.example', models: DEFAULT_DEEPSEEK_MODELS },
+      value: { apiKeyEnv: 'GLKJ_API_KEY', baseURL: 'https://recovered.example', models: DEFAULT_GLKJ_MODELS },
       user: { baseURL: 'https://recovered.example' },
       revision: 2,
     })
@@ -484,7 +484,7 @@ describe('ModelsSection', () => {
 
   it('checks current readiness before opening an editor and preserves an open draft during refresh', async () => {
     const { controller } = await mountSection()
-    const edit = screen.getByRole('button', { name: deepSeekCopy(en.editProvider) })
+    const edit = screen.getByRole('button', { name: glkjCopy(en.editProvider) })
     const ready = controller.store.getSnapshot()
     const snapshot = vi.spyOn(controller.store, 'getSnapshot').mockReturnValue({ ...ready, status: 'loading' })
     try {
@@ -557,7 +557,7 @@ describe('ModelsSection', () => {
   })
 
   it('waits for saved credential confirmation before removing its managed key', async () => {
-    const configured = new Set(['DEEPSEEK_API_KEY'])
+    const configured = new Set(['GLKJ_API_KEY'])
     const set = vi.fn((ref: string) => { configured.add(ref); return Promise.resolve(remoteOk(undefined)) })
     const scripted = scriptedFace({ set })
     const read = Promise.withResolvers<RemoteResult<Record<string, CredentialInfo>>>()
@@ -585,7 +585,7 @@ describe('ModelsSection', () => {
       fireEvent.click(remove)
       expect(screen.queryByRole('dialog', { name: openaiCopy(en.deleteTitle) })).toBeNull()
       holdJoin = false
-      await act(async () => { read.resolve(answer(['DEEPSEEK_API_KEY', 'OPENAI_API_KEY'])) })
+      await act(async () => { read.resolve(answer(['GLKJ_API_KEY', 'OPENAI_API_KEY'])) })
       await screen.findByText(openaiCopy(en.savedProvider))
       fireEvent.click(remove)
       const dialog = screen.getByRole('dialog', { name: openaiCopy(en.deleteTitle) })
@@ -596,7 +596,7 @@ describe('ModelsSection', () => {
       await waitFor(() => { expect(screen.queryByRole('dialog', { name: openaiCopy(en.deleteTitle) })).toBeNull() })
     } finally {
       holdJoin = false
-      await act(async () => { read.resolve(answer(['DEEPSEEK_API_KEY', 'OPENAI_API_KEY'])) })
+      await act(async () => { read.resolve(answer(['GLKJ_API_KEY', 'OPENAI_API_KEY'])) })
     }
   })
 
@@ -652,14 +652,14 @@ describe('ModelsSection', () => {
       { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [], error: failure },
     ]))
     scripted.face.credentials.describe.mockResolvedValue(remoteOk({
-      DEEPSEEK_API_KEY: { configured: false, writable: true },
+      GLKJ_API_KEY: { configured: false, writable: true },
     }))
     await mountFace(scripted)
 
     const card = screen.getByRole('listitem')
     expect(within(card).getByRole('alert').textContent).toBe(failure)
     expect(within(card).getByLabelText(en.keyInput)).toBeTruthy()
-    expect(within(card).queryByRole('button', { name: deepSeekCopy(en.editProvider) })).toBeNull()
+    expect(within(card).queryByRole('button', { name: glkjCopy(en.editProvider) })).toBeNull()
   })
 
   it('dispatches the provider-card seat per rendered row, keyed by the owning namespace', async () => {
@@ -739,7 +739,7 @@ describe('ModelsSection', () => {
     const missing = screen.getByRole('img', { name: en.credentialMissing })
     expect(missing.closest('li')?.textContent).toContain('DeepSeek')
     // The card is still one click away.
-    fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+    fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
     expect(screen.getByLabelText(en.keyInput)).toBeTruthy()
   })
 
@@ -832,7 +832,7 @@ describe('ModelsSection', () => {
     const key = screen.getByLabelText<HTMLInputElement>(en.keyInput)
     fireEvent.change(key, { target: { value: '  sk-live  ' } })
     fireEvent.click(screen.getByText(en.apply))
-    await waitFor(() => { expect(set).toHaveBeenCalledWith('DEEPSEEK_API_KEY', 'sk-live') })
+    await waitFor(() => { expect(set).toHaveBeenCalledWith('GLKJ_API_KEY', 'sk-live') })
     expect(mutate).not.toHaveBeenCalled()
     // The saved key re-loads the join; the settings answer rides the shared
     // mirror, so the reload shows as a directory read rather than a describe.
@@ -892,7 +892,7 @@ describe('ModelsSection', () => {
     fireEvent.click(save)
 
     expect(await screen.findByText(en.onboardingSaving)).toBeTruthy()
-    expect(set).toHaveBeenCalledWith('DEEPSEEK_API_KEY', 'sk-onboarding')
+    expect(set).toHaveBeenCalledWith('GLKJ_API_KEY', 'sk-onboarding')
     expect(mutate).not.toHaveBeenCalled()
     expect(onClose).not.toHaveBeenCalled()
 
@@ -912,7 +912,7 @@ describe('ModelsSection', () => {
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
     // The deepseek placeholder is pinned to the public endpoint, not the
     // effective value (which may reflect a launch-environment override).
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+    expect(baseURL.placeholder).toBe('https://api.glkj.example.com/anthropic (Default to use GLKJ_BASE_URL)')
     fireEvent.change(baseURL, { target: { value: 'https://next2' } })
     fireEvent.click(screen.getByText(en.apply))
     await waitFor(() => { expect(mutate).toHaveBeenCalledTimes(1) })
@@ -952,7 +952,7 @@ describe('ModelsSection', () => {
         op: 'set',
         path: ['models'],
         value: [
-          ...DEFAULT_DEEPSEEK_MODELS,
+          ...DEFAULT_GLKJ_MODELS,
           { id: 'private-preview', name: 'Private Preview', contextWindow: 131_072, inputModalities: ['text', 'image'] },
         ],
       }],
@@ -964,7 +964,7 @@ describe('ModelsSection', () => {
     const namespace: SettingsNamespaceView = {
       ...wireNamespaces()[0]!,
       ns: 'llm-deepseek',
-      value: { apiKeyEnv: 'DEEPSEEK_API_KEY', models: DEFAULT_DEEPSEEK_MODELS },
+      value: { apiKeyEnv: 'GLKJ_API_KEY', models: DEFAULT_GLKJ_MODELS },
       user: {},
     }
     const { face, mutate, set } = scriptedFace({
@@ -984,21 +984,21 @@ describe('ModelsSection', () => {
     />)
     fireEvent.click(screen.getByText(en.customized))
     expect(screen.getByLabelText<HTMLInputElement>(en.baseUrl).placeholder)
-      .toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+      .toBe('https://api.glkj.example.com/anthropic (Default to use GLKJ_BASE_URL)')
     expect(screen.queryByLabelText(en.customApi)).toBeNull()
     expect(screen.getByText(en.deepSeekEndpointHint)).toBeTruthy()
     fireEvent.change(screen.getByLabelText(en.keyInput), { target: { value: 'sk-messages-test' } })
     fireEvent.change(screen.getByLabelText(en.baseUrl), { target: { value: 'https://messages.example/anthropic' } })
     fireEvent.change(screen.getByLabelText(`${en.modelName} 1`), { target: { value: 'Messages Flash' } })
     fireEvent.click(screen.getByText(en.apply))
-    await waitFor(() => { expect(set).toHaveBeenCalledWith('DEEPSEEK_API_KEY', 'sk-messages-test') })
+    await waitFor(() => { expect(set).toHaveBeenCalledWith('GLKJ_API_KEY', 'sk-messages-test') })
     expect(mutate.mock.calls).toEqual([[
       'llm-deepseek',
       [
         { op: 'set', path: ['baseURL'], value: 'https://messages.example/anthropic' },
         { op: 'set', path: ['models'], value: [
-          { ...DEFAULT_DEEPSEEK_MODELS[0], name: 'Messages Flash' },
-          DEFAULT_DEEPSEEK_MODELS[1],
+          { ...DEFAULT_GLKJ_MODELS[0], name: 'Messages Flash' },
+          DEFAULT_GLKJ_MODELS[1],
         ] },
       ],
       0,
@@ -1107,8 +1107,8 @@ describe('ModelsSection', () => {
         op: 'set',
         path: ['models'],
         value: [
-          { ...DEFAULT_DEEPSEEK_MODELS[0], contextWindow: 1_000_000 },
-          { ...DEFAULT_DEEPSEEK_MODELS[1], contextWindow: 256_000 },
+          { ...DEFAULT_GLKJ_MODELS[0], contextWindow: 1_000_000 },
+          { ...DEFAULT_GLKJ_MODELS[1], contextWindow: 256_000 },
         ],
       }],
       0,
@@ -1278,7 +1278,7 @@ describe('ModelsSection', () => {
       [{
         op: 'set',
         path: ['models'],
-        value: [{ ...DEFAULT_DEEPSEEK_MODELS[1], maxTokens: 64_000 }],
+        value: [{ ...DEFAULT_GLKJ_MODELS[1], maxTokens: 64_000 }],
       }],
       0,
     ])
@@ -1347,7 +1347,7 @@ describe('ModelsSection', () => {
         path: ['models'],
         value: [
           { id: 'deepseek-v4-flash', description: 'Preserved hidden detail' },
-          DEFAULT_DEEPSEEK_MODELS[1],
+          DEFAULT_GLKJ_MODELS[1],
         ],
       }],
       0,
@@ -1396,7 +1396,7 @@ describe('ModelsSection', () => {
     />)
     fireEvent.click(screen.getByText(en.customized))
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+    expect(baseURL.placeholder).toBe('https://api.glkj.example.com/anthropic (Default to use GLKJ_BASE_URL)')
     fireEvent.change(baseURL, { target: { value: 'https://x' } })
     expect(baseURL.value).toBe('https://x')
     fireEvent.change(baseURL, { target: { value: '' } })
@@ -1591,7 +1591,7 @@ describe('ModelsSection', () => {
       renderSlot={() => null}
     />)
     const key = await screen.findByLabelText<HTMLInputElement>(en.keyInput)
-    expect(key.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'DEEPSEEK_API_KEY'))
+    expect(key.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'GLKJ_API_KEY'))
   })
 
   it('tells the user to reopen when another writer moved the namespace first', async () => {
@@ -1622,13 +1622,13 @@ describe('ModelsSection', () => {
   it('surfaces a refused credential write on the card', async () => {
     await mountFirstRun({
       set: vi.fn(() => Promise.resolve(remoteFail(
-        'credentials-local: invalid document at /home/user/.dsh/.credentials.yaml: BAD_INDENT at line 3, column 1',
+        'credentials-local: invalid document at /home/user/.glh/.credentials.yaml: BAD_INDENT at line 3, column 1',
       ))),
     })
     const key = screen.getByLabelText<HTMLInputElement>(en.keyInput)
     fireEvent.change(key, { target: { value: 'sk-live' } })
     fireEvent.click(screen.getByText(en.apply))
-    await screen.findByText(/invalid document at \/home\/user\/\.dsh\/\.credentials\.yaml/)
+    await screen.findByText(/invalid document at \/home\/user\/\.glh\/\.credentials\.yaml/)
     expect(screen.queryByRole('status')).toBeNull()
   })
 
@@ -2043,7 +2043,7 @@ describe('ModelsSection', () => {
     expect(screen.getAllByRole('img', { name: en.credentialMissing })
       .some(dot => dot.closest('li')?.textContent?.includes('DeepSeek') === true)).toBe(true)
     // Its card reopens through Edit, which closes the add card as any row does.
-    fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
+    fireEvent.click(screen.getByRole('button', { name: glkjCopy(en.editProvider) }))
     expect(screen.getAllByLabelText(en.keyInput)).toHaveLength(1)
     expect(screen.queryByLabelText(en.provider)).toBeNull()
   })
@@ -2184,7 +2184,7 @@ describe('apiKeyFailure', () => {
   })
 
   it.each([
-    ['a pasted environment line', 'DEEPSEEK_API_KEY=sk-abc'],
+    ['a pasted environment line', 'GLKJ_API_KEY=sk-abc'],
     ['double quotes', '"sk-abc"'],
     ['single quotes', '\'sk-abc\''],
     ['backticks', '`sk-abc`'],
@@ -2375,13 +2375,13 @@ it('shows endpoint configuration variables without presenting them as credential
 
 it.each([true, false, undefined])('shows the confirmed fallback state without assuming a connection works: %s', (configured) => {
   renderPiAiEditor('deepseek', wireNamespaces().find(view => view.ns === 'llm-pi-ai')!, {
-    nativeAuth: { env: ['DEEPSEEK_API_KEY'], oauth: false },
-    ...configured === undefined ? {} : { credentialChecks: { DEEPSEEK_API_KEY: { configured, writable: true } } },
+    nativeAuth: { env: ['GLKJ_API_KEY'], oauth: false },
+    ...configured === undefined ? {} : { credentialChecks: { GLKJ_API_KEY: { configured, writable: true } } },
   })
   const input = screen.getByLabelText<HTMLInputElement>(en.keyInput)
-  expect(input.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'DEEPSEEK_API_KEY'))
-  const hint = configured === true ? en.keyFallbackDetected.replace('{hint}', 'DEEPSEEK_API_KEY')
-    : configured === false ? en.keyFallbackMissing.replace('{hint}', 'DEEPSEEK_API_KEY') : en.keyFallbackUnchecked
+  expect(input.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'GLKJ_API_KEY'))
+  const hint = configured === true ? en.keyFallbackDetected.replace('{hint}', 'GLKJ_API_KEY')
+    : configured === false ? en.keyFallbackMissing.replace('{hint}', 'GLKJ_API_KEY') : en.keyFallbackUnchecked
   expect(screen.getByText(hint).getAttribute('role')).toBeNull()
   expect(document.getElementById(input.getAttribute('aria-describedby')!)?.textContent).toBe(hint)
   fireEvent.change(input, { target: { value: 'new-key' } })

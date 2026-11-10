@@ -16,9 +16,9 @@
       config:
         transport: streamable-http
         serverName: protected
-        url: !!js process.env.DSH_MCP_DEMO_URL
+        url: !!js process.env.GLH_MCP_DEMO_URL
         headers:
-          Authorization: 'Bearer ${credential:DSH_MCP_TEMPLATE_TOKEN}'
+          Authorization: 'Bearer ${credential:GLH_MCP_TEMPLATE_TOKEN}'
         expandTemplates: true
         failOnStartupError: true
         reconnect:

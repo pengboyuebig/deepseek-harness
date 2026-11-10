@@ -24,7 +24,7 @@ function writeStderr(text: string): Promise<void> {
 }
 
 /**
- * Print the startup summary and save a private, uniquely named report under DSH_HOME/logs.
+ * Print the startup summary and save a private, uniquely named report under GLH_HOME/logs.
  * Failed writes print the complete report to stderr instead of claiming a saved path.
  * @param error - startup audit failure retaining plugin metadata and original errors.
  * @param context - resolved Harness home, application version, and selected profile.
@@ -61,7 +61,8 @@ export async function reportStartupFailure(
     await mkdir(logDir, { recursive: true, mode: 0o700 })
     await writeFile(logPath, report, { flag: 'wx', mode: 0o600 })
   } catch (writeError) {
-    await write(`\ndsh: warning: could not write startup diagnostics: ${String(writeError)}\nFull diagnostics:\n${report}`)
+    await write(`
+glh: warning: could not write startup diagnostics: ${String(writeError)}\nFull diagnostics:\n${report}`)
     return
   }
   await write(`\nFull diagnostics: ${logPath}\n`)

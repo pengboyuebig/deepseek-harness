@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-浏览器 Preview（[webworker-runtime](../../../../packages/experimental/webworker-runtime/README.zh.md)、[webworker-packer](../../../../packages/experimental/webworker-packer/README.zh.md)）的启动配置可以在打包时生成：packer 用临时 home 运行 `dsh --profile web --dump-config`，把输出写进镜像的 `config/cordis.yml`；Worker 再把整份配置当作 profile 自己的补丁（一条 `insert`）插回去。在这样的镜像上实测，会带来三个后果：
+浏览器 Preview（[webworker-runtime](../../../../packages/experimental/webworker-runtime/README.zh.md)、[webworker-packer](../../../../packages/experimental/webworker-packer/README.zh.md)）的启动配置可以在打包时生成：packer 用临时 home 运行 `glh --profile web --dump-config`，把输出写进镜像的 `config/cordis.yml`；Worker 再把整份配置当作 profile 自己的补丁（一条 `insert`）插回去。在这样的镜像上实测，会带来三个后果：
 
 | 现象 | 原因 |
 |---|---|
@@ -81,7 +81,7 @@ Worker 的结构化 stub 抛出带 `ERR_FEATURE_UNAVAILABLE_ON_PLATFORM` 的错�
 
 ## 后果
 
-Preview 启动的组合与正式 Web 相同。不开 bundle 时，Worker 组合与正式 Web 只差 jsonl 的平台覆盖；开任一 bundle 都没有被跳过的补丁。插件页和“设置 → 内置插件”列出全部 `OPTIONAL_BUNDLES`，每个都显示标题和图标，没有元信息错误。11 个 optional bundle 逐个开启再关闭，两次都返回 `applied`；开启后它改动的每个启用行都是 active，关闭后插件列表恢复原样。启用 session-titles 会禁用 `@deepseek-ai/dsh-session-title-first-prompt-llm`（行 `session-title-llm`）并启用 `@deepseek-ai/dsh-session-title-all-prompts-llm`，与正式 Web 一致；启用 inspector-profile 后 Session Inspector 运行，NodeJS Inspector 降级启动。降级以 `ERR_FEATURE_UNAVAILABLE_ON_PLATFORM` 为前提，所以正常 `dsh web` 运行完整的 Inspector。
+Preview 启动的组合与正式 Web 相同。不开 bundle 时，Worker 组合与正式 Web 只差 jsonl 的平台覆盖；开任一 bundle 都没有被跳过的补丁。插件页和“设置 → 内置插件”列出全部 `OPTIONAL_BUNDLES`，每个都显示标题和图标，没有元信息错误。11 个 optional bundle 逐个开启再关闭，两次都返回 `applied`；开启后它改动的每个启用行都是 active，关闭后插件列表恢复原样。启用 session-titles 会禁用 `@deepseek-ai/dsh-session-title-first-prompt-llm`（行 `session-title-llm`）并启用 `@deepseek-ai/dsh-session-title-all-prompts-llm`，与正式 Web 一致；启用 inspector-profile 后 Session Inspector 运行，NodeJS Inspector 降级启动。降级以 `ERR_FEATURE_UNAVAILABLE_ON_PLATFORM` 为前提，所以正常 `glh web` 运行完整的 Inspector。
 
 体积（MiB，实测）：基础镜像 9.20（打包期组合且 chunk 随启动下载时为 12.79，−28%），含 11 个 optional bundle；另有 5 个 lazy tar 共 4.45（pdf 2.88、excel 1.39、terminal 0.13、frontmatter 0.05、inspector 底部面板 0.00）。基础镜像不含懒加载 chunk，页面请求 chunk 时才拉取对应 archive。
 

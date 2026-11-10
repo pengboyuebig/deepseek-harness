@@ -1,7 +1,7 @@
 """Exercise Session commands through Python and the real sdk profile with a local model.
 
 The default carrier is the repository's built dsh CLI. Set
-DSH_COMMANDS_TEST_RUNTIME=installed to run these same cases against the imported
+GLH_COMMANDS_TEST_RUNTIME=installed to run these same cases against the imported
 SDK wheel and its bundled runtime, including from outside the repository.
 """
 
@@ -31,10 +31,10 @@ from deepseek_harness.client import UserQuestionHandler
 _WAIT_SECONDS = 30
 _SESSION_ID = "commands-runtime"
 _MODEL = "deepseek-v4-flash"
-_HISTORY_MARKER = "DSH_COMMANDS_OLD_USER_INPUT"
+_HISTORY_MARKER = "GLH_COMMANDS_OLD_USER_INPUT"
 _FIRST_REPLY = "SDK_COMPACT_READY"
-_CHECKPOINT = "## Primary Request and Intent\n- DSH_COMMANDS_CHECKPOINT: retain the earlier task."
-_CONTINUE_PROMPT = "DSH_COMMANDS_CONTINUE: answer using the retained checkpoint."
+_CHECKPOINT = "## Primary Request and Intent\n- GLH_COMMANDS_CHECKPOINT: retain the earlier task."
+_CONTINUE_PROMPT = "GLH_COMMANDS_CONTINUE: answer using the retained checkpoint."
 _CONTINUE_REPLY = "SDK_COMPACT_OK"
 _T = TypeVar("_T")
 
@@ -200,16 +200,16 @@ def test_model_server_only_allows_expected_connection_aborts(
 
 
 def _dsh_bin() -> str | None:
-    mode = os.environ.get("DSH_COMMANDS_TEST_RUNTIME", "built")
+    mode = os.environ.get("GLH_COMMANDS_TEST_RUNTIME", "built")
     if mode == "installed":
         return None
     if mode != "built":
-        raise ValueError("DSH_COMMANDS_TEST_RUNTIME must be built or installed")
+        raise ValueError("GLH_COMMANDS_TEST_RUNTIME must be built or installed")
     repo = Path(__file__).resolve().parents[3]
     node = shutil.which("node")
     binary = repo / "apps/cli/lib/bin.js"
     if node is None or not binary.is_file():
-        pytest.skip("requires Node and built dsh CLI, or DSH_COMMANDS_TEST_RUNTIME=installed")
+        pytest.skip("requires Node and built dsh CLI, or GLH_COMMANDS_TEST_RUNTIME=installed")
     return str(binary)
 
 
@@ -264,8 +264,8 @@ def _runtime(
             base_url=model_server.url, api_key="keyless-commands-runtime",
             initialize_timeout_seconds=60, request_timeout_seconds=20, shutdown_timeout_seconds=20,
             on_user_question=on_user_question,
-            env={"DSH_PERMISSION_MODE": initial_permission,
-                 "DSH_TELEMETRY_DISABLED": "1", "DSH_TOOLS_MODE": "native"},
+            env={"GLH_PERMISSION_MODE": initial_permission,
+                 "GLH_TELEMETRY_DISABLED": "1", "GLH_TOOLS_MODE": "native"},
         )
         try:
             harness.start()
@@ -376,7 +376,7 @@ def test_compact_without_history_returns_without_a_model_turn(tmp_path: Path) ->
 
 
 def test_compact_rejects_busy_agent_before_the_model_is_released(tmp_path: Path) -> None:
-    response = _Completion("DSH_COMMANDS_BUSY_REPLY", blocked=True)
+    response = _Completion("GLH_COMMANDS_BUSY_REPLY", blocked=True)
     with _runtime(tmp_path, [response]) as runtime:
         session = runtime.harness.start_session(_SESSION_ID)
         running = runtime.workers.submit(
@@ -501,10 +501,10 @@ def test_unknown_slash_and_compact_arguments_follow_the_plain_prompt_path(tmp_pa
 
 
 def test_unimplemented_slash_remains_plain_text_without_recording_feedback(tmp_path: Path) -> None:
-    input_text = "/feedback DSH_FEEDBACK_TEXT_INPUT"
-    following = "DSH_AFTER_PLAN_TEXT_INPUT"
-    reply_before = "DSH_FEEDBACK_TEXT_REPLY"
-    reply = "DSH_AFTER_PLAN_TEXT_REPLY"
+    input_text = "/feedback GLH_FEEDBACK_TEXT_INPUT"
+    following = "GLH_AFTER_PLAN_TEXT_INPUT"
+    reply_before = "GLH_FEEDBACK_TEXT_REPLY"
+    reply = "GLH_AFTER_PLAN_TEXT_REPLY"
     with _runtime(tmp_path, [_Completion(reply_before), _Completion(reply)]) as runtime:
         session = runtime.harness.start_session(_SESSION_ID)
         first = runtime.call(session.run, input_text)
@@ -638,7 +638,7 @@ def test_running_permission_change_keeps_the_native_extra_step_and_notifications
         _assert_request_permission(requests[1], "danger-full-access", "never")
         assert requests[0]["system"] == requests[1]["system"]
         assert requests[0]["tools"] == requests[1]["tools"]
-        assert runtime.harness.config.env["DSH_PERMISSION_MODE"] == "workspace-write"
+        assert runtime.harness.config.env["GLH_PERMISSION_MODE"] == "workspace-write"
     events = _read_events(runtime.logs)
     _command_pair(events, execution, "permission")
     [notice] = [event["data"]["content"] for event in _of_type(events, "user/message")
@@ -664,5 +664,5 @@ def test_resumed_permission_survives_different_launch_defaults(tmp_path: Path) -
         assert isinstance(resumed.call(session.run, "Report the restored policy without using tools."), RunResult)
         [request] = resumed.model.captured()
         _assert_request_permission(request, "read-only", "ask")
-        assert resumed.harness.config.env["DSH_PERMISSION_MODE"] == "danger-full-access"
+        assert resumed.harness.config.env["GLH_PERMISSION_MODE"] == "danger-full-access"
     assert _permission_facts(_read_events(resumed.logs)) == saved

@@ -10,16 +10,16 @@ import {
 } from './transport.ts'
 
 /** Stable id the Search API provider registers under in the search registry. */
-export const DEEPSEEK_SEARCH_API_PROVIDER_ID = 'deepseek-search-api'
+export const GLKJ_SEARCH_API_PROVIDER_ID = 'deepseek-search-api'
 
 /** Default Search and Fetch API base, including its `/v1/tools` prefix; `/search` and `/fetch` are appended. */
-export const DEEPSEEK_WEB_API_BASE_URL = 'https://api.deepseek.com/v1/tools'
+export const GLKJ_WEB_API_BASE_URL = 'https://api.glkj.example.com/v1/tools'
 
 /** Default Search API result count, the service's own default. */
-export const DEEPSEEK_DEFAULT_COUNT = 10
+export const GLKJ_DEFAULT_COUNT = 10
 
 /** Default Search requests started per second, the service's account-wide 5 QPS limit. */
-export const DEEPSEEK_SEARCH_REQUESTS_PER_SECOND = 5
+export const GLKJ_SEARCH_REQUESTS_PER_SECOND = 5
 
 /** Longest `ori_question` the Search API accepts, in characters. */
 const ORIGINAL_QUESTION_MAX_CHARS = 128
@@ -70,7 +70,7 @@ export function mapSearchResponse(response: unknown): WebSearchResult {
  * failures after dispatch name the endpoint and tell the model how the user can configure it.
  */
 export class DeepSeekSearchApiProvider implements WebSearchProvider {
-  readonly id = DEEPSEEK_SEARCH_API_PROVIDER_ID
+  readonly id = GLKJ_SEARCH_API_PROVIDER_ID
   /** Monotonic start times (ms) of requests inside the current window, oldest first. */
   private readonly starts: number[] = []
   /** Picker description: what this provider suits and what it costs or cannot do. */

@@ -47,7 +47,7 @@ describe('desktop build paths', () => {
 
   it('retains target outputs while relocating caches through the supplied environment', () => {
     const cache = resolve('external-package-cache')
-    const environment = { DSH_DESKTOP_PACKAGE_CACHE_DIR: cache }
+    const environment = { GLH_DESKTOP_PACKAGE_CACHE_DIR: cache }
     const defaults = desktopTargetBuildPaths('win-x64', {})
     const paths = resolveDesktopTargetBuildPaths(environment, 'win32', 'x64')
     expect(paths).toEqual({ ...defaults, downloads: join(cache, 'downloads'), pnpmStore: join(cache, 'pnpm-store') })
@@ -62,8 +62,8 @@ describe('desktop build paths', () => {
   })
 
   it.each(['', ' ', 'relative/cache', './cache', 'cache\0invalid'])('rejects invalid cache directory %j', (directory) => {
-    expect(() => desktopTargetBuildPaths('win-x64', { DSH_DESKTOP_PACKAGE_CACHE_DIR: directory }))
-      .toThrow('DSH_DESKTOP_PACKAGE_CACHE_DIR')
+    expect(() => desktopTargetBuildPaths('win-x64', { GLH_DESKTOP_PACKAGE_CACHE_DIR: directory }))
+      .toThrow('GLH_DESKTOP_PACKAGE_CACHE_DIR')
   })
 
   it('resolves the development primary runtime from the build target rather than the host architecture', () => {
@@ -84,8 +84,8 @@ describe('desktop build paths', () => {
 
   it('resolves environment overrides and rejects unsupported targets', () => {
     expect(resolveDesktopBuildTarget({
-      DSH_DESKTOP_TARGET_PLATFORM: 'darwin',
-      DSH_DESKTOP_TARGET_ARCH: 'x64',
+      GLH_DESKTOP_TARGET_PLATFORM: 'darwin',
+      GLH_DESKTOP_TARGET_ARCH: 'x64',
     }, 'darwin', 'arm64')).toBe('mac-x64')
     expect(resolveDesktopBuildTarget({}, 'win32', 'x64')).toBe('win-x64')
     expect(() => resolveDesktopBuildTarget({}, 'linux', 'x64')).toThrow(/unsupported target/u)

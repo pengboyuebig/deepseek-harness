@@ -1,6 +1,6 @@
 /**
  * Tool-independent shell environment plugin: owns the `ctx.shellEnv` registry of
- * trusted, per-execution `DSH_*` variables consumed by the model-facing shell
+ * trusted, per-execution `GLH_*` variables consumed by the model-facing shell
  * tools (`dsh-tool-bash`, `dsh-tool-pwsh`). Built-in shell facts are owned by
  * the registry itself while plugins can register additional, enumerable facts
  * with effect-scoped disposal.
@@ -10,9 +10,9 @@
 
 import { Service, type Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { DSH_ENV_PREFIX } from '@deepseek-ai/dsh-shell'
+import { GLH_ENV_PREFIX } from '@deepseek-ai/dsh-shell'
 import type { DshEnvironment, DshEnvironmentKey } from '@deepseek-ai/dsh-shell'
-import { DSH_HOME_ENV, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { GLH_HOME_ENV, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
 import type { ToolExecution } from '@deepseek-ai/dsh-tools'
 // Declares `Context.profileContext`, the launcher-provided profile the built-ins read.
 import type {} from '@deepseek-ai/dsh-app-boot'
@@ -28,7 +28,7 @@ export const inject: string[] = []
 
 /** Plugin config (all optional — the built-in facts resolve without defaults). */
 export interface Config {
-  /** DeepSeek Harness home directory exposed as `DSH_HOME`; defaults to `$DSH_HOME` or `~/.dsh`. */
+  /** GLKJ Harness home directory exposed as `GLH_HOME`; defaults to `$GLH_HOME` or `~/.glh`. */
   dshHome?: string
 }
 
@@ -37,7 +37,7 @@ export const Config: z<Config> = z.object({
   dshHome: z.string(),
 })
 
-/** Model-visible metadata for one managed `DSH_*` environment variable. */
+/** Model-visible metadata for one managed `GLH_*` environment variable. */
 export interface BashEnvVariable {
   /** Concise description of the environment fact represented by the variable. */
   description: string
@@ -51,7 +51,7 @@ export interface BashEnvVariable {
 export interface BashEnvContributor {
   /** Stable contributor name used in diagnostics and duplicate detection. */
   name: string
-  /** Complete set of `DSH_*` keys this contributor may return. */
+  /** Complete set of `GLH_*` keys this contributor may return. */
   variables: Readonly<Record<DshEnvironmentKey, BashEnvVariable>>
   /**
    * Resolve this contributor's available values for one tool execution.
@@ -65,26 +65,26 @@ export interface BashEnvContributor {
 export interface BashEnvVariableInfo extends BashEnvVariable {
   /** Contributor that owns the variable. */
   contributor: string
-  /** Declared `DSH_*` environment variable name. */
+  /** Declared `GLH_*` environment variable name. */
   key: DshEnvironmentKey
 }
 
-const DSH_SHELL_KEY = `${DSH_ENV_PREFIX}SHELL` as const
-const DSH_SESSION_ID_KEY = `${DSH_ENV_PREFIX}SESSION_ID` as const
-const DSH_PROFILE_KEY = `${DSH_ENV_PREFIX}PROFILE` as const
-const DSH_PROFILE_DIR_KEY = `${DSH_ENV_PREFIX}PROFILE_DIR` as const
+const GLH_SHELL_KEY = `${GLH_ENV_PREFIX}SHELL` as const
+const GLH_SESSION_ID_KEY = `${GLH_ENV_PREFIX}SESSION_ID` as const
+const GLH_PROFILE_KEY = `${GLH_ENV_PREFIX}PROFILE` as const
+const GLH_PROFILE_DIR_KEY = `${GLH_ENV_PREFIX}PROFILE_DIR` as const
 const RESERVED_BASH_ENV_KEYS = new Set<DshEnvironmentKey>([
-  DSH_HOME_ENV,
-  DSH_SHELL_KEY,
-  DSH_SESSION_ID_KEY,
-  DSH_PROFILE_KEY,
-  DSH_PROFILE_DIR_KEY,
+  GLH_HOME_ENV,
+  GLH_SHELL_KEY,
+  GLH_SESSION_ID_KEY,
+  GLH_PROFILE_KEY,
+  GLH_PROFILE_DIR_KEY,
 ])
 const BASH_ENV_KEY_SUFFIX = /^[A-Z][A-Z0-9_]*$/
 
 /**
- * Registry (`ctx.shellEnv`) for trusted, per-execution `DSH_*` variables.
- * The namespace is rebuilt for every model shell call: ambient `DSH_*` values
+ * Registry (`ctx.shellEnv`) for trusted, per-execution `GLH_*` variables.
+ * The namespace is rebuilt for every model shell call: ambient `GLH_*` values
  * are discarded by the executor, then the registry's current snapshot is
  * injected. Built-in shell facts remain owned by the registry itself while
  * plugins can register additional, enumerable facts with effect-scoped
@@ -122,8 +122,8 @@ export class ShellEnvRegistry extends Service {
 
       const variables = Object.entries(contributor.variables) as [DshEnvironmentKey, BashEnvVariable][]
       for (const [key, variable] of variables) {
-        if (!key.startsWith(DSH_ENV_PREFIX)
-          || !BASH_ENV_KEY_SUFFIX.test(key.slice(DSH_ENV_PREFIX.length))) {
+        if (!key.startsWith(GLH_ENV_PREFIX)
+          || !BASH_ENV_KEY_SUFFIX.test(key.slice(GLH_ENV_PREFIX.length))) {
           throw new Error(`bash env contributor "${contributor.name}" declared invalid key "${key}"`)
         }
         if (RESERVED_BASH_ENV_KEYS.has(key)) {
@@ -149,22 +149,22 @@ export class ShellEnvRegistry extends Service {
   }
 
   /**
-   * Build the trusted `DSH_*` snapshot for one shell tool execution.
+   * Build the trusted `GLH_*` snapshot for one shell tool execution.
    * @param execution - the current tool execution.
    * @returns an immutable environment overlay containing built-ins and current contributions.
    */
   collect(execution: ToolExecution): DshEnvironment {
     const values: Record<DshEnvironmentKey, string> = {
-      [DSH_HOME_ENV]: this.dshHome,
-      [DSH_SHELL_KEY]: '1',
+      [GLH_HOME_ENV]: this.dshHome,
+      [GLH_SHELL_KEY]: '1',
     }
     if (execution.agent !== undefined) {
-      values[DSH_SESSION_ID_KEY] = execution.agent.session.header.id
+      values[GLH_SESSION_ID_KEY] = execution.agent.session.header.id
     }
     const profile = this.ctx.get('profileContext')
     if (profile !== undefined) {
-      values[DSH_PROFILE_KEY] = profile.name
-      values[DSH_PROFILE_DIR_KEY] = profile.dir
+      values[GLH_PROFILE_KEY] = profile.name
+      values[GLH_PROFILE_DIR_KEY] = profile.dir
     }
 
     for (const contributor of [...this.contributors.values()].sort((left, right) => left.name.localeCompare(right.name))) {

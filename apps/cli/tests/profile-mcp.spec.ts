@@ -15,7 +15,7 @@ describe('shipped MCP resource composition', () => {
   it.each(Object.keys(PROFILE_TEMPLATES))('%s carries one shared resource consumer without a server', (name) => {
     const home = mkdtempSync(join(tmpdir(), 'dsh-profile-mcp-'))
     try {
-      const profile = loadProfile('dsh', name, installAnchor, home)
+      const profile = loadProfile('glh', name, installAnchor, home)
       const warnings: string[] = []
       const rows = composeEntries([
         ...profile.layers.map(layer => layer.patches),
@@ -45,7 +45,7 @@ describe('shipped MCP resource composition', () => {
   it.each(Object.keys(PROFILE_TEMPLATES))('%s mounts the server manager only with the Web application', (name) => {
     const home = mkdtempSync(join(tmpdir(), 'dsh-profile-mcp-'))
     try {
-      const profile = loadProfile('dsh', name, installAnchor, home)
+      const profile = loadProfile('glh', name, installAnchor, home)
       const rows = composeEntries([...profile.layers.map(layer => layer.patches), profile.patches])
       expect(rows.filter(row => row.name === '@deepseek-ai/dsh-mcp-manager')).toEqual(name === 'web'
         ? [{ id: 'mcp-manager', name: '@deepseek-ai/dsh-mcp-manager', inject: ['credentials'] }]

@@ -16,13 +16,13 @@ const OFFICIAL_ORIGIN = new URL(PUBLIC_BASE_URL).origin
 
 /** Messages configuration with a per-request API-key reference. */
 export interface Config extends ProtocolConfig, ModelListingConfig {
-  /** Credential reference resolved per request; defaults to DEEPSEEK_API_KEY. */
+  /** Credential reference resolved per request; defaults to GLKJ_API_KEY. */
   apiKeyEnv: Volatile<string>
 }
 export const Config = z.object({
   ...deepSeekConfigFields,
   ...modelListingConfigFields,
-  apiKeyEnv: z.string().role('credential-ref').default('DEEPSEEK_API_KEY').volatile(),
+  apiKeyEnv: z.string().role('credential-ref').default('GLKJ_API_KEY').volatile(),
 })
 /** Plain deployment inputs for the API-key provider. */
 export type Options = ProtocolOptions & ModelListingOptions & { apiKeyEnv?: string }
@@ -55,7 +55,7 @@ export function resolveAdapterOptions(config: Options, environment?: LaunchEnvir
   const listed = new URL(connection.baseURL).origin === OFFICIAL_ORIGIN && isBuiltInCatalog(connection.models)
   return {
     ...connection,
-    apiKeyEnv: credentialRef(apiKeyEnv ?? 'DEEPSEEK_API_KEY'),
+    apiKeyEnv: credentialRef(apiKeyEnv ?? 'GLKJ_API_KEY'),
     ...listed ? { listing: { url: modelListingURL(connection.baseURL), ...timing } } : {},
   }
 }

@@ -13,5 +13,5 @@ The `deepseek-official` route previously listed its configured models without an
 
 ## Migration
 
-1. To use the API-key route, configure its key in Settings → Models or supply the reference named by `apiKeyEnv` (default `DEEPSEEK_API_KEY`) through the launch environment.
+1. To use the API-key route, configure its key in Settings → Models or supply the reference named by `apiKeyEnv` (default `GLKJ_API_KEY`) through the launch environment.
 2. Reopen the model selector and confirm the DeepSeek group appears. Custom discovery consumers must handle an empty catalog before credentials are configured; listing models does not verify that the remote API accepts the key.

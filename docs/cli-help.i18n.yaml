@@ -5,30 +5,30 @@
 /:
   en: d11ca88bdc409249
   zh: d11ca88bdc409249
-/dsh-cli-help:
-  en: b7174eab3476579d
-  zh: 5ddab967320e3cff
-/dsh-cli-help/contents:
-  en: 00308bcc6dc90afd
-  zh: 16f7442b76686a02
-/dsh-cli-help/dsh:
-  en: e0695abcf7d8b521
-  zh: 712c23b3c8a115ca
-/dsh-cli-help/dsh-plugin:
-  en: adad99c125d0ac51
-  zh: f11024971184f737
-/dsh-cli-help/dsh-acp:
-  en: bcb0f84577ce5f03
-  zh: 4382e617006849db
-/dsh-cli-help/dsh-headless:
-  en: 878a1dd78017964d
-  zh: bb43d91b4beb9bda
-/dsh-cli-help/dsh-sdk:
-  en: 701f239c5157dedb
-  zh: ee11be2932b05ce4
-/dsh-cli-help/dsh-sdk-minimal:
-  en: 8f0d7548d299ffd3
-  zh: fa2262e70d6819a0
-/dsh-cli-help/dsh-web:
-  en: 5d073104e8954cc8
-  zh: 91cd28f7c6ac96ac
+/glh-cli-help:
+  en: d75d54a93e6cbfd3
+  zh: cde4291c6fe67ff4
+/glh-cli-help/contents:
+  en: 1d8e9c83fe60abd3
+  zh: 257ef80df90202a4
+/glh-cli-help/glh:
+  en: 678fd14fe6aea90e
+  zh: aa230b59636a5c42
+/glh-cli-help/glh-plugin:
+  en: 2ba1e09db02c50a2
+  zh: f6406743c69714b3
+/glh-cli-help/glh-acp:
+  en: e682e96285cafe17
+  zh: 2b146bc5ae175c40
+/glh-cli-help/glh-headless:
+  en: 140d27e069435e51
+  zh: 4ffdb2c42024fa05
+/glh-cli-help/glh-sdk:
+  en: 5badfd29c99b6af0
+  zh: 139a4a0163b36ebd
+/glh-cli-help/glh-sdk-minimal:
+  en: acff07f5adc7cc34
+  zh: bc7c7e0b5c22f29a
+/glh-cli-help/glh-web:
+  en: d3e0d3e0d2594df5
+  zh: 56dc20ac0786b938

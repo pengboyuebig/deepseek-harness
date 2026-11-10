@@ -14,8 +14,8 @@ let downloads
 let cache
 if (existsSync(join(resourceDirectory, 'downloads.json'))) {
   downloads = JSON.parse(await readFile(join(resourceDirectory, 'downloads.json'), 'utf8'))
-  const root = process.env.DSH_RESOURCE_CACHE ?? join(homedir(), '.cache', 'deepseek-harness', 'resources')
-  if (!isAbsolute(root)) throw new Error('DSH_RESOURCE_CACHE must be an absolute directory')
+  const root = process.env.GLH_RESOURCE_CACHE ?? join(homedir(), '.cache', 'deepseek-harness', 'resources')
+  if (!isAbsolute(root)) throw new Error('GLH_RESOURCE_CACHE must be an absolute directory')
   if (!/^[a-f0-9]{64}$/u.test(downloads.identity)) throw new Error('runtime download manifest has an invalid cache identity')
   cache = join(root, downloads.identity)
 }
@@ -57,9 +57,9 @@ async function downloadResource(kind) {
   return kind === 'primary' ? join(destination, 'primary-runtime') : destination
 }
 
-const office = process.env.DSH_OFFICE_SIDECAR ?? (cache !== undefined && existsSync(join(cache, 'office', 'complete')) ? join(cache, 'office') : undefined)
+const office = process.env.GLH_OFFICE_SIDECAR ?? (cache !== undefined && existsSync(join(cache, 'office', 'complete')) ? join(cache, 'office') : undefined)
 if (office !== undefined) {
-  if (!isAbsolute(office)) throw new Error('DSH_OFFICE_SIDECAR must be an absolute directory')
+  if (!isAbsolute(office)) throw new Error('GLH_OFFICE_SIDECAR must be an absolute directory')
   const parentURL = pathToFileURL(join(office, 'package.json')).href
   registerHooks({
     resolve(specifier, context, nextResolve) {
@@ -67,37 +67,37 @@ if (office !== undefined) {
       return nextResolve(specifier, kit ? { ...context, parentURL } : context)
     },
   })
-  process.env.DSH_BUNDLED_OFFICE_NODE = join(office, 'node', 'bin', process.platform === 'win32' ? 'node.exe' : 'node')
-  process.env.DSH_BUNDLED_OFFICE_CLI = join(office, 'node_modules', '@deepseek-ai', 'libreoffice-kit', 'lib', 'cli.js')
+  process.env.GLH_BUNDLED_OFFICE_NODE = join(office, 'node', 'bin', process.platform === 'win32' ? 'node.exe' : 'node')
+  process.env.GLH_BUNDLED_OFFICE_CLI = join(office, 'node_modules', '@deepseek-ai', 'libreoffice-kit', 'lib', 'cli.js')
 } else if (isSea()) {
-  process.env.DSH_BUNDLED_OFFICE_CLI = ''
+  process.env.GLH_BUNDLED_OFFICE_CLI = ''
 }
-if (downloads !== undefined) process.env.DSH_BUNDLED_OFFICE_SKILLS = join(resourceDirectory, 'office-skills')
+if (downloads !== undefined) process.env.GLH_BUNDLED_OFFICE_SKILLS = join(resourceDirectory, 'office-skills')
 
-const selectorName = 'DSH_SUBPROCESS_RUNNER'
+const selectorName = 'GLH_SUBPROCESS_RUNNER'
 const selection = process.env[selectorName]
 const aclRunner = process.platform === 'win32'
   ? fileURLToPath(import.meta.resolve('@deepseek-ai/dsh-sandbox-windows-acl/runner'))
   : undefined
 
-const resource = process.env.DSH_RUNTIME_DOWNLOAD
+const resource = process.env.GLH_RUNTIME_DOWNLOAD
 if (resource !== undefined) {
-  Reflect.deleteProperty(process.env, 'DSH_RUNTIME_DOWNLOAD')
-  if (resource !== 'office' && resource !== 'primary') throw new Error('DSH_RUNTIME_DOWNLOAD must select office or primary')
+  Reflect.deleteProperty(process.env, 'GLH_RUNTIME_DOWNLOAD')
+  if (resource !== 'office' && resource !== 'primary') throw new Error('GLH_RUNTIME_DOWNLOAD must select office or primary')
   const path = await downloadResource(resource)
   console.log(JSON.stringify(path))
 } else if (aclRunner !== undefined && process.argv[2] === aclRunner) {
   process.argv.splice(1, 1)
   await import('@deepseek-ai/dsh-sandbox-windows-acl/runner')
-} else if (process.env.DSH_PTC_RUNTIME_NODE === '1') {
-  Reflect.deleteProperty(process.env, 'DSH_PTC_RUNTIME_NODE')
+} else if (process.env.GLH_PTC_RUNTIME_NODE === '1') {
+  Reflect.deleteProperty(process.env, 'GLH_PTC_RUNTIME_NODE')
   await import('@deepseek-ai/dsh-ptc-runtime-node/process')
 } else if (selection === undefined) {
   if (cache !== undefined && existsSync(join(cache, 'primary', 'complete'))) {
-    process.env.DSH_BUNDLED_PRIMARY_RUNTIME = join(cache, 'primary', 'primary-runtime')
+    process.env.GLH_BUNDLED_PRIMARY_RUNTIME = join(cache, 'primary', 'primary-runtime')
   }
   let packageManager
-  const primary = process.env.DSH_PRIMARY_RUNTIME ?? process.env.DSH_BUNDLED_PRIMARY_RUNTIME
+  const primary = process.env.GLH_PRIMARY_RUNTIME ?? process.env.GLH_BUNDLED_PRIMARY_RUNTIME
   if (primary !== undefined && primary !== '') {
     const { resolvePrimaryRuntime } = await import('@deepseek-ai/dsh-tool-workspace-dependencies')
     const { node, pnpm } = await resolvePrimaryRuntime(primary)

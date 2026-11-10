@@ -14,8 +14,8 @@ import { renderCliFixture } from './fixtures/render-cli.ts'
 
 const repo = fileURLToPath(new URL('../../../../', import.meta.url))
 const assetRoot = fileURLToPath(new URL('../assets/', import.meta.url))
-// DSH_PRIMARY_RUNTIME names the same runtime.json + dependencies/ payload used by shipped deployments.
-const runtime = process.env.DSH_PRIMARY_RUNTIME
+// GLH_PRIMARY_RUNTIME names the same runtime.json + dependencies/ payload used by shipped deployments.
+const runtime = process.env.GLH_PRIMARY_RUNTIME
 const python = runtime && join(runtime, 'dependencies/python', process.platform === 'win32' ? 'python.exe' : 'bin/python3')
 const seed = `
 import sys
@@ -62,7 +62,7 @@ const cases = [
   },
 ] as const
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each(['native', 'ptc'])('Excel validation scope (%s)', (mode) => {
+describe.skipIf(!process.env.GLKJ_API_KEY || !runtime).each(['native', 'ptc'])('Excel validation scope (%s)', (mode) => {
   it.each(mode === 'native' ? cases : cases.filter(({ kind }) => kind === 'layout'))('$name', async ({ task, kind }) => {
     let events: SessionEvent[] = []
     let original: Buffer | undefined
@@ -85,13 +85,13 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each(['native', 'ptc'
       ],
       processTimeoutMs: 110_000,
       env: {
-        DSH_PRIMARY_RUNTIME: runtime,
-        DSH_PERMISSION_MODE: 'danger-full-access',
-        DSH_HOME: join(controlRoot, 'home'),
-        DSH_AGENTS_HOME: join(controlRoot, 'agents'),
-        DSH_TELEMETRY_DISABLED: '1',
-        HTTP_PROXY: process.env.DSH_OFFICE_TEST_PROXY,
-        HTTPS_PROXY: process.env.DSH_OFFICE_TEST_PROXY,
+        GLH_PRIMARY_RUNTIME: runtime,
+        GLH_PERMISSION_MODE: 'danger-full-access',
+        GLH_HOME: join(controlRoot, 'home'),
+        GLH_AGENTS_HOME: join(controlRoot, 'agents'),
+        GLH_TELEMETRY_DISABLED: '1',
+        HTTP_PROXY: process.env.GLH_OFFICE_TEST_PROXY,
+        HTTPS_PROXY: process.env.GLH_OFFICE_TEST_PROXY,
       },
       async prepare(cwd) {
         await execa(python!, ['-c', seed, kind], { cwd })
@@ -111,7 +111,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each(['native', 'ptc'
         const logs = paths.filter(path => /session\.v\d+\.jsonl$/u.test(path))
         expect(logs).toHaveLength(1)
         const bytes = await readFile(join(sessionRoot, logs[0]!))
-        const traceDir = process.env.DSH_OFFICE_TRACE_DIR
+        const traceDir = process.env.GLH_OFFICE_TRACE_DIR
         if (traceDir !== undefined) {
           await mkdir(traceDir, { recursive: true })
           await writeFile(join(traceDir, `xlsx-${kind}-${mode}.jsonl`), bytes)

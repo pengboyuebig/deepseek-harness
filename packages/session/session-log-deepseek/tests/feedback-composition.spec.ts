@@ -36,8 +36,8 @@ async function boot(
   sessionLog: { enabled: boolean; maxBytes?: number }, mock: MockLlmServerOptions,
 ): Promise<{ ctx: Context; server: MockLlmServer }> {
   root = await mkdtemp(join(tmpdir(), 'dsh-feedback-upload-'))
-  vi.stubEnv('DSH_HOME', root)
-  vi.stubEnv('DEEPSEEK_API_KEY', 'feedback-test-key')
+  vi.stubEnv('GLH_HOME', root)
+  vi.stubEnv('GLKJ_API_KEY', 'feedback-test-key')
   server = await startMockLlmServer(mock)
   const modules = new Map<string, unknown>([
     ['@deepseek-ai/dsh-session', SessionStore],

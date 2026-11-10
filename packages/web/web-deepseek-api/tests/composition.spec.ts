@@ -55,11 +55,11 @@ async function bootComposition(web: Record<string, unknown>, environment: Record
   vi.stubGlobal('fetch', fetchMock)
   const root = await mkdtemp(join(tmpdir(), 'dsh-web-deepseek-api-composition-'))
   cleanups.push(async () => { await rm(root, { recursive: true, force: true }) })
-  const previousHome = process.env.DSH_HOME
-  process.env.DSH_HOME = root
+  const previousHome = process.env.GLH_HOME
+  process.env.GLH_HOME = root
   cleanups.push(async () => {
-    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'DSH_HOME')
-    else process.env.DSH_HOME = previousHome
+    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'GLH_HOME')
+    else process.env.GLH_HOME = previousHome
   })
   const configPath = join(root, 'cordis.yml')
   await writeFile(configPath, JSON.stringify([
@@ -102,9 +102,9 @@ function entry(ctx: Context, id: string) {
 }
 
 describe('web-deepseek-api over the real model routes', () => {
-  it('serves a user with only DEEPSEEK_API_KEY by default, at the origin DEEPSEEK_BASE_URL names', async () => {
+  it('serves a user with only GLKJ_API_KEY by default, at the origin GLKJ_BASE_URL names', async () => {
     const { ctx, sent } = await bootComposition({}, {
-      DEEPSEEK_API_KEY: 'chat-key', DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic',
+      GLKJ_API_KEY: 'chat-key', GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic',
     })
     expect([await ctx.web.searchReady(undefined), await ctx.web.fetchReady(undefined)]).toEqual([true, true])
     await ctx.web.search({ query: 'q' })
@@ -118,7 +118,7 @@ describe('web-deepseek-api over the real model routes', () => {
   it('sends Fetch to its own YAML endpoint while Search follows the route', async () => {
     const { ctx, sent } = await bootComposition(
       { fetchBaseURL: 'https://own.deepseek.test/v1/tools', fetchApiKeyEnv: 'OWN_FETCH_KEY' },
-      { DEEPSEEK_API_KEY: 'chat-key', OWN_FETCH_KEY: 'own-key', DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic' },
+      { GLKJ_API_KEY: 'chat-key', OWN_FETCH_KEY: 'own-key', GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic' },
     )
     await ctx.web.search({ query: 'q' })
     await ctx.web.fetch({ url: 'https://example.test/' })
@@ -128,14 +128,14 @@ describe('web-deepseek-api over the real model routes', () => {
     ])
   })
 
-  it('sends DEEPSEEK_API_KEY to the official base once the route entry is disposed, and unregisters with its own fiber', async () => {
+  it('sends GLKJ_API_KEY to the official base once the route entry is disposed, and unregisters with its own fiber', async () => {
     const { ctx, sent } = await bootComposition({}, {
-      DEEPSEEK_API_KEY: 'chat-key', DEEPSEEK_BASE_URL: 'https://internal.deepseek.test/anthropic',
+      GLKJ_API_KEY: 'chat-key', GLKJ_BASE_URL: 'https://internal.deepseek.test/anthropic',
     })
     await entry(ctx, 'llm-deepseek').dispose()
     expect(await ctx.web.searchReady(undefined)).toBe(true)
     await ctx.web.search({ query: 'q' })
-    expect(sent()).toEqual([{ endpoint: 'https://api.deepseek.com/v1/tools/search', authorization: 'Bearer chat-key', token: null }])
+    expect(sent()).toEqual([{ endpoint: 'https://api.glkj.example.com/v1/tools/search', authorization: 'Bearer chat-key', token: null }])
     await entry(ctx, 'web-deepseek-api').dispose()
     expect(ctx.web.listProviders()).toEqual({ search: [], fetch: [] })
   })

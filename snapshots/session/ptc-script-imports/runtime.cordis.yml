@@ -5,4 +5,4 @@
     launch:
       kind: node-script
       executable: !!js process.execPath
-      bootstrapPath: !!js "decodeURIComponent(new URL('./runner.mjs', 'file://' + process.env.DSH_SNAPSHOT_FILE).pathname)"
+      bootstrapPath: !!js "decodeURIComponent(new URL('./runner.mjs', 'file://' + process.env.GLH_SNAPSHOT_FILE).pathname)"

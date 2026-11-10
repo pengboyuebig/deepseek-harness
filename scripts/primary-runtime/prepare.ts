@@ -31,8 +31,8 @@ export async function downloadPrimaryRuntimeAsset(url: string, sha256: string, c
   try { bytes = readFileSync(destination) } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
     cached = false
-    const timeout = Number(process.env.DSH_RESOURCE_DOWNLOAD_TIMEOUT_MS ?? '300000')
-    if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 2_147_483_647) throw new Error('DSH_RESOURCE_DOWNLOAD_TIMEOUT_MS must be an integer from 1 to 2147483647')
+    const timeout = Number(process.env.GLH_RESOURCE_DOWNLOAD_TIMEOUT_MS ?? '300000')
+    if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 2_147_483_647) throw new Error('GLH_RESOURCE_DOWNLOAD_TIMEOUT_MS must be an integer from 1 to 2147483647')
     const response = await fetch(url, { signal: AbortSignal.timeout(timeout) })
     if (!response.ok) throw new Error(`primary runtime download: ${String(response.status)} ${url}`)
     bytes = Buffer.from(await response.arrayBuffer())

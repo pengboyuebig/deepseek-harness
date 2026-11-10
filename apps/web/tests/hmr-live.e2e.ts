@@ -1,4 +1,4 @@
-/** Built dsh web + the `pnpm run dev:web --no-serve` watchers → browser HMR, with no page reload. */
+/** Built glh web + the `pnpm run dev:web --no-serve` watchers → browser HMR, with no page reload. */
 
 import { existsSync, globSync, statSync } from 'node:fs'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -108,7 +108,7 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
   const failures: unknown[] = []
   try {
     subprocessFiber = await subprocessCtx.plugin(LocalSubprocessRuntime)
-    // Watchers only: the built `dsh web` below is the server under test, and the
+    // Watchers only: the built `glh web` below is the server under test, and the
     // built tree is this lane's precondition rather than something to rebuild.
     watcher = subprocessCtx.subprocess.spawn(spawnSpec(
       ['pnpm', 'run', 'dev:web', '--skip-build', '--no-serve'],
@@ -120,11 +120,11 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
       [process.execPath, binPath, 'web', '--no-open', '--port', '0'],
       world,
       {
-        DEEPSEEK_API_KEY: 'keyless-hmr-no-call',
-        DSH_HOME: join(world, '.dsh'),
+        GLKJ_API_KEY: 'keyless-hmr-no-call',
+        GLH_HOME: join(world, '.glh'),
       },
     ))
-    const baseUrl = await waitForOutput(host, /dsh web: (http:\/\/[^\s]+)/, 'built dsh web')
+    const baseUrl = await waitForOutput(host, /glh web: (http:\/\/[^\s]+)/, 'built glh web')
     browser = await chromium.launch()
     const page = await browser.newPage()
     const pageErrors: string[] = []

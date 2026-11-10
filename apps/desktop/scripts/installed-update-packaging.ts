@@ -13,8 +13,8 @@ import { planInstalledUpdateDistribution } from './installed-update-distribution
 
 const APP_ROOT = resolve(import.meta.dirname, '..')
 const REPOSITORY = resolve(APP_ROOT, '../..')
-const SIGNING_FIELDS = new Set(['DSH_DESKTOP_WINDOWS_CER_FILE', 'DSH_DESKTOP_WINDOWS_SIGNTOOL',
-  'DSH_DESKTOP_WINDOWS_KEY_CONTAINER', 'DSH_DESKTOP_WINDOWS_TOKEN_PIN'])
+const SIGNING_FIELDS = new Set(['GLH_DESKTOP_WINDOWS_CER_FILE', 'GLH_DESKTOP_WINDOWS_SIGNTOOL',
+  'GLH_DESKTOP_WINDOWS_KEY_CONTAINER', 'GLH_DESKTOP_WINDOWS_TOKEN_PIN'])
 
 /** Public refusal without credential values or contents of the incident record. */
 export class InstalledUpdateSigningHoldError extends Error {
@@ -57,7 +57,7 @@ async function inputHashes(manifest: string, version: string, environment: NodeJ
     ...['electron-builder-config.mjs', 'installed-update-builder.ts', 'build-installed-update-worker.mjs',
       'windows-sign.mjs', 'windows-sign.cmd', 'windows-signing-state.mjs', 'windows-timestamp.mjs', 'windows-directory-installer.mjs',
       'installer.nsh', 'prepare-windows-installer.ps1'].map(path => join(import.meta.dirname, path)),
-    environment.DSH_DESKTOP_WINDOWS_CER_FILE!, environment.DSH_DESKTOP_WINDOWS_SIGNTOOL!]
+    environment.GLH_DESKTOP_WINDOWS_CER_FILE!, environment.GLH_DESKTOP_WINDOWS_SIGNTOOL!]
   const files = []
   for (const path of paths) {
     files.push({ path, sha256: createHash('sha256').update(await readFile(path)).digest('hex') })
@@ -85,7 +85,7 @@ export async function packageInstalledUpdate(
   const output = join(run.root, version, 'installer')
   if (!await absent(preparation) || !await absent(output)) throw new Error('installed update: existing packaging attempt or output requires a new run')
   const environment = installedUpdatePackagingEnvironment({ ...loadDesktopPackageEnvironment('win32'),
-    DSH_DESKTOP_TARGET_PLATFORM: 'win32', DSH_DESKTOP_TARGET_ARCH: 'x64' })
+    GLH_DESKTOP_TARGET_PLATFORM: 'win32', GLH_DESKTOP_TARGET_ARCH: 'x64' })
   await createInstalledUpdateBuilderConfig(manifest, version, environment)
   const before = await inputHashes(manifest, version, environment)
   if (!options.execute) return { mode: 'check', version, childLaunched: false, signed: false, publicationAuthorized: false }

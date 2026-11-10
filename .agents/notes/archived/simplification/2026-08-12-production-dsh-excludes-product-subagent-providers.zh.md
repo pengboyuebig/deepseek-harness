@@ -1,4 +1,4 @@
-# Agent Note: 生产 dsh 排除产品 subagent 提供方
+# Agent Note: 生产 glh 排除产品 subagent 提供方
 
 Status: implemented
 Archived: 2026-09-04

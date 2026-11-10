@@ -27,4 +27,4 @@ jobs:
         with:
           check: recheck
           base-branch: ${{ github.ref_name }}
-          recheck-label-token: ${{ secrets.DSH_RECHECK_LABEL_TOKEN }}
+          recheck-label-token: ${{ secrets.GLH_RECHECK_LABEL_TOKEN }}

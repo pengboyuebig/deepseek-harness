@@ -7,7 +7,7 @@
  * Behavior mirrors `dsh-tool-bash` call-for-call: foreground and
  * `run_in_background` execution (with a job registry composed, every call
  * registers its process with `ctx.jobs` as it starts, and a foreground call
- * waits on its job until the timeout passes), the managed `DSH_*` environment through the
+ * waits on its job until the timeout passes), the managed `GLH_*` environment through the
  * shared `shell-env` registry, the per-call sandbox policy resolution (the
  * calling session's mode and cwd travel to the confining executor), the
  * sandbox-denial rendering with the same-turn escalation surface
@@ -122,7 +122,7 @@ function pwshDescription(windowsSandbox: boolean): string {
   const base = 'Execute a PowerShell command (`pwsh -Command`) and return its stdout/stderr. '
     + 'Each call runs in a fresh pwsh process; pass `workdir` instead of using `cd`. Paths use native Windows form (`C:\\...`); read environment '
     + 'variables with `$env:NAME`. '
-    + 'Managed `$env:DSH_*` variables expose current harness environment facts. '
+    + 'Managed `$env:GLH_*` variables expose current harness environment facts. '
     + 'Long output is truncated to its tail; the full output is saved to a file whose path is reported when available. '
     + 'On Windows a force-killed command settles as `[exit code: 1]` without a signal marker — treat it as an interruption, not a command failure. '
     + 'Provide `description` before `command` in the arguments. '

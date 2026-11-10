@@ -24,7 +24,7 @@ describe.skipIf(!built)('built lib real load path (plain node)', () => {
     const path = join(directory, 'worker.mjs')
     await copyFile(join(pkgDir, `lib/${entry}.js`), path)
     const result = await execa(process.execPath, ['--experimental-vm-modules', path, '100000'], {
-      cwd: directory, env: { DSH_SUBPROCESS_CONTROL: '' }, stdin: 'ignore',
+      cwd: directory, env: { GLH_SUBPROCESS_CONTROL: '' }, stdin: 'ignore',
       timeout: 55_000, killSignal: 'SIGKILL', reject: false,
     })
     expect(result.timedOut).toBe(false)

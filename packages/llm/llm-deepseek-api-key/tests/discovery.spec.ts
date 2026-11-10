@@ -5,7 +5,7 @@ import { expect, it, vi } from 'vitest'
 import * as ApiKey from '../src/index.ts'
 
 it.each([undefined, ''])('hides models without an API key: %j', async (key) => {
-  vi.stubEnv('DEEPSEEK_API_KEY', key)
+  vi.stubEnv('GLKJ_API_KEY', key)
   const ctx = new Context()
   try {
     await ctx.plugin(LlmRuntime)
@@ -18,7 +18,7 @@ it.each([undefined, ''])('hides models without an API key: %j', async (key) => {
 })
 
 it('advertises configured models with an API key', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'fixture-api-key')
+  vi.stubEnv('GLKJ_API_KEY', 'fixture-api-key')
   const ctx = new Context()
   try {
     await ctx.plugin(LlmRuntime)
@@ -33,7 +33,7 @@ it('advertises configured models with an API key', async () => {
 })
 
 it('reports malformed credentials during discovery', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'invalid\nheader')
+  vi.stubEnv('GLKJ_API_KEY', 'invalid\nheader')
   const ctx = new Context()
   try {
     await ctx.plugin(LlmRuntime)

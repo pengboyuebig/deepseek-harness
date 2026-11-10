@@ -9,14 +9,14 @@ import { parseSessionLog } from '@deepseek-ai/dsh-llm-replay'
 import { expectNoRenderContext, officeModelPatches } from './fixtures/real-office.ts'
 
 const repo = fileURLToPath(new URL('../../../../', import.meta.url))
-const runtime = process.env.DSH_PRIMARY_RUNTIME
+const runtime = process.env.GLH_PRIMARY_RUNTIME
 const python = runtime && join(runtime, 'dependencies/python', process.platform === 'win32' ? 'python.exe' : 'bin/python3')
 
 const launch = {
   binScript: join(repo, 'apps/cli/src/bin.ts'), sourceImport: 'tsx/esm' as const, tsconfigPath: join(repo, 'tsconfig.base.json'),
   configPath: 'office.patch.json', processTimeoutMs: 110_000,
-  env: { DSH_PRIMARY_RUNTIME: runtime, DSH_PERMISSION_MODE: 'danger-full-access', DSH_TELEMETRY_DISABLED: '1',
-    HTTP_PROXY: process.env.DSH_OFFICE_TEST_PROXY, HTTPS_PROXY: process.env.DSH_OFFICE_TEST_PROXY },
+  env: { GLH_PRIMARY_RUNTIME: runtime, GLH_PERMISSION_MODE: 'danger-full-access', GLH_TELEMETRY_DISABLED: '1',
+    HTTP_PROXY: process.env.GLH_OFFICE_TEST_PROXY, HTTPS_PROXY: process.env.GLH_OFFICE_TEST_PROXY },
 }
 
 async function prepareOffice(cwd: string) {
@@ -36,7 +36,7 @@ async function sessionEvents(cwd: string) {
   return events
 }
 
-it.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each([{ format: 'docx', mode: 'native' }, { format: 'pdf', mode: 'native' }, { format: 'docx', mode: 'ptc' }])('loads the operation skill and renders $format through the shell in $mode mode', async ({ format, mode }) => {
+it.skipIf(!process.env.GLKJ_API_KEY || !runtime).each([{ format: 'docx', mode: 'native' }, { format: 'pdf', mode: 'native' }, { format: 'docx', mode: 'ptc' }])('loads the operation skill and renders $format through the shell in $mode mode', async ({ format, mode }) => {
   let original: Buffer | undefined
   await runLoaderSmoke({
     label: 'Office CLI rendering', tempDirPrefix: 'dsh-office-render-',
@@ -91,7 +91,7 @@ it.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each([{ format: 'docx', mod
   })
 })
 
-it.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime)('keeps Office skills and the renderer unloaded for an ordinary task', async () => {
+it.skipIf(!process.env.GLKJ_API_KEY || !runtime)('keeps Office skills and the renderer unloaded for an ordinary task', async () => {
   await runLoaderSmoke({
     ...launch,
     label: 'ordinary task with Office routing', tempDirPrefix: 'dsh-office-unused-',
@@ -109,7 +109,7 @@ it.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime)('keeps Office skills and th
   })
 })
 
-it.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime)('exports PDF through the operation skill and preserves the source', async () => {
+it.skipIf(!process.env.GLKJ_API_KEY || !runtime)('exports PDF through the operation skill and preserves the source', async () => {
   let original: Buffer | undefined
   await runLoaderSmoke({
     ...launch,

@@ -13,7 +13,7 @@ Archived: 2026-09-04
 
 ## 决策
 
-`headless-runner` 在启动工作完全停稳后、提交任务前，为其创建的精确 Agent 观察 `agent/assistant-stream`。自身持有的区间以 `turn/start` 打开后，每个非空 `reasoning-delta` chunk frame 都会立即写入 stderr。一段连续 reasoning 以独占一行的 `dsh: reasoning:` 开始；各 delta 保持 provider 顺序，不添加 token 边界装饰。Reasoning block boundary 与 usage metadata 会保持该段打开；之后出现非 reasoning block 或 output delta、stream end、新 turn 或 listener dispose 时，如果 provider 没有输出末尾换行，runner 会用一个换行终止该段。
+`headless-runner` 在启动工作完全停稳后、提交任务前，为其创建的精确 Agent 观察 `agent/assistant-stream`。自身持有的区间以 `turn/start` 打开后，每个非空 `reasoning-delta` chunk frame 都会立即写入 stderr。一段连续 reasoning 以独占一行的 `glh: reasoning:` 开始；各 delta 保持 provider 顺序，不添加 token 边界装饰。Reasoning block boundary 与 usage metadata 会保持该段打开；之后出现非 reasoning block 或 output delta、stream end、新 turn 或 listener dispose 时，如果 provider 没有输出末尾换行，runner 会用一个换行终止该段。
 
 该输出是进程本地 Assistant stream 的瞬态投影。runner 仍从 flush 后的持久 Session settlement 而非进度呈现状态推导最终文本与退出状态。SDK 投影不公开 live frame。
 

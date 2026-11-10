@@ -11,7 +11,7 @@
 - id: web-deepseek-api
   name: '@deepseek-ai/dsh-web-deepseek-api'
   config:
-    fetchApiKeyEnv: DSH_SNAPSHOT_FETCH_KEY
+    fetchApiKeyEnv: GLH_SNAPSHOT_FETCH_KEY
     fetchBaseURL: http://127.0.0.1:43118/api/v1/tools
 
 - id: tool-web

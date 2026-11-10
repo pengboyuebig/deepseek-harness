@@ -22,7 +22,7 @@ def test_account_provider_signout_snapshot(tmp_path: Path) -> None:
         patches=(str(ROOT / 'snapshots' / 'sdk' / 'account-provider-signout' / 'cordis.yml'),),
         provider='deepseek-account',
         model='deepseek-v4-flash',
-        env={'DSH_TELEMETRY_DISABLED': '1', 'DSH_SNAPSHOT': 'replay'},
+        env={'GLH_TELEMETRY_DISABLED': '1', 'GLH_SNAPSHOT': 'replay'},
     ) as harness:
         result = harness.run('Reply with exactly: SDK snapshot')
     ending = next(event for event in reversed(result.events) if event['type'] == 'turn/end')

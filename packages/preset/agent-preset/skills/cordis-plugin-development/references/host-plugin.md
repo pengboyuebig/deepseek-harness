@@ -13,7 +13,7 @@ A Host-only bundle needs no dependencies, install scripts, or build tool:
   "private": true,
   "type": "module",
   "exports": { ".": "./index.js" },
-  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+  "glh": { "bundle": { "patch": "./cordis.patch.yml" } }
 }
 ```
 

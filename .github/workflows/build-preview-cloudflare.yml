@@ -30,7 +30,7 @@ env:
   CF_PROJECT: dsh-build-preview
   # CI runs must never report to the production telemetry endpoint baked into
   # apps/cli/cordis.yml (AppCLIEntry disables the row when set).
-  DSH_TELEMETRY_DISABLED: '1'
+  GLH_TELEMETRY_DISABLED: '1'
 
 jobs:
   preview:
@@ -39,7 +39,7 @@ jobs:
     # script check) after the Typert pass. Publishing is best effort: transport,
     # Access, and comment failures warn instead of failing the check.
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'blacksmith' && 'blacksmith-4vcpu-ubuntu-2404'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'blacksmith' && 'blacksmith-4vcpu-ubuntu-2404'
           || 'ubuntu-24.04' }}
     name: cloudflare pages preview
     steps:
@@ -86,7 +86,7 @@ jobs:
 
       - name: Build the preview page and pack the VFS image
         env:
-          DSH_CLIENT_TITLE: DSH preview pr-${{ github.event.pull_request.number }}
+          GLH_CLIENT_TITLE: DSH preview pr-${{ github.event.pull_request.number }}
         run: pnpm --filter @deepseek-ai/dsh-web-frontend run build:preview
 
       # Sourcemaps carry complete sources and stay off the deployment platform.

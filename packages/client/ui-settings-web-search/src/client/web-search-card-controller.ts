@@ -63,7 +63,7 @@ const MENU_ORDER = {
 } as const satisfies Record<keyof ProviderList, readonly string[]>
 
 /** Credential reference legacy Messages search resolves when its section names none. */
-const DEFAULT_API_KEY_REF = 'DEEPSEEK_API_KEY'
+const DEFAULT_API_KEY_REF = 'GLKJ_API_KEY'
 
 /** Form field the credential control stages under. */
 const API_KEY_FIELD = 'legacyApiKey'

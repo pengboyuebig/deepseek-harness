@@ -17,7 +17,7 @@ function row(overrides: Partial<ProviderRow> = {}): ProviderRow {
     },
     configured: true,
     removable: false,
-    apiKeyEnv: 'DEEPSEEK_API_KEY',
+    apiKeyEnv: 'GLKJ_API_KEY',
     credential: missingCredential,
     ...overrides,
   }

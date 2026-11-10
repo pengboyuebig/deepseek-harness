@@ -1,4 +1,4 @@
-# Agent Note: Derive Desktop test versions from the complete dsh version
+# Agent Note: Derive Desktop test versions from the complete glh version
 
 Status: implemented
 Archived: 2026-09-30
@@ -7,11 +7,11 @@ English | [中文](2026-09-16-desktop-release-version-derivation.zh.md)
 
 ## Problem
 
-Replacing a dsh prerelease identifier with the update channel name loses the base release identity and changes SemVer ordering. A date alone cannot distinguish multiple test builds of the same base.
+Replacing a glh prerelease identifier with the update channel name loses the base release identity and changes SemVer ordering. A date alone cannot distinguish multiple test builds of the same base.
 
 ## Decision
 
-The [Desktop release rules](../../../../apps/desktop/README.md#release-versions) preserve the complete dsh base for production and derive dated, indexed test versions from that base. The derived version is [passed to packaging as an argument](2026-09-21-desktop-build-version-as-input.md) rather than written into manifests, and it is derived from the dsh base so another test release cannot append a second date suffix.
+The [Desktop release rules](../../../../apps/desktop/README.md#release-versions) preserve the complete glh base for production and derive dated, indexed test versions from that base. The derived version is [passed to packaging as an argument](2026-09-21-desktop-build-version-as-input.md) rather than written into manifests, and it is derived from the glh base so another test release cannot append a second date suffix.
 
 The fixed Nightly feed is a distribution address, independent of version derivation. Existing clients continue to use that address with prerelease updates enabled and downgrades disabled. Test distribution does not publish the unsuffixed base. Operators check existing release records and objects before assigning an index.
 

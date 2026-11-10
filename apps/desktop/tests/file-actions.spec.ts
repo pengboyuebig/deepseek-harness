@@ -129,7 +129,7 @@ it('matches overlapping downloads of the same source to their captured requests'
 })
 
 it('retires timed-out downloads and cancels items arriving after their window closes', async () => {
-  vi.useFakeTimers(); vi.stubEnv('DSH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', '1000')
+  vi.useFakeTimers(); vi.stubEnv('GLH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', '1000')
   const root = await directory(), f = harness(root)
   const pending = f.invoke(DESKTOP_IPC.fileSave, { url: 'https://images.example/a', mode: 'download' })
   const rejected = expect(pending).rejects.toThrow('timed out')
@@ -151,7 +151,7 @@ it('retires timed-out downloads and cancels items arriving after their window cl
 })
 
 it('allows the native save dialog to remain open beyond the download startup deadline', async () => {
-  vi.useFakeTimers(); vi.stubEnv('DSH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', '1000')
+  vi.useFakeTimers(); vi.stubEnv('GLH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', '1000')
   const f = harness(await directory())
   const pending = f.invoke(DESKTOP_IPC.fileSave, { url: 'https://images.example/a', mode: 'saveAs' })
   const download = f.item()

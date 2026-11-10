@@ -26,7 +26,7 @@ async function fixture() {
   await file(join(root, 'node/node_modules/@deepseek-ai/dsh/lib/bin.js'), `
     export async function runCli(options = {}) {
       const result = process.argv[2] ? { argv: process.argv.slice(2) }
-        : { primary: process.env.DSH_BUNDLED_PRIMARY_RUNTIME, office: process.env.DSH_BUNDLED_OFFICE_CLI };
+        : { primary: process.env.GLH_BUNDLED_PRIMARY_RUNTIME, office: process.env.GLH_BUNDLED_OFFICE_CLI };
       if (options.packageManager) Object.assign(result, { packageManager: options.packageManager, hostPath: process.env.PATH });
       console.log(JSON.stringify(result));
     }
@@ -47,12 +47,12 @@ async function fixture() {
     import { mkdir, writeFile } from 'node:fs/promises';
     import { join } from 'node:path';
     export async function downloadNodeRuntime(target, destination) {
-      if (process.env.DSH_RUNTIME_DOWNLOAD !== undefined) throw new Error("private selector leaked");
+      if (process.env.GLH_RUNTIME_DOWNLOAD !== undefined) throw new Error("private selector leaked");
       await mkdir(join(destination, 'bin'), { recursive: true });
       await writeFile(join(destination, 'bin', process.platform === 'win32' ? 'node.exe' : 'node'), 'node');
     }
     export async function preparePrimaryRuntime({ output }) {
-      if (process.env.DSH_RUNTIME_DOWNLOAD !== undefined) throw new Error("private selector leaked");
+      if (process.env.GLH_RUNTIME_DOWNLOAD !== undefined) throw new Error("private selector leaked");
       await mkdir(join(output, 'primary-runtime'), { recursive: true });
       await writeFile(join(output, 'primary-runtime/runtime.json'), '{}');
     }
@@ -64,8 +64,8 @@ async function fixture() {
       const directory = join(destination, 'node_modules/@deepseek-ai/libreoffice-kit/lib');
       await mkdir(directory, { recursive: true });
       await writeFile(join(directory, 'cli.js'), 'cli');
-      if (process.env.DSH_FIXTURE_FAIL) throw new Error('fixture download failed');
-      if (process.env.DSH_FIXTURE_BARRIER) {
+      if (process.env.GLH_FIXTURE_FAIL) throw new Error('fixture download failed');
+      if (process.env.GLH_FIXTURE_BARRIER) {
         process.stderr.write('ready\\n');
         await new Promise(resolve => process.stdin.once('data', resolve));
         process.stdin.pause();
@@ -74,15 +74,15 @@ async function fixture() {
   `)
   function run(resource?: string, extra: NodeJS.ProcessEnv = {}, args: string[] = []) {
     const child = spawn(process.execPath, [bootstrap, ...args], {
-      env: { ...process.env, DSH_RESOURCE_CACHE: cache, DSH_RUNTIME_DOWNLOAD: resource, DSH_BUNDLED_PRIMARY_RUNTIME: undefined,
-        DSH_PRIMARY_RUNTIME: undefined, DSH_OFFICE_SIDECAR: undefined, DSH_BUNDLED_OFFICE_CLI: undefined, ...extra },
+      env: { ...process.env, GLH_RESOURCE_CACHE: cache, GLH_RUNTIME_DOWNLOAD: resource, GLH_BUNDLED_PRIMARY_RUNTIME: undefined,
+        GLH_PRIMARY_RUNTIME: undefined, GLH_OFFICE_SIDECAR: undefined, GLH_BUNDLED_OFFICE_CLI: undefined, ...extra },
       stdio: ['pipe', 'pipe', 'pipe'],
     })
     let stdout = '', stderr = ''
     child.stdout.on('data', (data) => { stdout += String(data) })
     let reportReady: (() => void) | undefined
     let failReady: ((error: Error) => void) | undefined
-    const ready = extra.DSH_FIXTURE_BARRIER === undefined ? Promise.resolve()
+    const ready = extra.GLH_FIXTURE_BARRIER === undefined ? Promise.resolve()
       : new Promise<void>((resolve, reject) => { reportReady = resolve; failReady = reject })
     child.stderr.on('data', (data) => { stderr += String(data); if (stderr.includes('ready\n')) reportReady?.() })
     const done = new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve, reject) => {
@@ -118,15 +118,15 @@ it('uses an explicit primary runtime instead of the cache and honors its empty d
     await run('primary').done
     const primary = join(root, 'replacement')
     await file(join(primary, 'runtime.json'), JSON.stringify({ node: '24.9.0', pnpm: '11.0.0' }))
-    const replaced = await run(undefined, { DSH_PRIMARY_RUNTIME: primary }).done
+    const replaced = await run(undefined, { GLH_PRIMARY_RUNTIME: primary }).done
     expect(replaced.code, replaced.stderr).toBe(0)
     expect(JSON.parse(replaced.stdout)).toMatchObject({ packageManager: {
       command: join(primary, 'dependencies/node/bin', process.platform === 'win32' ? 'node.exe' : 'node'),
     } })
-    const disabled = await run(undefined, { DSH_PRIMARY_RUNTIME: '' }).done
+    const disabled = await run(undefined, { GLH_PRIMARY_RUNTIME: '' }).done
     expect(disabled.code, disabled.stderr).toBe(0)
     expect(JSON.parse(disabled.stdout)).not.toHaveProperty('packageManager')
-    const missing = await run(undefined, { DSH_PRIMARY_RUNTIME: join(root, 'missing') }).done
+    const missing = await run(undefined, { GLH_PRIMARY_RUNTIME: join(root, 'missing') }).done
     expect(missing.code).toBe(1)
     expect(missing.stderr).toContain('ENOENT')
   } finally { await rm(root, { recursive: true, force: true }) }
@@ -145,14 +145,14 @@ it('starts without downloading, independently downloads either resource, and reu
     expect(office.code, office.stderr).toBe(0)
     const location = JSON.parse(office.stdout) as string
     expect(await readFile(join(location, 'node_modules/@deepseek-ai/libreoffice-kit/lib/cli.js'), 'utf8')).toBe('cli')
-    expect(await run('office', { DSH_FIXTURE_FAIL: '1' }).done).toMatchObject({ code: 0, stdout: office.stdout })
+    expect(await run('office', { GLH_FIXTURE_FAIL: '1' }).done).toMatchObject({ code: 0, stdout: office.stdout })
   } finally { await rm(root, { recursive: true, force: true }) }
 })
 
 it('cleans failed staging and allows an explicit retry', async () => {
   const { root, cache, run } = await fixture()
   try {
-    const failed = await run('office', { DSH_FIXTURE_FAIL: '1' }).done
+    const failed = await run('office', { GLH_FIXTURE_FAIL: '1' }).done
     expect(failed.code).toBe(1)
     expect(failed.stderr).toContain('fixture download failed')
     expect(await readdir(join(cache, 'a'.repeat(64)))).toEqual([])
@@ -162,7 +162,7 @@ it('cleans failed staging and allows an explicit retry', async () => {
 
 it('publishes one complete cache when two processes download concurrently', async () => {
   const { root, cache, run } = await fixture()
-  const jobs = [run('office', { DSH_FIXTURE_BARRIER: '1' }), run('office', { DSH_FIXTURE_BARRIER: '1' })]
+  const jobs = [run('office', { GLH_FIXTURE_BARRIER: '1' }), run('office', { GLH_FIXTURE_BARRIER: '1' })]
   try {
     await Promise.all(jobs.map(job => job.ready))
     for (const job of jobs) job.child.stdin.end('continue')
@@ -186,7 +186,7 @@ it('leaves ordinary CLI arguments to the CLI and rejects an invalid private down
     })
     const rejected = await run('invalid').done
     expect(rejected.code).toBe(1)
-    expect(rejected.stderr).toContain('DSH_RUNTIME_DOWNLOAD must select office or primary')
+    expect(rejected.stderr).toContain('GLH_RUNTIME_DOWNLOAD must select office or primary')
     await expect(readdir(cache)).rejects.toMatchObject({ code: 'ENOENT' })
   } finally { await rm(root, { recursive: true, force: true }) }
 })

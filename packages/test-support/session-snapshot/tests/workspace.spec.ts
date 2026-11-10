@@ -38,17 +38,17 @@ describe('workspace snapshots', () => {
 
   it('keeps generic marker files but omits declared runtime roots and the expected-empty marker', async () => {
     const directory = await root()
-    await mkdir(join(directory, '.dsh'))
-    await writeFile(join(directory, '.dsh', 'runtime.json'), '{}')
+    await mkdir(join(directory, '.glh'))
+    await writeFile(join(directory, '.glh', 'runtime.json'), '{}')
     await writeFile(join(directory, EMPTY_WORKSPACE_MARKER), '')
     await writeFile(join(directory, 'visible.txt'), 'visible')
 
-    expect(await captureWorkspaceSnapshot(directory, { ignoredRootEntries: ['.dsh'] })).toEqual([
+    expect(await captureWorkspaceSnapshot(directory, { ignoredRootEntries: ['.glh'] })).toEqual([
       { path: '.empty', kind: 'text', content: '' },
       { path: 'visible.txt', kind: 'text', content: 'visible' },
     ])
     expect(await captureExpectedWorkspaceSnapshot(directory)).toEqual([
-      { path: '.dsh/runtime.json', kind: 'text', content: '{}' },
+      { path: '.glh/runtime.json', kind: 'text', content: '{}' },
       { path: 'visible.txt', kind: 'text', content: 'visible' },
     ])
   })

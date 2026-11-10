@@ -18,7 +18,7 @@ This ordering replaces only the generation placement in [local gate speed-ups](2
 
 ## Measurements
 
-The local experiment uses macOS ARM64, Node 24.19.0 and TypeScript 6.0.3. `DSH_GATE_CONCURRENCY=1 pnpm run build:artifacts --profile official` runs baseline/candidate/candidate/baseline. Each run starts after `pnpm run clean`, then repeats without source changes. Installation and cleanup are excluded; native preparation, package compilation, bundles, Desktop, Web and build-record publication are included. Other owned heavy jobs pause; unrelated host load remains possible. Filesystem caches are not flushed.
+The local experiment uses macOS ARM64, Node 24.19.0 and TypeScript 6.0.3. `GLH_GATE_CONCURRENCY=1 pnpm run build:artifacts --profile official` runs baseline/candidate/candidate/baseline. Each run starts after `pnpm run clean`, then repeats without source changes. Installation and cleanup are excluded; native preparation, package compilation, bundles, Desktop, Web and build-record publication are included. Other owned heavy jobs pause; unrelated host load remains possible. Filesystem caches are not flushed.
 
 | Inputs | Clean baseline / candidate (s) | No-change baseline / candidate (s) | Clean peak RSS baseline / candidate (MiB) |
 |---|---|---|---|

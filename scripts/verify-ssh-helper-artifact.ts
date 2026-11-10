@@ -132,9 +132,9 @@ export async function verifySshHelper(argv: string[]): Promise<void> {
     const executable = join(installed, 'dsh-ssh-helper')
     const helperHash = await fileDigest(executable)
     const environment = {
-      HOME: home, PATH: process.env.PATH, DSH_HOME: join(home, 'dsh'),
-      TSX_TSCONFIG_PATH: join(root, 'tsconfig.base.json'), DSH_TELEMETRY_DISABLED: '1',
-      ...(values.backend === undefined ? {} : { DSH_EXPECT_SANDBOX_RUNNER: values.backend }),
+      HOME: home, PATH: process.env.PATH, GLH_HOME: join(home, 'dsh'),
+      TSX_TSCONFIG_PATH: join(root, 'tsconfig.base.json'), GLH_TELEMETRY_DISABLED: '1',
+      ...(values.backend === undefined ? {} : { GLH_EXPECT_SANDBOX_RUNNER: values.backend }),
     }
     const runs = await Promise.allSettled([0, 1].map(async (index) => {
       const cwd = join(workspace, String(index))

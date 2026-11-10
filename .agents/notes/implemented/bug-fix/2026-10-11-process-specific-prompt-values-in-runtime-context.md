@@ -6,13 +6,13 @@ English | [中文](2026-10-11-process-specific-prompt-values-in-runtime-context.
 
 ## Problem
 
-`dsh web` wrote two process-specific values directly into the system prompt: the implementation checkout path in the `harness:source` section (four directories above the web-app module) and the Web GUI URL in the `app:web-surface` section (the bound port or `publicUrl`). These operations change them without the user perceiving a system-prompt change:
+`glh web` wrote two process-specific values directly into the system prompt: the implementation checkout path in the `harness:source` section (four directories above the web-app module) and the Web GUI URL in the `app:web-surface` section (the bound port or `publicUrl`). These operations change them without the user perceiving a system-prompt change:
 
 | Operation | Changed value |
 |---|---|
 | Every Desktop launch (`--port 0` picks a random port) | Web URL |
 | A different `--port`, or alternating A/B checkouts | Web URL, checkout path |
-| npm and Desktop installations sharing one `DSH_HOME` | Checkout path |
+| npm and Desktop installations sharing one `GLH_HOME` | Checkout path |
 
 On resume the loop renders the prompt again. On a route without `systemPromptUpdate: 'in-history'`, such as a hand-declared pi-ai `anthropic-messages` route, the changed prompt rewrites the surface head node. Claude binds historical thinking-block signatures to the conversation prefix, system prompt included, so the upstream answers 400 (`Invalid signature … bound to a different conversation`) and the Session cannot continue until the environment is restored. In-history routes do not fail, but every change appends a complete prompt.
 
@@ -26,7 +26,7 @@ Both values become runtime context and the system prompt keeps only value-free g
 |---|---|
 | `@deepseek-ai/dsh-harness-dev-context` (`packages/context/harness-dev-context`) | Both sections, both contexts, and the earlier-format projection; all module-private, exporting only the plugin protocol (`name`, `inject`, `apply`) |
 | `@deepseek-ai/dsh-host-webserver` | `WebServer.getOrigin()` (the bind address's URL form with protocol and bound port) and `bindUrlHost(host)` |
-| `@deepseek-ai/dsh-web-app` | The `web-runtime` row provides `webApp`, whose `getAdvertisedUrl()` returns the configured `publicUrl`, otherwise the listener origin, the same value as `DSH_WEB_URL` and the startup URL; the bundle patch mounts the `harness-dev-context` row |
+| `@deepseek-ai/dsh-web-app` | The `web-runtime` row provides `webApp`, whose `getAdvertisedUrl()` returns the configured `publicUrl`, otherwise the listener origin, the same value as `GLH_WEB_URL` and the startup URL; the bundle patch mounts the `harness-dev-context` row |
 | `@deepseek-ai/dsh-system-prompt` | `CONTEXT_ORDERS.HARNESS_SOURCE = 200` and `WEB_SURFACE = 210` |
 
 The plugin injects `systemPrompt`, `sessionProjections`, and `webApp` and reads those services in code; its patch row carries no configuration expression. The checkout path is four directories above this package's source or built entry, the same depth as the former web-app location, so source, npm, and Desktop installations resolve the same root. The URL is `webApp.getAdvertisedUrl()`, so a profile that overrides the `web-runtime` row's `publicUrl` reaches the model as well. The plugin reaches the `webApp` type through `import type {} from '@deepseek-ai/dsh-web-app'`; the import is erased at runtime, so the web-app bundle's dependency on this package remains the only runtime edge.
@@ -35,10 +35,10 @@ The plugin injects `systemPrompt`, `sessionProjections`, and `webApp` and reads 
 
 | Registration | Content |
 |---|---|
-| Section `harness:source` (the `HARNESS_SOURCE` slot) | `The runtime context names the DeepSeek Harness implementation checkout. …`, the remaining guidance unchanged |
-| Context `harness:source` (`CONTEXT_ORDERS.HARNESS_SOURCE = 200`) | `Current DeepSeek Harness implementation checkout: "<path>".` |
-| Section `app:web-surface` (the `WEB_SURFACE` slot) | `You are interacting with the user through the DeepSeek Harness Web GUI whose URL the runtime context names. …`, the remaining guidance unchanged |
-| Context `app:web-surface` (`CONTEXT_ORDERS.WEB_SURFACE = 210`) | `Current DeepSeek Harness Web GUI URL: "<url>".` |
+| Section `harness:source` (the `HARNESS_SOURCE` slot) | `The runtime context names the GLKJ Harness implementation checkout. …`, the remaining guidance unchanged |
+| Context `harness:source` (`CONTEXT_ORDERS.HARNESS_SOURCE = 200`) | `Current GLKJ Harness implementation checkout: "<path>".` |
+| Section `app:web-surface` (the `WEB_SURFACE` slot) | `You are interacting with the user through the GLKJ Harness Web GUI whose URL the runtime context names. …`, the remaining guidance unchanged |
+| Context `app:web-surface` (`CONTEXT_ORDERS.WEB_SURFACE = 210`) | `Current GLKJ Harness Web GUI URL: "<url>".` |
 
 Both contexts are optional (no `required`). The only complete persona, web-app's minimal preset, also disables optional runtime context, so it still sees neither value. Runtime context follows the existing mechanism: an unchanged value emits no snapshot, a change appends a complete snapshot before the step's user message, and resume compares against the latest logged snapshot, never rewriting a committed message.
 
@@ -48,8 +48,8 @@ The plugin registers the host-only session projection `harnessDevLegacyPrompt`, 
 
 | Earlier template | Matching rule |
 |---|---|
-| `harness:source` | Starts with `The DeepSeek Harness implementation checkout is at `, ends with the earlier fixed guidance, no line break between |
-| `app:web-surface` | Starts with `You are interacting with the user through the DeepSeek Harness Web GUI at `, ends with `. ` plus the guidance as earlier releases rendered it, frozen as a literal, no line break between |
+| `harness:source` | Starts with `The GLKJ Harness implementation checkout is at `, ends with the earlier fixed guidance, no line break between |
+| `app:web-surface` | Starts with `You are interacting with the user through the GLKJ Harness Web GUI at `, ends with `. ` plus the guidance as earlier releases rendered it, frozen as a literal, no line break between |
 
 Both section text providers read the projection state of `AssembleContext.agent.session`: with an earlier paragraph they return it verbatim (`interpolate: false`), otherwise the current guidance. Diagnostic assemblies without an agent use the current guidance. `sessionProjections` is a required injection and the plugin registers its own unit, so the state is readable whenever an agent exists.
 
@@ -74,7 +74,7 @@ The projection computes only on each committed `system/message`, adding no synch
 
 **Keep the implementation in web-app and app-boot.** Development-facing context and earlier-format compatibility would enlarge the public API of two core packages; app-boot's `addHarnessSourceSection` had web-app as its only caller.
 
-**Read `webStartup.publicUrl`.** It carries only the `--public-url` flag, so a profile override of the `web-runtime` row's `publicUrl` would reach `DSH_WEB_URL` but not the model; the effective value exists only inside web-app, which now provides it as `webApp`.
+**Read `webStartup.publicUrl`.** It carries only the `--public-url` flag, so a profile override of the `web-runtime` row's `publicUrl` would reach `GLH_WEB_URL` but not the model; the effective value exists only inside web-app, which now provides it as `webApp`.
 
 **Read the head node text from Session history directly.** The synchronous arbitrary-history read APIs are deprecated and new calls are prohibited; a projection is the established way to obtain that state after resume.
 
@@ -84,7 +84,7 @@ The projection computes only on each committed `system/message`, adding no synch
 - An earlier-format Session keeps the old values of its earlier paragraphs for its whole lifetime; the later `Current …` runtime context in the same request gives the current values.
 - Only these two paragraphs are protected. When other prompt text changes between releases, routes without in-history updates still rewrite the head.
 - A release without this fix rewrites the head of a new-format Session with the earlier template on resume; both A/B checkouts need this fix before they alternate.
-- app-boot no longer exports `addHarnessSourceSection` or `HARNESS_SOURCE_SECTION`; web-app's `surfaceContext` controls only `DSH_WEB_URL`, and disabling the `harness-dev-context` row turns both contexts off.
+- app-boot no longer exports `addHarnessSourceSection` or `HARNESS_SOURCE_SECTION`; web-app's `surfaceContext` controls only `GLH_WEB_URL`, and disabling the `harness-dev-context` row turns both contexts off.
 - Runtime context in recorded Web e2e Sessions gains two lines; the test scaffold normalizes the URL and checkout path to placeholders.
 
 ## Testing

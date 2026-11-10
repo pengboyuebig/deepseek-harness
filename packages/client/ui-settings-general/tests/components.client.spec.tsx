@@ -242,7 +242,7 @@ describe('current version', () => {
     ['Current version: 1.2.3-rc.4', en],
     ['当前版本：1.2.3-rc.4', zh],
   ])('renders the localized release label %s', (expected, dictionary) => {
-    vi.stubEnv('DSH_CLIENT_VERSION', '1.2.3-rc.4')
+    vi.stubEnv('GLH_CLIENT_VERSION', '1.2.3-rc.4')
     const translate: TriggerContentProps['t'] = (key, params) => {
       let text = (dictionary as Record<string, string>)[key] ?? key
       for (const [name, value] of Object.entries(params ?? {})) text = text.replace(`{${name}}`, String(value))
@@ -254,7 +254,7 @@ describe('current version', () => {
   })
 
   it('omits the row when a partial build has no version metadata', () => {
-    vi.stubEnv('DSH_CLIENT_VERSION', undefined)
+    vi.stubEnv('GLH_CLIENT_VERSION', undefined)
     const view = render(<CurrentVersionRow {...kit} t={t} />)
     expect(view.container.textContent).toBe('')
   })

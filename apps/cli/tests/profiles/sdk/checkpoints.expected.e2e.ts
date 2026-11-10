@@ -54,7 +54,7 @@ describe.skipIf(!existsSync(dshBin))('sdk-minimal durability checkpoints', () =>
     const harness = new DeepSeekHarness({
       dshBin, profile: 'sdk-minimal', dshHome: join(root, 'home'),
       cwd: root, processCwd: root, patches: [patch],
-      env: { ...process.env, DEEPSEEK_API_KEY: 'keyless-checkpoint-test', DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}` },
+      env: { ...process.env, GLKJ_API_KEY: 'keyless-checkpoint-test', GLKJ_BASE_URL: `http://127.0.0.1:${address.port}` },
     })
     onTestFinished(async () => { await harness.close() })
     const result = await harness.run('Reply OK without calling tools.')

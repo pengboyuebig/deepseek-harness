@@ -50,7 +50,7 @@ The graph retains each row's revisioned one-resource combo URL for HMR and adds 
 
 ### The loading flow, end to end
 
-What happens between `dsh web` starting and the UI appearing? Three stages: the host composes a graph and parser-preloads bootstrap factories, the HTML facade creates the module system and the shell prefetches, then Cordis orchestrates.
+What happens between `glh web` starting and the UI appearing? Three stages: the host composes a graph and parser-preloads bootstrap factories, the HTML facade creates the module system and the shell prefetches, then Cordis orchestrates.
 
 **Host side — compose the graph.**
 

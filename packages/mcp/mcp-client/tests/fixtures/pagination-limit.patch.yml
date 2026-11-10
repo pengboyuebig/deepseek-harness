@@ -5,7 +5,7 @@
         transport: stdio
         serverName: pagination-limit
         command: !!js process.execPath
-        args: !!js '[process.env.DSH_MCP_PAGINATION_FIXTURE]'
+        args: !!js '[process.env.GLH_MCP_PAGINATION_FIXTURE]'
         failOnStartupError: true
         reconnect:
           enabled: false

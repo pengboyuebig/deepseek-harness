@@ -13,7 +13,7 @@ The duplicate path also exposed less configuration than a bundle. Its `repositor
 
 ## Decision
 
-DeepSeek Harness has one standalone external-Plugin distribution path: installable profile bundles. `dsh plugin --profile <name> add <package-or-git-spec>` records the dependency in the profile package, and the installed package declares `dsh.bundle.patch` to contribute its patch layer. The package manager owns source acquisition, versions, dependencies, build lifecycles, and its lockfile. The bundle patch owns Cordis Plugin selection and complete Plugin config.
+GLKJ Harness has one standalone external-Plugin distribution path: installable profile bundles. `glh plugin --profile <name> add <package-or-git-spec>` records the dependency in the profile package, and the installed package declares `dsh.bundle.patch` to contribute its patch layer. The package manager owns source acquisition, versions, dependencies, build lifecycles, and its lockfile. The bundle patch owns Cordis Plugin selection and complete Plugin config.
 
 The `@deepseek-ai/dsh-repository-plugin` package, `.dsh-plugin` authoring format, `dsh-plugin-prepare` executable, generated wrapper, immutable repository cache, base `repository-plugins` row, and dedicated GitHub acceptance lane are removed. The unused vendored `@cordisjs/plugin-loader/repository` subpath and its bundled pnpm dependency are removed with their only consumer. Existing repository cache directories are inert user data; DSH neither reads nor deletes them.
 
@@ -34,7 +34,7 @@ This note consolidates the removed repository cache, static format, config-only 
 ## Consequences
 
 - Third-party packages use one installation and composition model, with ordinary dependency declarations and full patch-level Plugin config.
-- Installing or updating an external bundle is an explicit `dsh plugin` package-manager operation rather than a watched source-list edit. User patch HMR still configures rows contributed by installed bundles.
+- Installing or updating an external bundle is an explicit `glh plugin` package-manager operation rather than a watched source-list edit. User patch HMR still configures rows contributed by installed bundles.
 - Profile installation requires `pnpm` on the host `PATH`. This is acceptable for an explicit package-management operation and avoids shipping the removed cache's pinned package-manager runtime solely for configuration-time activation.
 - `.dsh-plugin` packages and existing repository source-list patches stop working. Their cache files remain removable by the user but are not migrated or automatically deleted.
 - The dedicated pnpm runtime, preparation executable, wrapper generator, Git credential CI setup, repository cache, and repository-specific tests disappear.
@@ -42,4 +42,4 @@ This note consolidates the removed repository cache, static format, config-only 
 
 ## Testing
 
-Static gates reject stale package, config, documentation, graph, and workspace references. The existing `dsh plugin` built-CLI acceptance covers profile initialization, package-manager installation, bundle discovery, and layer reconciliation. Declarative package-relative Skill and MCP bundle resources remain a named coverage gap in this removal layer.
+Static gates reject stale package, config, documentation, graph, and workspace references. The existing `glh plugin` built-CLI acceptance covers profile initialization, package-manager installation, bundle discovery, and layer reconciliation. Declarative package-relative Skill and MCP bundle resources remain a named coverage gap in this removal layer.

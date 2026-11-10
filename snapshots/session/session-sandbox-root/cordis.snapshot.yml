@@ -43,7 +43,7 @@
 - id: sandbox-policy
   name: '@deepseek-ai/dsh-sandbox-policy'
   config:
-    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+    mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
     workspaceRoot: /tmp
     additionalWritableRoots: !!js "[process.cwd() + '/extra']"
 

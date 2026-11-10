@@ -1,7 +1,7 @@
 /**
  * Keep unit suites from requesting the official DeepSeek model listing.
  *
- * The API-key and account routes request `GET https://api.deepseek.com/models` whenever they hold a
+ * The API-key and account routes request `GET https://api.glkj.example.com/models` whenever they hold a
  * credential for the official endpoint, and suites routinely boot those routes with a dummy key or
  * inherit a developer's real one. Such a request would reach production and, on a network that never
  * answers, hold the route's first catalog access for its whole listing deadline. Here it fails at once,
@@ -10,7 +10,7 @@
  */
 
 /** The listing endpoint of the official DeepSeek API. */
-const OFFICIAL_LISTING = 'https://api.deepseek.com/models'
+const OFFICIAL_LISTING = 'https://api.glkj.example.com/models'
 
 const ambientFetch = globalThis.fetch
 globalThis.fetch = (input, init) => {

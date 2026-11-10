@@ -38,7 +38,7 @@
           "ns": "llm-deepseek",
           "schema": {},
           "value": {
-            "apiKeyEnv": "DEEPSEEK_API_KEY"
+            "apiKeyEnv": "GLKJ_API_KEY"
           },
           "applies": "live",
           "secrets": [
@@ -57,7 +57,7 @@
   "credentialsDescribe": {
     "ok": true,
     "value": {
-      "DEEPSEEK_API_KEY": {
+      "GLKJ_API_KEY": {
         "configured": true,
         "source": "file",
         "writable": true
@@ -2297,7 +2297,7 @@
               "content": [
                 {
                   "type": "text",
-                  "text": "# Markdown fixture\n\nAssistant output renders **strong text**, *emphasis*, and `inline code`.\n\n- first item\n  - nested item\n\n| Area | State |\n| --- | --- |\n| history | rendered |\n| streaming | stable |\n\n[DeepSeek](https://www.deepseek.com)\n\n```ts\nconst markdown = true\n```"
+                  "text": "# Markdown fixture\n\nAssistant output renders **strong text**, *emphasis*, and `inline code`.\n\n- first item\n  - nested item\n\n| Area | State |\n| --- | --- |\n| history | rendered |\n| streaming | stable |\n\n[DeepSeek](https://www.glkj.example.com)\n\n```ts\nconst markdown = true\n```"
                 }
               ],
               "source": {
@@ -2331,7 +2331,7 @@
                   "index": 0,
                   "block": {
                     "type": "text",
-                    "text": "# Markdown fixture\n\nAssistant output renders **strong text**, *emphasis*, and `inline code`.\n\n- first item\n  - nested item\n\n| Area | State |\n| --- | --- |\n| history | rendered |\n| streaming | stable |\n\n[DeepSeek](https://www.deepseek.com)\n\n```ts\nconst markdown = true\n```"
+                    "text": "# Markdown fixture\n\nAssistant output renders **strong text**, *emphasis*, and `inline code`.\n\n- first item\n  - nested item\n\n| Area | State |\n| --- | --- |\n| history | rendered |\n| streaming | stable |\n\n[DeepSeek](https://www.glkj.example.com)\n\n```ts\nconst markdown = true\n```"
                   }
                 }
               },
@@ -4837,16 +4837,16 @@
               "isError": false
             },
             "meta": {
-              "answer": "DeepSeek Harness is a plugin-based agent harness on vendored Cordis where **every capability is a plugin**.",
+              "answer": "GLKJ Harness is a plugin-based agent harness on vendored Cordis where **every capability is a plugin**.",
               "sources": [
                 {
-                  "url": "https://github.com/deepseek-ai/deepseek-harness",
-                  "title": "DeepSeek Harness — plugin-based agent harness",
+                  "url": "https://git.glkj.example.com/glkj/harness",
+                  "title": "GLKJ Harness — plugin-based agent harness",
                   "snippet": "Everything is a plugin: session, tools, agent-loop, and LLM adapters all mount on the same Cordis context.",
                   "publishedAt": "2026-07-01"
                 },
                 {
-                  "url": "https://www.deepseek.com/blog/harness-architecture",
+                  "url": "https://www.glkj.example.com/blog/harness-architecture",
                   "snippet": "The capability-seam pattern splits each capability into interface, implementation, and consumer packages."
                 },
                 {
@@ -4948,7 +4948,7 @@
                   "type": "tool-call",
                   "id": "fx-call-71",
                   "name": "web_fetch",
-                  "arguments": "{\"url\":\"https://www.deepseek.com/blog/harness-architecture\"}"
+                  "arguments": "{\"url\":\"https://www.glkj.example.com/blog/harness-architecture\"}"
                 }
               ],
               "source": {
@@ -4984,7 +4984,7 @@
                     "type": "tool-call",
                     "id": "fx-call-71",
                     "name": "web_fetch",
-                    "arguments": "{\"url\":\"https://www.deepseek.com/blog/harness-architecture\"}"
+                    "arguments": "{\"url\":\"https://www.glkj.example.com/blog/harness-architecture\"}"
                   }
                 }
               },
@@ -5026,7 +5026,7 @@
             "step": 0,
             "callId": "fx-call-71",
             "name": "web_fetch",
-            "arguments": "{\"url\":\"https://www.deepseek.com/blog/harness-architecture\"}"
+            "arguments": "{\"url\":\"https://www.glkj.example.com/blog/harness-architecture\"}"
           }
         }
       },
@@ -5057,7 +5057,7 @@
               "isError": false
             },
             "meta": {
-              "url": "https://www.deepseek.com/blog/harness-architecture",
+              "url": "https://www.glkj.example.com/blog/harness-architecture",
               "statusCode": 200,
               "truncated": false
             }

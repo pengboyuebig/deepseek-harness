@@ -49,13 +49,13 @@ describe('Python runtime executable builder CLI', () => {
     const entrypoint = join(setup, 'pnpm.cjs')
     const commands = join(setup, 'commands.jsonl')
     writeFileSync(entrypoint, [
-      "require('node:fs').appendFileSync(process.env.DSH_PYTHON_BUILD_COMMANDS, JSON.stringify(process.argv.slice(2)) + '\\n')",
+      "require('node:fs').appendFileSync(process.env.GLH_PYTHON_BUILD_COMMANDS, JSON.stringify(process.argv.slice(2)) + '\\n')",
       'process.exit(31)',
       '',
     ].join('\n'))
 
     const result = run(
-      { npm_execpath: entrypoint, DSH_PYTHON_BUILD_COMMANDS: commands },
+      { npm_execpath: entrypoint, GLH_PYTHON_BUILD_COMMANDS: commands },
       '--skip-build',
       '--build-artifacts',
       '--targets=node24-macos-arm64',
@@ -75,14 +75,14 @@ describe('Python runtime executable builder CLI', () => {
     const entrypoint = join(setup, 'pnpm.cjs')
     const commands = join(setup, 'commands.jsonl')
     writeFileSync(entrypoint, [
-      "require('node:fs').appendFileSync(process.env.DSH_PYTHON_BUILD_COMMANDS, JSON.stringify(process.argv.slice(2)) + '\\n')",
+      "require('node:fs').appendFileSync(process.env.GLH_PYTHON_BUILD_COMMANDS, JSON.stringify(process.argv.slice(2)) + '\\n')",
       "if (process.argv.slice(2).join(' ') === 'run verify-runtime-closure') process.exit(31)",
       'process.exit(32)',
       '',
     ].join('\n'))
 
     const result = run(
-      { npm_execpath: entrypoint, DSH_PYTHON_BUILD_COMMANDS: commands },
+      { npm_execpath: entrypoint, GLH_PYTHON_BUILD_COMMANDS: commands },
       '--build-artifacts',
       '--targets=node24-macos-arm64',
     )

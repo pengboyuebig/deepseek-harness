@@ -28,7 +28,7 @@ kind: "package-bundle"
 
 ```sh
 pnpm run build
-pnpm dsh web
+pnpm glh web
 ```
 
 源码 Desktop 的启动方式和独立开发配置档见[桌面开发说明](../../../apps/desktop/README.zh.md)。需要使用 Computer Use 的配置档分别开启该功能。

@@ -33,7 +33,7 @@ describe('experimental Inspector through a real Loader composition', () => {
   it.each([false, true])('starts inspection with --inspect=%s and opens Chrome only when requested', async (flag) => {
     root = await mkdtemp(join(tmpdir(), 'dsh-inspector-loader-'))
     const configPath = join(root, 'cordis.yml')
-    const entries = composeEntries([loadOverlayPatches('dsh', fileURLToPath(
+    const entries = composeEntries([loadOverlayPatches('glh', fileURLToPath(
       new URL('../../inspector-profile/cordis.patch.yml', import.meta.url),
     ))])
     const inspector = entries.find(entry => entry.id === 'experimental-inspector')!

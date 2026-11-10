@@ -8,7 +8,7 @@ import { defineConfig } from 'tsdown'
  * generated source text, so it needs no client bundle.
  */
 export default defineConfig(({ env }) => {
-  if (env?.DSH_BUILD_FACE === 'client') return { entry: '' } satisfies UserConfig
+  if (env?.GLH_BUILD_FACE === 'client') return { entry: '' } satisfies UserConfig
   return {
     entry: [
       'lib/types/index.js',

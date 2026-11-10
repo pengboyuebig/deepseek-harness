@@ -1,5 +1,5 @@
 ---
-description: "dsh Web 客户端插件页上的网页搜索与获取设置页：Search 与 Fetch 提供方下拉框、DeepSeek Search API 的结果数，以及旧版 Messages 搜索的设置。"
+description: "glh Web 客户端插件页上的网页搜索与获取设置页：Search 与 Fetch 提供方下拉框、DeepSeek Search API 的结果数，以及旧版 Messages 搜索的设置。"
 kind: "package-reference"
 ---
 
@@ -29,7 +29,7 @@ kind: "package-reference"
 
 **网页搜索提供方**一节中，DeepSeek Search API 在说明之后显示 DeepSeek 网页搜索与获取指南链接，下拉框下方的灰色面板中是**每次搜索结果数**（1–50 的整数，默认 10；无效值阻止保存）。DeepSeek Fetch API 所在节显示提供方下拉框及说明。两个 API 都跟随会话的 DeepSeek 凭据，单独配置的端点字段只能在 YAML 中设置（[web-deepseek-api 鉴权](../../web/web-deepseek-api/README.zh.md#authentication)）。在本页没有设置项的提供方（例如 DeepSeek Fetch API、本机直接获取或插件提供方）不显示面板。所有控件直接位于所在节中，没有折叠区。
 
-**DeepSeek（旧版）**在同样的面板布局中显示 API Key、独立的 Messages Base URL 与**单次请求最多搜索次数**（`maxUses`，正整数，默认 5）。密钥写入 `web-search-deepseek.apiKeyEnv` 指向的引用（默认 `DEEPSEEK_API_KEY`）；端点和次数上限写入 `web-search-deepseek`，与 API 设置分开。切换其他提供方会丢弃未保存的密钥，但保留端点和次数设置。
+**DeepSeek（旧版）**在同样的面板布局中显示 API Key、独立的 Messages Base URL 与**单次请求最多搜索次数**（`maxUses`，正整数，默认 5）。密钥写入 `web-search-deepseek.apiKeyEnv` 指向的引用（默认 `GLKJ_API_KEY`）；端点和次数上限写入 `web-search-deepseek`，与 API 设置分开。切换其他提供方会丢弃未保存的密钥，但保留端点和次数设置。
 
 数值字段显示生效值，一旦被覆盖就带**已覆盖**标签和**恢复默认**，清空后保存等于重置；填写部署默认值则作为覆盖值保存。暂存了无效编辑或保存失败时提供方下拉框不可用，以免切换后隐藏的字段不再可见。
 
@@ -74,7 +74,7 @@ kind: "package-reference"
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- **自动选择只看部署组合层**——组合层没有为该能力设置提供方时，下拉框才提供自动选择。自动选择生效时，Host 的 `DSH_WEB_SEARCH_PROVIDER` 或 `DSH_WEB_FETCH_PROVIDER` 环境变量会改为由它指定提供方，而页面不会显示这一选择。两者都没有时，如果注册了多个可用提供方，自动选择会让每次操作以 `WEB_PROVIDER_AMBIGUOUS` 失败。
+- **自动选择只看部署组合层**——组合层没有为该能力设置提供方时，下拉框才提供自动选择。自动选择生效时，Host 的 `GLH_WEB_SEARCH_PROVIDER` 或 `GLH_WEB_FETCH_PROVIDER` 环境变量会改为由它指定提供方，而页面不会显示这一选择。两者都没有时，如果注册了多个可用提供方，自动选择会让每次操作以 `WEB_PROVIDER_AMBIGUOUS` 失败。
 
 <a id="dev-note"></a>
 ### 开发备注

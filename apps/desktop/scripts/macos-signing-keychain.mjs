@@ -69,9 +69,9 @@ export async function withMacOSSigningKeychain(environment, action, run = execut
     security(['list-keychains', '-d', 'user', '-s', keychain, ...previousKeychains])
     const probe = join(directory, 'probe')
     run('/bin/cp', ['/usr/bin/true', probe])
-    run('/usr/bin/codesign', ['--force', '--sign', `Developer ID Application: ${environment.DSH_DESKTOP_MACOS_SIGNING_IDENTITY}`, '--keychain', keychain, '--timestamp', '--options', 'runtime', probe])
+    run('/usr/bin/codesign', ['--force', '--sign', `Developer ID Application: ${environment.GLH_DESKTOP_MACOS_SIGNING_IDENTITY}`, '--keychain', keychain, '--timestamp', '--options', 'runtime', probe])
     run('/usr/bin/codesign', ['--verify', '--strict', probe])
-    const childEnvironment = { ...environment, CSC_KEYCHAIN: keychain, DSH_DESKTOP_MACOS_SIGNING_PROBE: probe }
+    const childEnvironment = { ...environment, CSC_KEYCHAIN: keychain, GLH_DESKTOP_MACOS_SIGNING_PROBE: probe }
     delete childEnvironment.CSC_LINK
     delete childEnvironment.CSC_KEY_PASSWORD
     await action(childEnvironment)

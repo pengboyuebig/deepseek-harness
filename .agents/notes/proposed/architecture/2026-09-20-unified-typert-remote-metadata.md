@@ -164,7 +164,7 @@ const result = await page.invoke(remote, arguments_, signal)
 
 ```sh
 pnpm run build
-pnpm dsh --profile <profile-name> <profile-arguments>
+pnpm glh --profile <profile-name> <profile-arguments>
 ```
 
 ## Alternatives considered

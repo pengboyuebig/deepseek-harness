@@ -22,7 +22,7 @@ Messages 以原生协议字段表示思考、签名、工具调用、工具结�
 
 系统提示词更新在端点与模型显式声明支持时，使用现有[路由能力](2026-09-02-in-history-system-prompt-replacement.zh.md)。Messages 保留初始顶层 system，在对应的用户或工具结果轮次之后，将后续快照发送为原生 system 轮次，保留此前发送的前缀。这个位置不同于循环先 system、后 user 的接纳顺序；序列化既不改写持久化日志，也不改变对话轮次的顺序。未声明能力的路由将最新快照归并到顶层，直接压缩调用也如此。仅凭协议或模型名称推断能力并不充分，因为支持情况和更新语义取决于实际部署的端点。
 
-Web 显示 DeepSeek，并提供端点与凭据引用。没有端点覆盖时，解析使用 `https://api.deepseek.com/anthropic`。覆盖地址必须支持 Messages。适配器遵循精确 `/v1` 根地址规则，不从其他类似版本的后缀推断兼容性。单一模型目录公布各条目声明的能力。
+Web 显示 DeepSeek，并提供端点与凭据引用。没有端点覆盖时，解析使用 `https://api.glkj.example.com/anthropic`。覆盖地址必须支持 Messages。适配器遵循精确 `/v1` 根地址规则，不从其他类似版本的后缀推断兼容性。单一模型目录公布各条目声明的能力。
 
 适配器在原生序列化后使用现有[请求扩展注册表](../architecture/2026-08-21-deepseek-llm-api-request-extensions.zh.md)，并在 HTTP 2xx 后、读取流之前接受已捕获贡献。会话日志投递和插件清单仍由原有包负责，并留在模型输入之外。辅助 [web 搜索提供方](../../../../packages/web/web-search-deepseek/README.zh.md)保留独立的端点、请求与设置。
 

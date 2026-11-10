@@ -8,7 +8,7 @@ English | [中文](guide.zh.md)
 
 ## Change
 
-DSH requires Node.js 24.9 or newer. The previous release also supported Node.js 22.19 and newer releases in the 22.x line. This change affects npm installations, source checkouts, and the Python SDK's explicit `DSH_RUNTIME_MODE=node` development carrier. Packaged desktop applications and the Python SDK's bundled executable provide their own runtime.
+DSH requires Node.js 24.9 or newer. The previous release also supported Node.js 22.19 and newer releases in the 22.x line. This change affects npm installations, source checkouts, and the Python SDK's explicit `GLH_RUNTIME_MODE=node` development carrier. Packaged desktop applications and the Python SDK's bundled executable provide their own runtime.
 
 ## Migration
 

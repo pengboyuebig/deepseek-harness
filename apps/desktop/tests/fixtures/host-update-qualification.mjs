@@ -18,7 +18,7 @@ const observed = []
 const { runProfile } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh/profile-boot')).href)
 const { loadLayeredEnv, loadProfileDirectory } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-app-boot')).href)
 const installAnchor = require.resolve('@deepseek-ai/dsh/package.json')
-const running = await runProfile({ environment: loadLayeredEnv('dsh'), profile: 'desktop',
+const running = await runProfile({ environment: loadLayeredEnv('glh'), profile: 'desktop',
   resolvedProfile: { profile: loadProfileDirectory('dsh', project, installAnchor), installAnchor },
   patchFiles: [], args: ['--no-open', '--port', '0'] })
 const host = { updateTasks: installDesktopUpdateTaskControl(running.ctx), dispose: () => running.shutdown.shutdown(0) }

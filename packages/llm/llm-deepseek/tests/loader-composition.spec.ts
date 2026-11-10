@@ -39,7 +39,7 @@ const uploadExclusion = {
 }
 
 const NS = 'llm-deepseek'
-const KEY_REF = credentialRef('DEEPSEEK_API_KEY')
+const KEY_REF = credentialRef('GLKJ_API_KEY')
 
 let root: string | undefined
 let context: Context | undefined
@@ -61,11 +61,11 @@ async function loadComposition(
   // exactly as the previous process left them.
   const fresh = options.reuseRoot === undefined
   root = options.reuseRoot ?? await mkdtemp(join(tmpdir(), 'dsh-llm-composition-'))
-  vi.stubEnv('DSH_HOME', root)
+  vi.stubEnv('GLH_HOME', root)
   const settingsPath = join(root, 'profile', 'cordis.patch.yml')
   const credentialsPath = join(root, '.credentials.yaml')
   if (options.withDynamic && fresh) {
-    await writeFile(credentialsPath, 'version: 1\nrefs:\n  DEEPSEEK_API_KEY: boot-key\n', { mode: 0o600 })
+    await writeFile(credentialsPath, 'version: 1\nrefs:\n  GLKJ_API_KEY: boot-key\n', { mode: 0o600 })
   }
 
   const configPath = join(root, 'cordis.yml')
@@ -150,10 +150,10 @@ async function loadComposition(
 
 describe('llm-deepseek real dynamic composition', () => {
   it('updates the model catalog when the stored API key is removed or added', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     // The official endpoint's model listing is unavailable, so the route serves its built-in catalog offline.
     vi.spyOn(globalThis, 'fetch').mockImplementation(() => Promise.resolve(new Response(null, { status: 404 })))
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.glkj.example.com/anthropic' })
     const credentials = ctx.get('credentials')!
     const models = await ctx.llm.listModels('deepseek-official')
     expect(models).not.toHaveLength(0)
@@ -173,20 +173,20 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('follows the official model listing and reloads it once the customized catalog is restored', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const keys: Array<string | null> = []
     const messages = { api_capabilities: { anthropic_messages: {} } }
     vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
       const request = new Request(input, init)
-      if (request.url !== 'https://api.deepseek.com/models') return Promise.reject(new Error(`unexpected request to ${request.url}`))
+      if (request.url !== 'https://api.glkj.example.com/models') return Promise.reject(new Error(`unexpected request to ${request.url}`))
       keys.push(request.headers.get('x-api-key'))
       return Promise.resolve(new Response(JSON.stringify({ data: [
         { id: 'deepseek-flash', ...messages },
         { id: 'deepseek-v5', ...messages, client_requirements: { 'deepseek-harness': { min_version: '0.0.1' } } },
       ] })))
     })
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.glkj.example.com/anthropic' })
     const ids = async () => (await ctx.llm.listModels('deepseek-official')).map(model => model.id)
     expect(await ids()).toEqual(['deepseek-flash', 'deepseek-v5'])
 
@@ -200,7 +200,7 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('advertises listed badges through the composed route and drops them with a customized catalog', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const messages = { api_capabilities: { anthropic_messages: {} } }
@@ -208,7 +208,7 @@ describe('llm-deepseek real dynamic composition', () => {
       { id: 'deepseek-flash', ...messages, client_metadata: { 'deepseek-harness': { badge: { text: { en: 'New', zh: '新' }, tone: 'info' } } } },
       { id: 'deepseek-v4-pro', ...messages, client_metadata: { 'deepseek-harness': { badge: { text: 'far too long a badge' } } } },
     ] }))))
-    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.deepseek.com/anthropic' })
+    const { ctx } = await loadComposition({ withDynamic: true, baseURL: 'https://api.glkj.example.com/anthropic' })
     const badges = async () => (await ctx.llm.listModels('deepseek-official')).map(model => [model.id, model.badge])
     expect(await badges()).toEqual([
       ['deepseek-flash', { text: { en: 'New', zh: '新' }, tone: 'info' }],
@@ -220,7 +220,7 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('keeps package inventory on when the Loader composition disables session upload', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'entry-key')
+    vi.stubEnv('GLKJ_API_KEY', 'entry-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await loadComposition({ withDynamic: false, baseURL: server.url, enableSessionLog: false })
     const session = ctx.sessions.create(SessionId('extension-composition'))
@@ -239,7 +239,7 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('sends the canonical session suffix by default through Loader composition', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'entry-key')
+    vi.stubEnv('GLKJ_API_KEY', 'entry-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await loadComposition({
       withDynamic: false,
@@ -269,7 +269,7 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it.each([false, true])('applies a registered upload exclusion through HTTP with consumer first=%s', async (exclusionFirst) => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'entry-key')
+    vi.stubEnv('GLKJ_API_KEY', 'entry-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }, { kind: 'sse', events: textEvents }])
     const { ctx } = await loadComposition({ withDynamic: false, baseURL: server.url, exclusionFirst })
     const session = ctx.sessions.create(SessionId('excluded-composition'))
@@ -288,7 +288,7 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('boots from cordis.yml and routes the next request after external settings and credential edits', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const serverA = await mockServer([{ kind: 'sse', events: textEvents }])
     const serverB = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx, settingsPath, credentialsPath } = await loadComposition({ withDynamic: true, baseURL: serverA.url })
@@ -303,7 +303,7 @@ describe('llm-deepseek real dynamic composition', () => {
     await vi.waitFor(() => {
       expect((ctx.settings.describe().find(row => row.ns === NS)!.value as { baseURL?: string }).baseURL).toBe(serverB.url)
     }, { timeout: 5000 })
-    await writeFile(credentialsPath, 'version: 1\nrefs:\n  DEEPSEEK_API_KEY: rotated-key\n', { mode: 0o600 })
+    await writeFile(credentialsPath, 'version: 1\nrefs:\n  GLKJ_API_KEY: rotated-key\n', { mode: 0o600 })
     await vi.waitFor(async () => {
       expect(await ctx.get('credentials')!.resolve(KEY_REF)).toEqual({ value: 'rotated-key', source: 'file' })
     }, { timeout: 5000 })
@@ -314,9 +314,9 @@ describe('llm-deepseek real dynamic composition', () => {
   })
 
   it('keeps a stored key writable and rotatable across a real restart', async () => {
-    // No ambient DEEPSEEK_API_KEY: the shipped surfaces do not hoist
+    // No ambient GLKJ_API_KEY: the shipped surfaces do not hoist
     // the credentials document into process.env, so a stored key must stay file-sourced.
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const first = await mockServer([{ kind: 'sse', events: textEvents }])
     const second = await mockServer([{ kind: 'sse', events: textEvents }])
     const boot = await loadComposition({ withDynamic: true, baseURL: first.url })
@@ -345,7 +345,7 @@ describe('llm-deepseek real dynamic composition', () => {
   it('boots the same adapter on entry config alone, resolving the reference from the environment', async () => {
     // No settings and no credentials provider: configuration carries only the
     // reference, so the environment is the whole credential plane here.
-    vi.stubEnv('DEEPSEEK_API_KEY', 'entry-key')
+    vi.stubEnv('GLKJ_API_KEY', 'entry-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await loadComposition({ withDynamic: false, baseURL: server.url })
 

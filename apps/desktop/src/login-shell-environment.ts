@@ -13,8 +13,8 @@ const FALLBACK_SHELLS = ['/bin/zsh', '/bin/bash', '/bin/sh'] as const
 const PROBE_ENVIRONMENT = { DISABLE_AUTO_UPDATE: 'true', ZSH_TMUX_AUTOSTARTED: 'true', ZSH_TMUX_AUTOSTART: 'false' } as const
 /** Variables that describe the probe shell process rather than the user's configuration. */
 const SHELL_SESSION_KEYS = new Set(['PWD', 'OLDPWD', 'SHLVL', '_', ...Object.keys(PROBE_ENVIRONMENT)])
-/** Desktop resolves paths such as `DSH_HOME` before the read, so the Host keeps the same inherited values. */
-const LAUNCHER_OWNED_PREFIXES = ['DSH_', 'ELECTRON_'] as const
+/** Desktop resolves paths such as `GLH_HOME` before the read, so the Host keeps the same inherited values. */
+const LAUNCHER_OWNED_PREFIXES = ['GLH_', 'ELECTRON_'] as const
 
 /** Validated login-shell read settings. */
 export interface DesktopLoginShellConfig {
@@ -52,10 +52,10 @@ export interface DesktopLoginShellReadOptions {
 /**
  * Resolve login-shell read settings.
  * @param env - Desktop process environment.
- * @returns Validated per-candidate deadline; `DSH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS` defaults to 10000.
+ * @returns Validated per-candidate deadline; `GLH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS` defaults to 10000.
  */
 export function resolveDesktopLoginShellConfig(env: NodeJS.ProcessEnv): DesktopLoginShellConfig {
-  return { timeoutMs: resolveDurationMs(env, 'DSH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS', 10_000) }
+  return { timeoutMs: resolveDurationMs(env, 'GLH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS', 10_000) }
 }
 
 /**
@@ -88,7 +88,7 @@ export function parseLoginShellOutput(stdout: string): Record<string, string> | 
 
 /**
  * Overlay login-shell variables on the inherited environment; shell values win except for
- * probe-session variables and launcher-owned `DSH_*` / `ELECTRON_*` names.
+ * probe-session variables and launcher-owned `GLH_*` / `ELECTRON_*` names.
  * @param base - Environment Desktop inherited.
  * @param shell - Variables printed by the login shell.
  * @returns A new environment; neither argument is modified.

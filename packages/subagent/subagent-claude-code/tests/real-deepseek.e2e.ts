@@ -22,8 +22,8 @@ import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
 import * as claudeCode from '../src/index.ts'
 
 const execFileAsync = promisify(execFile)
-const OFFICIAL_DEEPSEEK_MESSAGES_BASE_URL = 'https://api.deepseek.com/anthropic'
-const DEEPSEEK_MODEL = 'deepseek-v4-flash'
+const OFFICIAL_GLKJ_MESSAGES_BASE_URL = 'https://api.glkj.example.com/anthropic'
+const GLKJ_MODEL = 'deepseek-v4-flash'
 const sdkRoot = dirname(fileURLToPath(
   import.meta.resolve('@anthropic-ai/claude-agent-sdk'),
 ))
@@ -58,12 +58,12 @@ async function expectQuiescent(handles: readonly SubprocessHandle[]): Promise<vo
   }
 }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)(
+describe.skipIf(!process.env.GLKJ_API_KEY)(
   'Claude Code provider with real DeepSeek API',
   () => {
     it('returns one unique nonce through the production provider and real SDK/CLI', async () => {
-      const apiKey = process.env.DEEPSEEK_API_KEY
-      if (apiKey === undefined) throw new Error('e2e ran without DEEPSEEK_API_KEY')
+      const apiKey = process.env.GLKJ_API_KEY
+      if (apiKey === undefined) throw new Error('e2e ran without GLKJ_API_KEY')
       const root = mkdtempSync(join(tmpdir(), 'dsh-claude-deepseek-e2e-'))
       roots.push(root)
       const workspace = join(root, 'workspace')
@@ -83,12 +83,12 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)(
 
       const env = {
         ANTHROPIC_AUTH_TOKEN: apiKey,
-        ANTHROPIC_BASE_URL: OFFICIAL_DEEPSEEK_MESSAGES_BASE_URL,
-        ANTHROPIC_MODEL: DEEPSEEK_MODEL,
-        ANTHROPIC_DEFAULT_OPUS_MODEL: DEEPSEEK_MODEL,
-        ANTHROPIC_DEFAULT_SONNET_MODEL: DEEPSEEK_MODEL,
-        ANTHROPIC_DEFAULT_HAIKU_MODEL: DEEPSEEK_MODEL,
-        CLAUDE_CODE_SUBAGENT_MODEL: DEEPSEEK_MODEL,
+        ANTHROPIC_BASE_URL: OFFICIAL_GLKJ_MESSAGES_BASE_URL,
+        ANTHROPIC_MODEL: GLKJ_MODEL,
+        ANTHROPIC_DEFAULT_OPUS_MODEL: GLKJ_MODEL,
+        ANTHROPIC_DEFAULT_SONNET_MODEL: GLKJ_MODEL,
+        ANTHROPIC_DEFAULT_HAIKU_MODEL: GLKJ_MODEL,
+        CLAUDE_CODE_SUBAGENT_MODEL: GLKJ_MODEL,
         CLAUDE_CODE_EFFORT_LEVEL: 'max',
         CLAUDE_CONFIG_DIR: claudeConfig,
         HOME: root,
@@ -129,7 +129,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)(
       })
       expect(version.stdout.trim()).toBe('2.1.263 (Claude Code)')
 
-      const nonce = `DSH_CLAUDE_DEEPSEEK_${randomUUID()}`
+      const nonce = `GLH_CLAUDE_DEEPSEEK_${randomUUID()}`
       const parent = await harness.create(SessionId('deepseek-e2e-parent'), {}, { cwd: workspace })
       const run = await startExternalActivation(ctx, 'claude-code', {
         prompt: [{

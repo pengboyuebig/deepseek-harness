@@ -1,5 +1,5 @@
 ---
-description: "由安装方持有的官方 dsh 组合包列表（随附 profile 模板、默认列表，以及可选、按需和已退役的组合包），以及插件管理器保护和展示的包。"
+description: "由安装方持有的官方 glh 组合包列表（随附 profile 模板、默认列表，以及可选、按需和已退役的组合包），以及插件管理器保护和展示的包。"
 kind: "package-library"
 ---
 
@@ -9,7 +9,7 @@ kind: "package-library"
 
 ## 概述
 
-`@deepseek-ai/dsh-official-bundles` 保存由 dsh 安装决定的组合包名称：每个随附 profile 以哪些组合包启动、随附但默认关闭哪些组合包、哪些官方组合包按请求安装，哪些组合包曾由早期版本随附、现在要从 profile 中移除，以及插件管理器保护、隐藏、排序或标记为实验性的包。[`dsh-app-boot`](../../boot/app-boot/README.zh.md) 在加载 profile 时应用这些列表；插件管理器、CLI、Desktop、镜像打包器和仓库检查直接读取它们。本包只含数据，因此修改列表不会改动 app-boot 和插件管理器。请把它作为直接的库依赖使用，而不是通过 `cordis.yml` 使用。
+`@deepseek-ai/dsh-official-bundles` 保存由 glh 安装决定的组合包名称：每个随附 profile 以哪些组合包启动、随附但默认关闭哪些组合包、哪些官方组合包按请求安装，哪些组合包曾由早期版本随附、现在要从 profile 中移除，以及插件管理器保护、隐藏、排序或标记为实验性的包。[`dsh-app-boot`](../../boot/app-boot/README.zh.md) 在加载 profile 时应用这些列表；插件管理器、CLI、Desktop、镜像打包器和仓库检查直接读取它们。本包只含数据，因此修改列表不会改动 app-boot 和插件管理器。请把它作为直接的库依赖使用，而不是通过 `cordis.yml` 使用。
 
 ## 目录
 
@@ -28,11 +28,11 @@ kind: "package-library"
 
 ### Profile 模板
 
-`PROFILE_TEMPLATES` 把每个随附 profile 名称（`web`、`headless`、`acp`、`sdk`、`sdk-minimal`）映射到其有序的组合包层列表。App-boot 用模板初始化缺失的随附 profile，`dsh --profile <name> --from-default-profile <template>` 把某个模板复制为自定义 profile。`DEFAULT_PROFILE_BUNDLES` 是 `dsh plugin` 对没有模板的 profile 名称使用的列表。`INSTALLATION_OWNED_PROFILE_TUPLES` 列出早期版本写入随附 profile 的组合包列表；app-boot 把与之完全一致的列表替换为当前模板。
+`PROFILE_TEMPLATES` 把每个随附 profile 名称（`web`、`headless`、`acp`、`sdk`、`sdk-minimal`）映射到其有序的组合包层列表。App-boot 用模板初始化缺失的随附 profile，`glh --profile <name> --from-default-profile <template>` 把某个模板复制为自定义 profile。`DEFAULT_PROFILE_BUNDLES` 是 `glh plugin` 对没有模板的 profile 名称使用的列表。`INSTALLATION_OWNED_PROFILE_TUPLES` 列出早期版本写入随附 profile 的组合包列表；app-boot 把与之完全一致的列表替换为当前模板。
 
 ### 可选与已退役组合包
 
-`OPTIONAL_BUNDLES` 列出安装随附、供用户开启的组合包。每一项都必须是 `dsh` 应用的运行时依赖，并声明 `dsh.bundle.patch`、图标和 `./locale/*.json` 显示元信息，且不能被任何模板选中；[`verify-default-product-isolation`](../../../scripts/verify-default-product-isolation.ts) 检查这些规则。[插件管理器](../../boot/plugin-manager/README.zh.md#use-this-package)把这些组合包报告为 `optional`。`RETIRED_BUNDLES` 列出安装不再携带的组合包；app-boot 在加载 profile 时将它们从该 profile 的组合包列表中移除。
+`OPTIONAL_BUNDLES` 列出安装随附、供用户开启的组合包。每一项都必须是 `glh` 应用的运行时依赖，并声明 `dsh.bundle.patch`、图标和 `./locale/*.json` 显示元信息，且不能被任何模板选中；[`verify-default-product-isolation`](../../../scripts/verify-default-product-isolation.ts) 检查这些规则。[插件管理器](../../boot/plugin-manager/README.zh.md#use-this-package)把这些组合包报告为 `optional`。`RETIRED_BUNDLES` 列出安装不再携带的组合包；app-boot 在加载 profile 时将它们从该 profile 的组合包列表中移除。
 
 <a id="plugin-manager-lists"></a>
 ### 插件管理器列表
@@ -79,7 +79,7 @@ kind: "package-library"
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- **列表编译进安装**——修改列表需要发布新的 dsh 版本；profile 无法扩展可选或按需列表。
+- **列表编译进安装**——修改列表需要发布新的 glh 版本；profile 无法扩展可选或按需列表。
 
 <a id="dev-note"></a>
 ### 开发备注

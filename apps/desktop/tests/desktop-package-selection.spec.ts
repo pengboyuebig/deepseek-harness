@@ -81,7 +81,7 @@ it('resolves an old locally retained package with publishRequested=false without
       target: 'mac-arm64' as const, preset: 'test' as const, productVersion: '1.0.0', version: '1.0.0',
       testReleaseId: 'b'.repeat(32), publishRequested: false, qualification: 'notarized' as const }
     await retainDesktopRelease(join(root, 'releases'), source, [file])
-    const env = { GITHUB_REPOSITORY: 'owner/repo', RUNNER_NAME: 'mini', DSH_PACKAGING_CONFIG_DIR: join(root, 'packaging'),
+    const env = { GITHUB_REPOSITORY: 'owner/repo', RUNNER_NAME: 'mini', GLH_PACKAGING_CONFIG_DIR: join(root, 'packaging'),
       DESKTOP_PACKAGE_SELECTION: JSON.stringify(selection) }
     const apiCalls: string[] = []
     const api = (path: string) => {

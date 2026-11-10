@@ -23,7 +23,7 @@ it.skipIf(!built)('loads the packed GitHub example with its explicitly installed
 }, async () => {
   const { temporary, installation, home, profile, environment, tarballs, members, externalVersions, packageCommand }
     = await createPackedInstallation('dsh-webhook-packed-', [runtime, adapter])
-  Object.assign(environment, { DSH_GITHUB_WEBHOOK_SECRET: secret, DSH_GITHUB_WEBHOOK_PORT: '0' })
+  Object.assign(environment, { GLH_GITHUB_WEBHOOK_SECRET: secret, GLH_GITHUB_WEBHOOK_PORT: '0' })
   expect(existsSync(join(installation, 'node_modules', runtime))).toBe(false)
   expect(existsSync(join(installation, 'node_modules', adapter))).toBe(false)
   await writeFile(join(profile, 'package.json'), JSON.stringify({
@@ -77,7 +77,7 @@ export function apply(ctx) {
       child.stdout?.on('data', (chunk: Buffer) => {
         output += chunk.toString()
         const origin = /PACKED_WEBHOOK_READY=(http:\/\/127\.0\.0\.1:\d+)/.exec(output)?.[1]
-        if (origin !== undefined && output.includes('dsh web: ')) resolveReady(origin)
+        if (origin !== undefined && output.includes('glh web: ')) resolveReady(origin)
       })
       void child.then((result) => {
         rejectReady(new Error(`Web profile exited before readiness:\n${result.stdout}\n${result.stderr}`))

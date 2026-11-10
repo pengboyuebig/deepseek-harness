@@ -37,7 +37,7 @@ it.each(['accepted', 'unconfirmed', 'incomplete', 'wrong-journal', 'upload', 'pu
     if (scenario === 'metadata') await writeFile(join(records, 'state.json'), JSON.stringify({ approval, upload: 'uploaded', purgeAttempt: '1', purge: { zoneId: 'zone-fixture', publicUrl: 'https://download.deepseek.com/desktop/dsh-latest-macos-arm64.dmg', submittedAt: '2026-10-30T00:00:00.000Z', jobId: 'old-job', status: 'success' } }))
     if (scenario === 'metadata-retry') await writeFile(join(records, 'state.json'), JSON.stringify({ approval, upload: 'upload-intent', uploadConfirmed: true }))
     const env = { RUNNER_NAME: 'mini', GITHUB_REPOSITORY: 'owner/repo', GITHUB_RUN_ID: '99',
-      GITHUB_RUN_ATTEMPT: '1', DSH_PACKAGING_CONFIG_DIR: config, DESKTOP_PUBLISH_ROUTE: JSON.stringify(route),
+      GITHUB_RUN_ATTEMPT: '1', GLH_PACKAGING_CONFIG_DIR: config, DESKTOP_PUBLISH_ROUTE: JSON.stringify(route),
       DESKTOP_WEBSITE_APPROVAL: approval, DOWNLOAD_PROD_EO_ZONE_ID: 'zone-fixture', GITHUB_OUTPUT: join(root, 'output') }
     if (scenario === 'upload' || scenario === 'put' || scenario === 'uploaded' || scenario === 'metadata' || scenario === 'metadata-retry' || scenario === 'stable' || scenario === 'approval') {
       await writeFile(join(root, 'releases', '12', '1', manifest.files[0]!.name), 'x')
@@ -110,7 +110,7 @@ it.each(['accepted', 'unconfirmed', 'incomplete', 'wrong-journal', 'upload', 'pu
     vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-10-30T00:00:00.000Z'))
     const summary = join(root, 'summary.md')
     await publishWebsiteCi('purge', { RUNNER_NAME: 'mini', GITHUB_REPOSITORY: 'owner/repo', GITHUB_RUN_ID: '99',
-      GITHUB_RUN_ATTEMPT: '1', DSH_PACKAGING_CONFIG_DIR: config, DESKTOP_PUBLISH_ROUTE: JSON.stringify(route),
+      GITHUB_RUN_ATTEMPT: '1', GLH_PACKAGING_CONFIG_DIR: config, DESKTOP_PUBLISH_ROUTE: JSON.stringify(route),
       DESKTOP_WEBSITE_APPROVAL: approval, DOWNLOAD_PROD_EO_ZONE_ID: 'zone-fixture', GITHUB_STEP_SUMMARY: summary })
     expect(submit).toHaveBeenCalledOnce()
     expect(query).toHaveBeenCalledTimes(2)

@@ -606,7 +606,7 @@ const MARKDOWN_FIXTURE = [
   '| history | rendered |',
   '| streaming | stable |',
   '',
-  '[DeepSeek](https://www.deepseek.com)',
+  '[DeepSeek](https://www.glkj.example.com)',
   '',
   '```ts',
   'const markdown = true',
@@ -750,16 +750,16 @@ const READ_SAMPLE_TEXT = [
  * titled source without a snippet; `truncated` exercises the capped indicator.
  */
 const WEB_SEARCH_META = {
-  answer: 'DeepSeek Harness is a plugin-based agent harness on vendored Cordis where **every capability is a plugin**.',
+  answer: 'GLKJ Harness is a plugin-based agent harness on vendored Cordis where **every capability is a plugin**.',
   sources: [
     {
-      url: 'https://github.com/deepseek-ai/deepseek-harness',
-      title: 'DeepSeek Harness — plugin-based agent harness',
+      url: 'https://git.glkj.example.com/glkj/harness',
+      title: 'GLKJ Harness — plugin-based agent harness',
       snippet: 'Everything is a plugin: session, tools, agent-loop, and LLM adapters all mount on the same Cordis context.',
       publishedAt: '2026-07-01',
     },
     {
-      url: 'https://www.deepseek.com/blog/harness-architecture',
+      url: 'https://www.glkj.example.com/blog/harness-architecture',
       snippet: 'The capability-seam pattern splits each capability into interface, implementation, and consumer packages.',
     },
     {
@@ -773,12 +773,12 @@ const WEB_SEARCH_META = {
 
 /** The `web_fetch` result metadata for the web-fetch turn. */
 const WEB_FETCH_META = {
-  url: 'https://www.deepseek.com/blog/harness-architecture',
+  url: 'https://www.glkj.example.com/blog/harness-architecture',
   statusCode: 200,
   truncated: false,
 } satisfies JsonValue
 
-const DEEPSEEK_REASONING = {
+const GLKJ_REASONING = {
   efforts: [
     { id: 'off', name: 'Off' },
     { id: 'high', name: 'High' },
@@ -808,13 +808,13 @@ function fixtureModelGroups(): ModelProviderGroup[] {
           id: 'deepseek-v4-flash',
           name: 'DeepSeek-V4-Flash',
           description: '快速响应',
-          reasoning: DEEPSEEK_REASONING,
+          reasoning: GLKJ_REASONING,
         },
         {
           id: 'deepseek-v4-pro',
           name: 'DeepSeek-V4-Pro',
           description: '复杂任务',
-          reasoning: DEEPSEEK_REASONING,
+          reasoning: GLKJ_REASONING,
         },
       ],
     },
@@ -871,7 +871,7 @@ function fixtureSettledStream(
 }
 
 /** Rendered system prompt of the fx-alpha history: surface node 0. */
-const FIXTURE_SYSTEM_PROMPT = '你是 DeepSeek Harness 的 fixture 助手。用简洁的中文回答，并在需要时调用工具。'
+const FIXTURE_SYSTEM_PROMPT = '你是 GLKJ Harness 的 fixture 助手。用简洁的中文回答，并在需要时调用工具。'
 
 /** fx-alpha history script: 75 turns (~150+ messages -> 4 pages at PAGE_MESSAGES=50),
  *  mixing reasoning blocks / tool call+result / context. */
@@ -1152,7 +1152,7 @@ function buildAlphaLog(presented = false): SessionEvent[] {
   toolTurn(
     71,
     'web_fetch',
-    '{"url":"https://www.deepseek.com/blog/harness-architecture"}',
+    '{"url":"https://www.glkj.example.com/blog/harness-architecture"}',
     '# Harness architecture\n\nEverything is a plugin.',
     WEB_FETCH_META,
   )
@@ -2074,7 +2074,7 @@ function createFixtureWorld(options: FixtureOptions): FixtureWorld {
   const fixtureCredentials = new Map<string, true>([
     // The assembled fixture represents an already-configured shipped
     // DeepSeek route so unrelated GUI journeys do not enter first-run setup.
-    ['DEEPSEEK_API_KEY', true],
+    ['GLKJ_API_KEY', true],
   ])
 
   /** Canonical fixture implementation of the generated Settings Remote contract. */
@@ -2092,7 +2092,7 @@ function createFixtureWorld(options: FixtureOptions): FixtureWorld {
             ns: 'llm-deepseek',
             autoGenerate: true,
             schema: {},
-            value: { apiKeyEnv: 'DEEPSEEK_API_KEY' },
+            value: { apiKeyEnv: 'GLKJ_API_KEY' },
             applies: 'live',
             secrets: [{ path: ['apiKey'], set: false }],
             revision: 0,

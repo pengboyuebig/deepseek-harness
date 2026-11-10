@@ -5,7 +5,7 @@
         transport: stdio
         serverName: catalog
         command: !!js process.execPath
-        args: !!js '[process.env.DSH_MCP_RESOURCES_FIXTURE]'
+        args: !!js '[process.env.GLH_MCP_RESOURCES_FIXTURE]'
         failOnStartupError: true
         reconnect:
           enabled: false

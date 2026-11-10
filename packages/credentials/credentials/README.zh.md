@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## 概述
 
-`dsh-credentials` 通过让 settings 与 `cordis.yml` 引用 `DEEPSEEK_API_KEY` 等密钥名称，使机密值留在配置之外。它还存储持久化的按插件组织的凭据记录，包括授权 grant 与提供方环境值。轮换后的已存储密钥会作用于下一次请求，无需重启或修改配置。配置界面可以报告密钥或记录是否已设置、来自哪里及能否写入，而不会暴露值。空密钥值视为不存在，而空记录仍表示一项有意存储的凭据。
+`dsh-credentials` 通过让 settings 与 `cordis.yml` 引用 `GLKJ_API_KEY` 等密钥名称，使机密值留在配置之外。它还存储持久化的按插件组织的凭据记录，包括授权 grant 与提供方环境值。轮换后的已存储密钥会作用于下一次请求，无需重启或修改配置。配置界面可以报告密钥或记录是否已设置、来自哪里及能否写入，而不会暴露值。空密钥值视为不存在，而空记录仍表示一项有意存储的凭据。
 
 ## 目录
 
@@ -51,7 +51,7 @@ import { credentialRef } from '@deepseek-ai/dsh-credentials'
 
 declare const ctx: Context
 
-const ref = credentialRef('DEEPSEEK_API_KEY')          // POSIX shell identifier, branded
+const ref = credentialRef('GLKJ_API_KEY')          // POSIX shell identifier, branded
 const hit = await ctx.credentials.resolve(ref)         // { value, source } | undefined
 const info = await ctx.credentials.describe(ref)       // { configured, source?, writable } — never the value
 await ctx.credentials.set(ref, 'sk-…')                 // the stored value outranks environment fallbacks
@@ -85,14 +85,14 @@ await ctx.credentials.deleteRecord(key)                  // no-op when absent
 settings 分节或 `cordis.yml` 条目按名引用密钥，而不是包含密钥本身——例如 LLM（大语言模型）适配器接受 `apiKeyEnv`：
 
 ```yaml
-apiKeyEnv: DEEPSEEK_API_KEY
+apiKeyEnv: GLKJ_API_KEY
 ```
 
 需要该密钥的请求使用它当前存储的值，因此轮换密钥会作用于紧随其后的下一次请求——无需重启，无需改配置。
 
 ### 可能出错的地方
 
-- **存储的密钥优先于启动环境**——存在存储值时，`DEEPSEEK_API_KEY=… dsh`（或 CI 机密、容器 `-e`）不会生效；要使用导出的密钥，请 `unset` 存储的密钥。
+- **存储的密钥优先于启动环境**——存在存储值时，`GLKJ_API_KEY=… glh`（或 CI 机密、容器 `-e`）不会生效；要使用导出的密钥，请 `unset` 存储的密钥。
 - **空值无法存储**——存储空字符串会被拒绝；请改为移除密钥。
 - **密钥值绝不会出现在配置界面或诊断信息中**——界面只显示密钥是否已设置、来自哪里、能否修改；值本身留在存储中。
 

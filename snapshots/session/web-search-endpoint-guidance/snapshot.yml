@@ -9,4 +9,4 @@ header:
   systemPromptSource: text-turn
   toolSchemasSource: text-turn
 environment:
-  DSH_SNAPSHOT_SEARCH_KEY: snapshot-key
+  GLH_SNAPSHOT_SEARCH_KEY: snapshot-key

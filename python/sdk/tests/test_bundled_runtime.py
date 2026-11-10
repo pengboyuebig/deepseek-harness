@@ -35,10 +35,10 @@ def _client(tmp_path: Path, mode: str, monkeypatch: pytest.MonkeyPatch, *patches
             cwd=str(tmp_path),
             env={
                 # The lazily mounted adapter requires a key even without a model call.
-                "DEEPSEEK_API_KEY": "sk-dummy-for-boot",
-                "DEEPSEEK_BASE_URL": "http://127.0.0.1:9",
-                "DSH_PERMISSION_MODE": "danger-full-access",
-                "DSH_TELEMETRY_DISABLED": "1",
+                "GLKJ_API_KEY": "sk-dummy-for-boot",
+                "GLKJ_BASE_URL": "http://127.0.0.1:9",
+                "GLH_PERMISSION_MODE": "danger-full-access",
+                "GLH_TELEMETRY_DISABLED": "1",
             },
             request_timeout_seconds=120,
         )
@@ -76,7 +76,7 @@ def test_python_sdk_applies_an_ordered_profile_patch(
         cwd=str(tmp_path),
         dsh_home=str(tmp_path / "home"),
         patches=(str(patch),),
-        env={"DSH_PERMISSION_MODE": "danger-full-access"},
+        env={"GLH_PERMISSION_MODE": "danger-full-access"},
         api_key="sk-dummy-for-boot",
         base_url="http://127.0.0.1:9",
         request_timeout_seconds=120,

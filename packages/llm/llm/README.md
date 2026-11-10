@@ -41,7 +41,7 @@ Mount the service and at least one adapter, then select the provider by name in 
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-deepseek-api-key'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY
+    apiKeyEnv: GLKJ_API_KEY
 ```
 
 A stream returns token-level chunks and always ends with one terminal `finish` chunk. `BlockAssembler` turns the chunks into content blocks and messages; `AssistantStreamAccumulator` preserves their exact timestamps and token boundaries in a compact representation that the loop embeds in one durable attempt settlement:

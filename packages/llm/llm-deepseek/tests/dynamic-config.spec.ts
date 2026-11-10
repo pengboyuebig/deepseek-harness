@@ -28,7 +28,7 @@ declare module '@deepseek-ai/dsh-llm' {
 }
 
 const configurations = new WeakMap<Context, Awaited<ReturnType<typeof liveConfig>>>()
-const KEY_REF = credentialRef('DEEPSEEK_API_KEY')
+const KEY_REF = credentialRef('GLKJ_API_KEY')
 const IMAGE_REF: ImageAttachmentRef = {
   attachmentId: AttachmentId(`sha256:${'a'.repeat(64)}`),
   mediaType: 'image/png',
@@ -36,8 +36,8 @@ const IMAGE_REF: ImageAttachmentRef = {
   width: 1,
   height: 1,
 }
-const HOST_IMAGE_PATH = '/host/.dsh/attachments/objects/aa/object'
-const MODEL_IMAGE_PATH = '/model/.dsh/attachments/objects/aa/object'
+const HOST_IMAGE_PATH = '/host/.glh/attachments/objects/aa/object'
+const MODEL_IMAGE_PATH = '/model/.glh/attachments/objects/aa/object'
 
 class MappedFileSystem extends Service {
   constructor(ctx: Context) {
@@ -120,7 +120,7 @@ interface Harness {
  * file watching is the providers' own covered concern.
  */
 async function boot(dir: string, config: object): Promise<Harness> {
-  vi.stubEnv('DSH_HOME', dir)
+  vi.stubEnv('GLH_HOME', dir)
   const ctx = new Context()
   cleanups.push(async () => {
     await ctx.fiber.dispose()
@@ -138,9 +138,9 @@ function prompt(ctx: Context) {
 
 describe('request-level dynamic configuration', () => {
   it('routes the next request with the freshly resolved base URL and credential', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
-    await writeFile(join(dir, '.credentials.yaml'), 'version: 1\nrefs:\n  DEEPSEEK_API_KEY: first-key\n', { mode: 0o600 })
+    await writeFile(join(dir, '.credentials.yaml'), 'version: 1\nrefs:\n  GLKJ_API_KEY: first-key\n', { mode: 0o600 })
     const serverA = await mockServer([{ kind: 'sse', events: textEvents }])
     const serverB = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await boot(dir, { baseURL: serverA.url })
@@ -158,7 +158,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('starts keyless and serves the next request once the key arrives', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const { ctx } = await boot(dir, { baseURL: server.url })
@@ -173,7 +173,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('rejects a stored credential no header can carry, never echoing it in the failure', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const dir = await home()
     const { ctx } = await boot(dir, { baseURL: 'http://127.0.0.1:1' })
     const secret = 'sk-\u{1F600}supersecret'
@@ -192,7 +192,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('advertises a live settings catalog without re-registration', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'catalog-fixture-key')
+    vi.stubEnv('GLKJ_API_KEY', 'catalog-fixture-key')
     const dir = await home()
     const { ctx } = await boot(dir, { baseURL: 'http://127.0.0.1:1' })
 
@@ -206,7 +206,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('applies changed request file limits to the next request', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     const dir = await home()
     const server = await mockServer([
       { kind: 'sse', events: textEvents },
@@ -275,7 +275,7 @@ describe('request-level dynamic configuration', () => {
   })
 
   it('fails catalog reads while a stored snapshot fails beyond-schema validation, and recovers on repair', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'catalog-fixture-key')
+    vi.stubEnv('GLKJ_API_KEY', 'catalog-fixture-key')
     const dir = await home()
     const { ctx } = await boot(dir, { baseURL: 'http://127.0.0.1:1' })
 
@@ -293,7 +293,7 @@ describe('request-level dynamic configuration', () => {
     const dir = await home()
     const good = await mockServer([{ kind: 'sse', events: textEvents }])
     const rejected = await mockServer([{ kind: 'sse', events: textEvents }])
-    vi.stubEnv('DEEPSEEK_API_KEY', 'good-key')
+    vi.stubEnv('GLKJ_API_KEY', 'good-key')
     const { ctx } = await boot(dir, { baseURL: good.url })
 
     // One snapshot moves the endpoint and fails the resolve step beyond the

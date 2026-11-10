@@ -1,4 +1,4 @@
-# Agent Note: 从完整 dsh 版本派生 Desktop 测试版本
+# Agent Note: 从完整 glh 版本派生 Desktop 测试版本
 
 Status: implemented
 Archived: 2026-09-30
@@ -7,11 +7,11 @@ Archived: 2026-09-30
 
 ## 问题
 
-用更新通道名替换 dsh 预发布标识会丢失基础发布身份，并改变 SemVer 排序。只有日期无法区分同一基础版本的多次测试构建。
+用更新通道名替换 glh 预发布标识会丢失基础发布身份，并改变 SemVer 排序。只有日期无法区分同一基础版本的多次测试构建。
 
 ## 决策
 
-[Desktop 发布规则](../../../../apps/desktop/README.zh.md#release-versions)在 production 中保留完整 dsh 基础版本，并从该基础版本派生带日期和序号的测试版本。派生出的版本[作为参数传给打包](2026-09-21-desktop-build-version-as-input.zh.md)，不写入清单；它从 dsh 基础版本派生，因此下一次测试发布不会追加第二个日期后缀。
+[Desktop 发布规则](../../../../apps/desktop/README.zh.md#release-versions)在 production 中保留完整 glh 基础版本，并从该基础版本派生带日期和序号的测试版本。派生出的版本[作为参数传给打包](2026-09-21-desktop-build-version-as-input.zh.md)，不写入清单；它从 glh 基础版本派生，因此下一次测试发布不会追加第二个日期后缀。
 
 固定 Nightly feed 是分发地址，与版本派生独立。现有客户端继续使用该地址，允许预发布更新并禁止降级。test 分发不发布无后缀基础版本。操作者分配序号前检查已有发布记录和对象。
 

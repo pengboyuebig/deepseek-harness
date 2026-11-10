@@ -6,16 +6,16 @@ import { expect, it, vi } from 'vitest'
 import { Config } from '../src/config.ts'
 import { SenseVoiceWorker } from '../src/recognizer.ts'
 
-const { DSH_SPEECH_E2E_ROOT: dataRoot, DSH_SPEECH_E2E_AUDIO: audioPath } = process.env
+const { GLH_SPEECH_E2E_ROOT: dataRoot, GLH_SPEECH_E2E_AUDIO: audioPath } = process.env
 
 it.skipIf(!dataRoot || !audioPath)('prepares a real local recognizer, transcribes speech, and releases it', { timeout: 3_660_000, retry: 0 }, async () => {
   const ctx = new Context()
   await ctx.plugin(LocalSubprocess)
   const spawn = vi.spyOn(ctx.get('subprocess')!, 'spawn')
   const worker = new SenseVoiceWorker(ctx, Config({ dataRoot: dataRoot!,
-    modelDirectory: process.env.DSH_SPEECH_E2E_MODEL,
-    vadModelPath: process.env.DSH_SPEECH_E2E_VAD,
-    precision: process.env.DSH_SPEECH_E2E_PRECISION === 'fp32' ? 'fp32' : 'int8',
+    modelDirectory: process.env.GLH_SPEECH_E2E_MODEL,
+    vadModelPath: process.env.GLH_SPEECH_E2E_VAD,
+    precision: process.env.GLH_SPEECH_E2E_PRECISION === 'fp32' ? 'fp32' : 'int8',
   }))
   try {
     worker.prepare()

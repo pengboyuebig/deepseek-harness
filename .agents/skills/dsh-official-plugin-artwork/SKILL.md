@@ -1,6 +1,6 @@
 ---
 name: dsh-official-plugin-artwork
-description: Draw and review official DeepSeek Harness plugin icons and optional feature previews, including experimental plugins. Use for package artwork and PluginArtwork glyphs; covers semantic references, proportions, lettering, transparency, localization, package metadata, and designer review. Not for toolbar or action icons.
+description: Draw and review official GLKJ Harness plugin icons and optional feature previews, including experimental plugins. Use for package artwork and PluginArtwork glyphs; covers semantic references, proportions, lettering, transparency, localization, package metadata, and designer review. Not for toolbar or action icons.
 ---
 
 # Official plugin artwork
@@ -39,5 +39,5 @@ Before drawing a larger image for the top of an official bundle's detail documen
 1. Show a few numbered alternatives before polishing uncertain geometry. Preserve their labels through review and apply the chosen version; an existing file or generated draft does not establish designer approval. Keep comparison artifacts in a gitignored directory, not the product package.
 2. Compare old and new artwork beside unchanged references in light and dark themes, at actual row/card sizes as well as enlarged. Check balance, lettering, empty space, clipping, and image decoding.
 3. Run `pnpm run verify-package-meta` for [package metadata and SVG artwork](../../../scripts/verify-package-meta.ts), `pnpm run constraints` for the canonical package payload, and `pnpm run verify-official-bundle-catalog`. Regenerate a stale catalog with `pnpm run gen-official-bundle-catalog`, never by hand. Structural checks do not replace visual review.
-4. Build affected artifacts and inspect the real page through `dsh web`. Batch approved refinements before restarting a metadata-caching Host, then verify the entry and nested component rows in both themes.
+4. Build affected artifacts and inspect the real page through `glh web`. Batch approved refinements before restarting a metadata-caching Host, then verify the entry and nested component rows in both themes.
 5. Follow the repository's UI testing policy and [record-browser-gif](../record-browser-gif/SKILL.md) for a GUI PR. Obtain designer approval before landing new glyphs. Record reusable drawing principles here, not the history of rejected drafts.

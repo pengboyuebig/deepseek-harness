@@ -41,13 +41,13 @@ All listed headers are required on every Desktop request; a required header may 
 | Header | Meaning and allowed values |
 |---|---|
 | `x-client-platform` | `desktop-win` or `desktop-mac` |
-| `x-client-version` | Shared client build version, inlined as `DSH_CLIENT_VERSION` at packaging; full SemVer retaining prerelease identifiers, initially equal to the bundled dsh version |
+| `x-client-version` | Shared client build version, inlined as `GLH_CLIENT_VERSION` at packaging; full SemVer retaining prerelease identifiers, initially equal to the bundled glh version |
 | `x-client-bundle-id` | Platform uses this field to identify the Chat application; the field does not apply to Harness, so Desktop sends it empty |
 | `x-client-locale` | `zh_CN` or `en_US`, taken from the active UI language's primary subtag; selects localized content, not region |
 | `x-client-timezone-offset` | Whole-second offset from UTC, positive east of Greenwich, sampled from the shell for every request |
 | `x-client-arch` | Windows `x64`; macOS `x64` or `arm64` |
 | `x-client-update-channel` | Initially always `nightly`, independent of version suffix |
-| `x-client-bundled-dsh-version` | Full bundled dsh version from release metadata |
+| `x-client-bundled-dsh-version` | Full bundled glh version from release metadata |
 
 | Query | Client behavior | Initial backend behavior |
 |---|---|---|
@@ -80,7 +80,7 @@ This means the current client does not require a mandatory update, not that its 
   "msg": "Client version too low",
   "data": {
     "show_content": {
-      "title": "请更新 DeepSeek Harness",
+      "title": "请更新 GLKJ Harness",
       "detail": "当前版本已停止支持，请下载并安装新版本。"
     },
     "desktop_app_link": "https://example.com/harness/download"
@@ -104,7 +104,7 @@ Do not add `mode`, `force_update`, `show_key`, `target_version`, button copy, or
 
 Missing required headers, invalid SemVer, and unsupported platform/architecture/channel combinations return explicit parameter errors, not no-force success or a mandatory policy. Prefer the existing business meanings of `biz_code = 1` for a missing version and `biz_code = 2` for an invalid version; final error allocation belongs to the backend. Service failures must not masquerade as success because success may remove an existing block.
 
-Match platform, architecture, Desktop version, bundled dsh version, and channel using server-owned ranges and precedence. Use complete SemVer, not lexical sorting or truncated prerelease values. Initially the two versions are equal and channel is fixed Nightly; independent revisions and channel switching are deferred. Do not require a downgrade or stop returning `40005` merely because a client has queried or displayed it before.
+Match platform, architecture, Desktop version, bundled glh version, and channel using server-owned ranges and precedence. Use complete SemVer, not lexical sorting or truncated prerelease values. Initially the two versions are equal and channel is fixed Nightly; independent revisions and channel switching are deferred. Do not require a downgrade or stop returning `40005` merely because a client has queried or displayed it before.
 
 ### Policy publication and current decisions
 
@@ -123,7 +123,7 @@ Capacity and rate limits must account for recurring guest requests, client-side 
 
 ## Alternatives considered
 
-**Relying on remote business interception.** Local dsh requests need not reach the remote gateway; an independent guest query is necessary.
+**Relying on remote business interception.** Local glh requests need not reach the remote gateway; an independent guest query is necessary.
 
 **Reusing the mobile nested payload for Desktop.** The backend agreement flattens Desktop fields. Preserve mobile compatibility by platform, without making new Desktop clients support an undistributed nested variant.
 

@@ -66,7 +66,7 @@ it('routes manual packaging to the dedicated runner with explicit preset and sig
   expect(workflow.jobs.package).not.toHaveProperty('name')
   expect(job['runs-on']).toBe('dsh-win-package-trial')
   expect(JSON.stringify(job.env)).not.toContain('runner.')
-  expect(job.steps.find(step => step.name === 'Configure persistent pnpm store')?.env?.DSH_DESKTOP_PACKAGE_CACHE_DIR)
+  expect(job.steps.find(step => step.name === 'Configure persistent pnpm store')?.env?.GLH_DESKTOP_PACKAGE_CACHE_DIR)
     .toBe('${{ runner.tool_cache }}/dsh-desktop-package-cache')
   expect(workflow.concurrency).toEqual({ group: 'windows-desktop-package', 'cancel-in-progress': false })
   expect(workflow.permissions).toEqual({ contents: 'read' })
@@ -82,8 +82,8 @@ it('routes manual packaging to the dedicated runner with explicit preset and sig
   expect(workflow.on.workflow_dispatch!.inputs.update_channel!.default).toBe('nightly')
   expect(job.env.PACKAGE_VERSION_MODE).toBe("${{ inputs.version_mode == 'follow-dsh' && 'product' || inputs.version_mode == 'build-number' && 'auto' || inputs.version_mode }}")
   expect(job.env.PACKAGE_SOURCE_REF).toBe('${{ inputs.source_ref }}')
-  expect(job.env.DSH_DESKTOP_UPDATE_CHANNEL).toBe('${{ inputs.update_channel }}')
-  expect(job.env.DSH_PACKAGING_PRESET).toBe('${{ inputs.preset }}')
+  expect(job.env.GLH_DESKTOP_UPDATE_CHANNEL).toBe('${{ inputs.update_channel }}')
+  expect(job.env.GLH_PACKAGING_PRESET).toBe('${{ inputs.preset }}')
   expect(job.env.PACKAGE_SIGNING).toBe('${{ inputs.signing }}')
   expect(job.steps.find(step => step.id === 'checkout')!.with).toMatchObject({ clean: true, 'persist-credentials': false, ref: '${{ inputs.source_ref }}' })
   expect(job.steps.find(step => step.uses?.startsWith('pnpm/action-setup@'))?.with?.dest)
@@ -144,27 +144,27 @@ it.skipIf(process.platform !== 'win32')('keeps the dependency store stable acros
       const environmentFile = resolve(directory, run + '.env')
       execFileSync('pwsh', ['-NoProfile', '-File', script], {
         env: { ...process.env, GITHUB_WORKSPACE: workspace,
-          PACKAGE_CACHE_NAMESPACE: '', DSH_DESKTOP_PACKAGE_CACHE_DIR: packageCache,
+          PACKAGE_CACHE_NAMESPACE: '', GLH_DESKTOP_PACKAGE_CACHE_DIR: packageCache,
           PNPM_HOME: resolve(directory, run, 'pnpm'), GITHUB_ENV: environmentFile },
         stdio: 'pipe',
       })
       return readFileSync(environmentFile, 'utf8').trim()
     })
     expect(outputs.map(output => output.split(/\r?\n/u))).toEqual(Array.from({ length: 2 }, () => [
-      `DSH_DESKTOP_PACKAGE_CACHE_DIR=${packageCache}`, `PNPM_CONFIG_STORE_DIR=${store}`,
+      `GLH_DESKTOP_PACKAGE_CACHE_DIR=${packageCache}`, `PNPM_CONFIG_STORE_DIR=${store}`,
     ]))
     const runNamespace = (namespace: string) => {
       const output = resolve(directory, 'namespace.env')
       rmSync(output, { force: true })
       execFileSync('pwsh', ['-NoProfile', '-File', script], {
         env: { ...process.env, GITHUB_WORKSPACE: workspace,
-          PACKAGE_CACHE_NAMESPACE: namespace, DSH_DESKTOP_PACKAGE_CACHE_DIR: packageCache, GITHUB_ENV: output },
+          PACKAGE_CACHE_NAMESPACE: namespace, GLH_DESKTOP_PACKAGE_CACHE_DIR: packageCache, GITHUB_ENV: output },
         stdio: 'pipe',
       })
       return readFileSync(output, 'utf8').trim().split(/\r?\n/u)
     }
     expect(runNamespace('perf-1')).toEqual([
-      `DSH_DESKTOP_PACKAGE_CACHE_DIR=${resolve(packageCache, 'perf-1')}`, `PNPM_CONFIG_STORE_DIR=${resolve(store, 'perf-1')}`,
+      `GLH_DESKTOP_PACKAGE_CACHE_DIR=${resolve(packageCache, 'perf-1')}`, `PNPM_CONFIG_STORE_DIR=${resolve(store, 'perf-1')}`,
     ])
     for (const invalid of ['../escape', 'Upper', 'has space', 'con', 'perf\n', 'a'.repeat(65)]) {
       expect(() => runNamespace(invalid)).toThrow()

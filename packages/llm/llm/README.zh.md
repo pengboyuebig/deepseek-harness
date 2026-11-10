@@ -41,7 +41,7 @@ kind: "package-reference"
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-deepseek-api-key'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY
+    apiKeyEnv: GLKJ_API_KEY
 ```
 
 流会返回 token 级分片，并始终以一个终止 `finish` 分片结束。`BlockAssembler` 把分片组装为内容块与消息；`AssistantStreamAccumulator` 在紧凑表示中保留其精确时间戳与 token 边界，loop 再把它嵌入一个持久 attempt settlement：

@@ -298,7 +298,7 @@ describe('DeepSeek web cancellation and failures', () => {
 
   it('uses the default credential reference when no resolver is configured', async () => {
     await expect(searchProvider({ ...options, apiKey: '' }).search({ query: 'q' }))
-      .rejects.toThrow('DeepSeek web access has no API key for "DEEPSEEK_API_KEY"')
+      .rejects.toThrow('DeepSeek web access has no API key for "GLKJ_API_KEY"')
   })
 
   it('observes cancellation triggered synchronously by credential resolution', async () => {

@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-Web 插件页只管理用户装进 profile 的组合包。像 Agent Teams 这样的官方实验层，用户得先去 npm 找到包名并按名安装才能开启；而[默认产品隔离](2026-09-12-default-product-experimental-isolation.zh.md)又把所有实验包挡在安装的运行时依赖之外，所以随 dsh 一起交付的东西没有办法把它提供出来。
+Web 插件页只管理用户装进 profile 的组合包。像 Agent Teams 这样的官方实验层，用户得先去 npm 找到包名并按名安装才能开启；而[默认产品隔离](2026-09-12-default-product-experimental-isolation.zh.md)又把所有实验包挡在安装的运行时依赖之外，所以随 glh 一起交付的东西没有办法把它提供出来。
 
 ## 决策
 

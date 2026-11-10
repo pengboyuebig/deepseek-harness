@@ -7,7 +7,7 @@ English | [中文](2026-09-23-bounded-pnpm-runs.zh.md)
 
 ## Problem
 
-A profile package operation could hold the profile write lock forever. A `dsh web` process held `~/.dsh/profiles/web/package.json.lock` for 22 minutes after its pnpm child printed `Done in 2s`: that child never exited, so the operation awaited an end that never came, the lock was never released, and every later management call in the process queued behind it. pnpm 11.13.0 consumes its one-shot worker-pool teardown once, re-creates the pool lazily afterwards, and unreferences a worker only during destruction, so the pool keeps the parent process alive with no repository-side change able to fix it.
+A profile package operation could hold the profile write lock forever. A `glh web` process held `~/.glh/profiles/web/package.json.lock` for 22 minutes after its pnpm child printed `Done in 2s`: that child never exited, so the operation awaited an end that never came, the lock was never released, and every later management call in the process queued behind it. pnpm 11.13.0 consumes its one-shot worker-pool teardown once, re-creates the pool lazily afterwards, and unreferences a worker only during destruction, so the pool keeps the parent process alive with no repository-side change able to fix it.
 
 A second cause reaches the same end by another route: a lifecycle script that inherited pnpm's stdout and stderr keeps those pipes open after pnpm exits, so a reader waiting for end of file never sees one, and the lock stays held while that reader waits.
 
@@ -19,7 +19,7 @@ A second cause reaches the same end by another route: a lifecycle script that in
 - A run whose captured output stays silent for `idleTimeoutMs` is terminated, reports `timedOut` beside its own exit status, and is not asked of the next registry, which bounds how long one operation can hold the lock.
 - A terminated run is classified `timeout` whatever exit status the signal left behind. Installation and removal report failure instead of success, so a manifest pnpm had half written is restored rather than activated.
 - A terminated run stops its whole process tree and waits for it to disappear before the caller restores the profile and releases the lock, because an approved lifecycle script runs as a child of pnpm and outlives it. execa's `killDescendants` addresses the tree on every kill path, including cancellation, and is passed only for a captured run, so a run that inherits the terminal keeps the caller's process group.
-- `dsh plugin` inherits the caller's terminal and captures nothing, so no silence bound applies to it and its operator keeps the ability to interrupt.
+- `glh plugin` inherits the caller's terminal and captures nothing, so no silence bound applies to it and its operator keeps the ability to interrupt.
 
 ## Why a silence bound rather than a duration bound
 

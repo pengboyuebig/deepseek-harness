@@ -12,10 +12,10 @@ from .models import CommandExecution, JsonObject, Notification
 
 @dataclass(slots=True)
 class DeepSeekHarnessConfig:
-    """Configuration for launching the local DeepSeek Harness SDK runtime.
+    """Configuration for launching the local GLKJ Harness SDK runtime.
 
     The runtime inherits the caller's environment by default, so existing
-    DEEPSEEK_API_KEY and DEEPSEEK_BASE_URL settings keep working. Use ``env`` to
+    GLKJ_API_KEY and GLKJ_BASE_URL settings keep working. Use ``env`` to
     intentionally override or inject variables for a subprocess.
     These values are startup input, not a live Session state mirror; Session
     commands do not rewrite this object.
@@ -100,7 +100,7 @@ class _RunActivity:
 
 
 class DeepSeekHarness:
-    """Reusable synchronous SDK for running DeepSeek Harness agent turns.
+    """Reusable synchronous SDK for running GLKJ Harness agent turns.
 
     The runtime subprocess starts lazily and remains owned by this instance
     across calls to :meth:`run`. Use the instance as a context manager, or call
@@ -122,9 +122,9 @@ class DeepSeekHarness:
         self._cwd = cwd
         env = dict(self.config.env)
         if self.config.base_url is not None:
-            env["DEEPSEEK_BASE_URL"] = self.config.base_url
+            env["GLKJ_BASE_URL"] = self.config.base_url
         if self.config.api_key is not None:
-            env["DEEPSEEK_API_KEY"] = self.config.api_key
+            env["GLKJ_API_KEY"] = self.config.api_key
 
         self._client = HarnessClient(
             HarnessConfig(

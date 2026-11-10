@@ -90,17 +90,17 @@ it.each(['preset', 'identity', 'team', 'certificate', 'toolchain', 'source'])(
     const f = fixture()
     const certificate = join(f.root, 'signing.p12')
     writeFileSync(certificate, 'fixture encrypted certificate')
-    const environment = { CSC_LINK: certificate, DSH_PACKAGING_PRESET: 'production',
-      DSH_DESKTOP_MACOS_SIGNING_IDENTITY: 'Fixture (ABCDEFGHIJ)', DSH_DESKTOP_MACOS_TEAM_ID: 'ABCDEFGHIJ',
+    const environment = { CSC_LINK: certificate, GLH_PACKAGING_PRESET: 'production',
+      GLH_DESKTOP_MACOS_SIGNING_IDENTITY: 'Fixture (ABCDEFGHIJ)', GLH_DESKTOP_MACOS_TEAM_ID: 'ABCDEFGHIJ',
       APPLE_APP_SPECIFIC_PASSWORD: 'private-password' }
     const source = cuaHelperSourceDigest(f.root)
     const run = (_command: string, args: string[]): string => args.join(' ')
     const before = cuaHelperBuildKey(source, environment, run)
     environment.APPLE_APP_SPECIFIC_PASSWORD = 'new-private-password'
     expect(cuaHelperBuildKey(source, environment, run)).toBe(before)
-    if (change === 'preset') environment.DSH_PACKAGING_PRESET = 'test'
-    if (change === 'identity') environment.DSH_DESKTOP_MACOS_SIGNING_IDENTITY = 'Other (ABCDEFGHIJ)'
-    if (change === 'team') environment.DSH_DESKTOP_MACOS_TEAM_ID = '1234567890'
+    if (change === 'preset') environment.GLH_PACKAGING_PRESET = 'test'
+    if (change === 'identity') environment.GLH_DESKTOP_MACOS_SIGNING_IDENTITY = 'Other (ABCDEFGHIJ)'
+    if (change === 'team') environment.GLH_DESKTOP_MACOS_TEAM_ID = '1234567890'
     if (change === 'certificate') writeFileSync(certificate, 'another certificate')
     const after = cuaHelperBuildKey(change === 'source' ? 'b'.repeat(64) : source, environment,
       change === 'toolchain' ? () => 'another toolchain' : run)
@@ -113,10 +113,10 @@ it('resolves the configured signing file without installing desktop dependencies
   const config = join(f.root, 'config')
   mkdirSync(join(config, 'secrets'), { recursive: true })
   writeFileSync(join(config, 'secrets/macos-signing.env'), 'CSC_LINK=./signing.p12\nDSH_DESKTOP_MACOS_TEAM_ID=ABCDEFGHIJ\n')
-  const environment = { DSH_PACKAGING_CONFIG_DIR: config, DSH_PACKAGING_PRESET: 'production' }
-  expect(readCuaSigningSettings(environment)).toMatchObject({ CSC_LINK: join(config, 'secrets/signing.p12'), DSH_PACKAGING_PRESET: 'production' })
-  expect(() => readCuaSigningSettings({ ...environment, DSH_PACKAGING_PRESET: 'invalid' })).toThrow('preset')
-  expect(() => readCuaSigningSettings({ ...environment, DSH_PACKAGING_CONFIG_DIR: 'relative' })).toThrow('CONFIG_DIR')
+  const environment = { GLH_PACKAGING_CONFIG_DIR: config, GLH_PACKAGING_PRESET: 'production' }
+  expect(readCuaSigningSettings(environment)).toMatchObject({ CSC_LINK: join(config, 'secrets/signing.p12'), GLH_PACKAGING_PRESET: 'production' })
+  expect(() => readCuaSigningSettings({ ...environment, GLH_PACKAGING_PRESET: 'invalid' })).toThrow('preset')
+  expect(() => readCuaSigningSettings({ ...environment, GLH_PACKAGING_CONFIG_DIR: 'relative' })).toThrow('CONFIG_DIR')
 })
 
 it('loads fingerprinting and selection under plain Node with no node_modules directory', () => {
@@ -205,13 +205,13 @@ it.each(['test', 'production'])('computes the same %s build key through selectio
   const config = join(f.root, 'config')
   mkdirSync(join(config, 'presets'), { recursive: true })
   mkdirSync(join(config, 'secrets'))
-  writeFileSync(join(config, 'presets', `${preset}.env`), `DSH_DESKTOP_AUTO_UPDATE_ENV=${preset}\n`)
+  writeFileSync(join(config, 'presets', `${preset}.env`), `GLH_DESKTOP_AUTO_UPDATE_ENV=${preset}\n`)
   writeFileSync(join(config, 'secrets/signing.p12'), 'fixture certificate')
   writeFileSync(join(config, 'secrets/macos-signing.env'), [
-    'CSC_LINK=./signing.p12', 'CSC_KEY_PASSWORD=fixture-password', 'DSH_DESKTOP_MACOS_TEAM_ID=ABCDEFGHIJ',
-    'DSH_DESKTOP_MACOS_SIGNING_IDENTITY=Fixture (ABCDEFGHIJ)',
+    'CSC_LINK=./signing.p12', 'CSC_KEY_PASSWORD=fixture-password', 'GLH_DESKTOP_MACOS_TEAM_ID=ABCDEFGHIJ',
+    'GLH_DESKTOP_MACOS_SIGNING_IDENTITY=Fixture (ABCDEFGHIJ)',
   ].join('\n'))
-  const environment = { DSH_PACKAGING_CONFIG_DIR: config, DSH_PACKAGING_PRESET: preset }
+  const environment = { GLH_PACKAGING_CONFIG_DIR: config, GLH_PACKAGING_PRESET: preset }
   const source = cuaHelperSourceDigest(f.root)
   const run = (_command: string, args: string[]): string => args.join(' ')
   expect(cuaHelperBuildKey(source, readCuaSigningSettings(environment), run))

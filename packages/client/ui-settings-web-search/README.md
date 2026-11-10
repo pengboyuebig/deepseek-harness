@@ -1,5 +1,5 @@
 ---
-description: "The web search and fetch settings page on the dsh web client's Plugins page: the Search and Fetch provider menus, the DeepSeek Search API result count, and legacy Messages search settings."
+description: "The web search and fetch settings page on the glh web client's Plugins page: the Search and Fetch provider menus, the DeepSeek Search API result count, and legacy Messages search settings."
 kind: "package-reference"
 ---
 
@@ -29,7 +29,7 @@ The **Web search and fetch** card in the Official group opens the page. It has a
 
 Under **Web search provider**, DeepSeek Search API adds a link to the DeepSeek search and fetch guide after its description, and a gray panel below the menu holds **Results per search** (an integer from 1 through 50, default 10; invalid counts block saving). The DeepSeek Fetch API section shows its provider menu and description. Both APIs follow the DeepSeek credential of the conversation, and their own endpoint fields are YAML-only ([web-deepseek-api authentication](../../web/web-deepseek-api/README.md#authentication)). A provider with no settings on this page, such as DeepSeek Fetch API, Direct fetch, or a plugin provider, shows no panel. Every control sits directly in its section; nothing is collapsed.
 
-**DeepSeek (legacy)** shows its API key, independent Messages Base URL, and **Maximum searches per request** (`maxUses`, a positive integer, default 5) in the same panel layout. The key writes the `web-search-deepseek.apiKeyEnv` reference (`DEEPSEEK_API_KEY` by default); endpoint and limit writes stay in `web-search-deepseek`, separate from API settings. Switching away drops an unsaved key but preserves endpoint and limit settings.
+**DeepSeek (legacy)** shows its API key, independent Messages Base URL, and **Maximum searches per request** (`maxUses`, a positive integer, default 5) in the same panel layout. The key writes the `web-search-deepseek.apiKeyEnv` reference (`GLKJ_API_KEY` by default); endpoint and limit writes stay in `web-search-deepseek`, separate from API settings. Switching away drops an unsaved key but preserves endpoint and limit settings.
 
 Value fields render the effective value, carry an **Overridden** badge with **Reset to default** once overridden, and save as a reset when emptied; a value equal to the deployment default saves as an override. The provider menus are disabled while an invalid edit or a failed save is staged, so a field the change would hide stays visible.
 
@@ -74,7 +74,7 @@ None; this package neither assembles nor sends a provider request.
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- **Automatic selection reads only the deployment composition** — a menu offers it when the composition layer sets no provider for that capability. While automatic selection applies, the Host's `DSH_WEB_SEARCH_PROVIDER` or `DSH_WEB_FETCH_PROVIDER` environment variable picks the provider instead, and the page does not show that choice. Without either, automatic selection with more than one usable registered provider makes each operation fail with `WEB_PROVIDER_AMBIGUOUS`.
+- **Automatic selection reads only the deployment composition** — a menu offers it when the composition layer sets no provider for that capability. While automatic selection applies, the Host's `GLH_WEB_SEARCH_PROVIDER` or `GLH_WEB_FETCH_PROVIDER` environment variable picks the provider instead, and the page does not show that choice. Without either, automatic selection with more than one usable registered provider makes each operation fail with `WEB_PROVIDER_AMBIGUOUS`.
 
 <a id="dev-note"></a>
 ### Dev Note

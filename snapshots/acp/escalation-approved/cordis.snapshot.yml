@@ -15,7 +15,7 @@
 - id: session-persistence-jsonl
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
-    root: !!js process.env.DSH_SNAPSHOT_SESSIONS_ROOT ?? dshHomePath('sessions')
+    root: !!js process.env.GLH_SNAPSHOT_SESSIONS_ROOT ?? dshHomePath('sessions')
     compression: none
 
 - id: sandbox
@@ -49,4 +49,4 @@
       config:
         command: "printf 'escalated\\n' > /tmp/dsh-escalated.txt && cat /tmp/dsh-escalated.txt && rm /tmp/dsh-escalated.txt"
         recordedPath: /tmp/dsh-escalated.txt
-        livePath: !!js process.env.DSH_SNAPSHOT_SPILL_ROOT + '/dsh-escalated.txt'
+        livePath: !!js process.env.GLH_SNAPSHOT_SPILL_ROOT + '/dsh-escalated.txt'

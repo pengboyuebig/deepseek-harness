@@ -34,16 +34,16 @@ import { assemble, type AssembledResult } from './assemble.ts'
 /**
  * Real-API e2e for the direct-fetch adapter: V4 Flash across thinking modes
  * and a max-effort tool round trip with reasoning passback. The suite skips
- * entirely without $DEEPSEEK_API_KEY; the pre-release vision smoke additionally
- * requires $DEEPSEEK_VISION_E2E=1, and the Flash image/system-update smoke
- * requires $DEEPSEEK_FLASH_E2E=1.
+ * entirely without $GLKJ_API_KEY; the pre-release vision smoke additionally
+ * requires $GLKJ_VISION_E2E=1, and the Flash image/system-update smoke
+ * requires $GLKJ_FLASH_E2E=1.
  */
 
 const FLASH = 'deepseek-v4-flash'
 const VISION = 'deepseek-v4-flash-vision-exp'
-const VISION_E2E_ENABLED = process.env.DEEPSEEK_VISION_E2E === '1'
+const VISION_E2E_ENABLED = process.env.GLKJ_VISION_E2E === '1'
 /** A model whose endpoint reads the latest `system` message at any position; unset skips the in-history smoke. */
-const IN_HISTORY_MODEL = process.env.DEEPSEEK_IN_HISTORY_MODEL
+const IN_HISTORY_MODEL = process.env.GLKJ_IN_HISTORY_MODEL
 const TEST_PNG = Uint8Array.from(readFileSync(
   new URL('../../llm-pi-ai/tests/fixtures/qr-code.png', import.meta.url),
 ))
@@ -103,7 +103,7 @@ class E2eAttachmentStore extends AttachmentStore {
 
 beforeEach(async () => {
   identityHome = await mkdtemp(join(tmpdir(), 'dsh-e2e-user-id-'))
-  vi.stubEnv('DSH_HOME', identityHome)
+  vi.stubEnv('GLH_HOME', identityHome)
 })
 
 async function harness(model: string, config: Partial<Config> = {}) {
@@ -150,8 +150,8 @@ const weatherTool: ToolSchema = {
   },
 }
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY)('llm-deepseek e2e (real API)', () => {
-  it.skipIf(process.env.DEEPSEEK_FLASH_E2E !== '1')('deepseek-flash accepts images and retains system updates', async () => {
+describe.skipIf(!process.env.GLKJ_API_KEY)('llm-deepseek e2e (real API)', () => {
+  it.skipIf(process.env.GLKJ_FLASH_E2E !== '1')('deepseek-flash accepts images and retains system updates', async () => {
     const ctx = new Context()
     contexts.push(ctx)
     await ctx.plugin(LlmRuntime)
@@ -181,8 +181,8 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)('llm-deepseek e2e (real API)', ()
   })
 
   it.skipIf(!VISION_E2E_ENABLED)('uses the built-in official route to upload, reference, and delete one image', async () => {
-    const key = process.env.DEEPSEEK_API_KEY
-    if (key === undefined) throw new Error('e2e ran without DEEPSEEK_API_KEY')
+    const key = process.env.GLKJ_API_KEY
+    if (key === undefined) throw new Error('e2e ran without GLKJ_API_KEY')
     const baseURL = Protocol.PUBLIC_BASE_URL
     const ctx = await harness(VISION, { baseURL })
     await ctx.plugin(E2eAttachmentStore)
@@ -252,16 +252,16 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)('llm-deepseek e2e (real API)', ()
   })
 
   it('serves a real request with the key held only by a credentials-local document', async () => {
-    const key = process.env.DEEPSEEK_API_KEY
-    if (key === undefined) throw new Error('e2e ran without DEEPSEEK_API_KEY')
+    const key = process.env.GLKJ_API_KEY
+    if (key === undefined) throw new Error('e2e ran without GLKJ_API_KEY')
     const dir = await mkdtemp(join(tmpdir(), 'dsh-e2e-credentials-'))
     try {
       // JSON.stringify quotes the value: YAML is a JSON superset, so a real
       // key survives whatever characters it happens to carry.
-      await writeFile(join(dir, '.credentials.yaml'), `version: 1\nrefs:\n  DEEPSEEK_API_KEY: ${JSON.stringify(key)}\n`, { mode: 0o600 })
+      await writeFile(join(dir, '.credentials.yaml'), `version: 1\nrefs:\n  GLKJ_API_KEY: ${JSON.stringify(key)}\n`, { mode: 0o600 })
       // Scrub the ambient variable so only the credential seam can supply the
       // key: this request proves the per-request resolution path end to end.
-      vi.stubEnv('DEEPSEEK_API_KEY', '')
+      vi.stubEnv('GLKJ_API_KEY', '')
       const ctx = new Context()
       contexts.push(ctx)
       await ctx.plugin(LlmRuntime)

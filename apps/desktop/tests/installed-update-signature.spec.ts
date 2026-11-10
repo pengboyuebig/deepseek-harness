@@ -51,7 +51,7 @@ describe('installed update read-only signature evidence', () => {
 
   it.runIf(process.platform === 'win32')('isolates verification processes and records only public attributes for unchanged bytes', async () => {
     await fixture(async (file, root) => {
-      vi.stubEnv('DSH_DESKTOP_WINDOWS_TOKEN_PIN', 'fixture-pin')
+      vi.stubEnv('GLH_DESKTOP_WINDOWS_TOKEN_PIN', 'fixture-pin')
       vi.stubEnv('DOWNLOAD_TEST_COS_SECRET_KEY', 'fixture-key')
       vi.stubEnv('PSModulePath', 'incompatible-powershell-modules')
       vi.stubEnv('NODE_OPTIONS', '--require unused')
@@ -72,7 +72,7 @@ describe('installed update read-only signature evidence', () => {
         expect(options).toMatchObject({ windowsHide: true, timeout: 60_000 })
         expect(options.shell).toBeUndefined()
       }
-      expect(calls.execute.mock.calls[1]![2].env.DSH_VERIFY_FILE).toBe(file)
+      expect(calls.execute.mock.calls[1]![2].env.GLH_VERIFY_FILE).toBe(file)
       expect(await readFile(file, 'utf8')).toBe('inert bytes, never executed')
       await expect(verifyInstalledUpdateSignature(file, 'CN=Fixture', root)).rejects.toMatchObject({ code: 'EEXIST' })
       expect(calls.execute).toHaveBeenCalledTimes(2)

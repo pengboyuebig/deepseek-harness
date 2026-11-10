@@ -9,7 +9,7 @@ English | [中文](2026-09-24-exited-holder-lock-takeover.zh.md)
 
 `withFileLock` in [dsh-atomic-write](../../../../packages/util/atomic-write/README.md) creates `<file>.lock` with exclusive create and removes it in a `finally`. A process that ends without running that `finally` leaves the lock behind, and every later writer of the file times out until someone deletes it by hand. The [original decision](../../archived/architecture/2026-07-30-settings-write-path-integrity.md) accepted this because file age cannot distinguish a crashed holder from a paused one.
 
-The profile package lock (`<profile>/package.json.lock`) made the cost visible. `dsh plugin` installs no signal handler, so Ctrl-C, SIGTERM, or closing its terminal ends the process while pnpm runs, and the lock stays. `dsh` and `dsh web` exit right after application disposal resolves, while a cancelled installation is still restoring files and has not released the lock. A crash, SIGKILL, or out-of-memory kill has the same effect. After any of these, every plugin operation on that profile fails after `lockWaitMs` (two minutes by default) without saying that the holder is gone.
+The profile package lock (`<profile>/package.json.lock`) made the cost visible. `glh plugin` installs no signal handler, so Ctrl-C, SIGTERM, or closing its terminal ends the process while pnpm runs, and the lock stays. `glh` and `glh web` exit right after application disposal resolves, while a cancelled installation is still restoring files and has not released the lock. A crash, SIGKILL, or out-of-memory kill has the same effect. After any of these, every plugin operation on that profile fails after `lockWaitMs` (two minutes by default) without saying that the holder is gone.
 
 ## Decision
 
@@ -18,7 +18,7 @@ The profile package lock (`<profile>/package.json.lock`) made the cost visible. 
 - Contenders that read the same record serialize on a claim file, `<file>.lock.takeover-<first 16 hex digits of the record's SHA-256>`, created with `wx`. The claimant re-reads the lock and probes its PID again, removes it only if it still holds that record and the PID is still absent, removes the claim, and retries acquisition at once. The record's holder cannot release it once its PID is absent, another takeover needs the same claim, and a new holder that reused the PID fails the second probe, so a claimant never removes a lock that another contender acquired after the exited holder's.
 - A record that is empty, incomplete, not a decimal PID, or names PID 0 or a PID beyond the int32 range the probe accepts is waited for. None of these proves that the holder stopped.
 - Takeover proves only that the recorded process exited, not that the processes it started stopped writing. The [Plugin Manager](../../../../packages/boot/plugin-manager/README.md) records each pnpm run in `.plugin-manager/run.json` while the run lasts; an operation that finds that record waits up to five seconds for the recorded run to stop and otherwise refuses to run, naming the process and the record.
-- The probe runs on the contender's host. Writers on several hosts sharing one `DSH_HOME` over a network filesystem are unsupported; the `flock` that guards Session files does not reliably exclude them either.
+- The probe runs on the contender's host. Writers on several hosts sharing one `GLH_HOME` over a network filesystem are unsupported; the `flock` that guards Session files does not reliably exclude them either.
 
 ## Alternatives considered
 
@@ -32,7 +32,7 @@ The profile package lock (`<profile>/package.json.lock`) made the cost visible. 
 
 **Terminate the recorded pnpm run instead of refusing.** Its PID can have been reused by an unrelated process, which a signal would then kill. Refusing leaves that case to the operator, whom the diagnostic names the process and the record.
 
-**Signal handlers in `dsh plugin` only.** This covers one of the paths that leave a lock and leaves crashes, forced exits, and the other lock files behind.
+**Signal handlers in `glh plugin` only.** This covers one of the paths that leave a lock and leaves crashes, forced exits, and the other lock files behind.
 
 ## Testing
 

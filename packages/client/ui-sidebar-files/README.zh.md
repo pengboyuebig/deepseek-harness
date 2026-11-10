@@ -1,5 +1,5 @@
 ---
-description: "dsh Web 客户端右侧 Sidebar 的工作区文件浏览器：文件页，以及停靠与浮动文件预览旁每个分栏一棵的工作区目录树，通过网络逐层列出。"
+description: "glh Web 客户端右侧 Sidebar 的工作区文件浏览器：文件页，以及停靠与浮动文件预览旁每个分栏一棵的工作区目录树，通过网络逐层列出。"
 kind: "package-reference"
 ---
 

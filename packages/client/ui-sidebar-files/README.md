@@ -1,5 +1,5 @@
 ---
-description: "The right Sidebar's workspace file browser for the dsh web client: the files page and one workspace tree per pane beside docked and floating file previews, listed one level at a time over the wire."
+description: "The right Sidebar's workspace file browser for the glh web client: the files page and one workspace tree per pane beside docked and floating file previews, listed one level at a time over the wire."
 kind: "package-reference"
 ---
 

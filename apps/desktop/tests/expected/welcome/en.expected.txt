@@ -1,6 +1,6 @@
-DeepSeek Harness
-DeepSeek Harness
-Welcome to DeepSeek Harness
+GLKJ Harness
+GLKJ Harness
+Welcome to GLKJ Harness
 Build potential. Explore intelligence.
 Sign in
 Add API Key

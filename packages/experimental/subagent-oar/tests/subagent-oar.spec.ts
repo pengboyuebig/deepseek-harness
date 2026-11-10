@@ -149,12 +149,12 @@ describe('OAR task input', () => {
 
   it('removes inherited credentials and retains explicit environment deletion', () => {
     vi.stubEnv('OAR_FIXTURE_API_TOKEN', 'private')
-    vi.stubEnv('DSH_OAR_DELETE_ME', 'inherited')
-    const environment = oarEnvironment({ DSH_OAR_DELETE_ME: null, DSH_OAR_KEEP_ME: 'supplied' })
+    vi.stubEnv('GLH_OAR_DELETE_ME', 'inherited')
+    const environment = oarEnvironment({ GLH_OAR_DELETE_ME: null, GLH_OAR_KEEP_ME: 'supplied' })
     expect(environment.OAR_FIXTURE_API_TOKEN).toBeNull()
-    expect(environment.DSH_OAR_DELETE_ME).toBeNull()
-    expect(environment.DSH_OAR_KEEP_ME).toBe('supplied')
-    expect(process.env.DSH_OAR_DELETE_ME).toBe('inherited')
+    expect(environment.GLH_OAR_DELETE_ME).toBeNull()
+    expect(environment.GLH_OAR_KEEP_ME).toBe('supplied')
+    expect(process.env.GLH_OAR_DELETE_ME).toBe('inherited')
   })
   it('forwards shared environment corrections without copying unchanged ambient values', () => {
     const inherited = process.env.OAR_FIXTURE_PROXY_VALUE

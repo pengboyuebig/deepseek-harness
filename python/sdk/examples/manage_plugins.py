@@ -19,13 +19,13 @@ def main() -> None:
     parser.add_argument("--dsh-bin", type=Path)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     args = parser.parse_args()
-    if os.environ.get("DSH_PRIMARY_RUNTIME") is None:
+    if os.environ.get("GLH_PRIMARY_RUNTIME") is None:
         download_primary_runtime()
     with ThreadPoolExecutor(max_workers=2) as worker:
         harness = DeepSeekHarness(dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
                                   dsh_bin=None if args.dsh_bin is None else str(args.dsh_bin.resolve()),
                                   approval_requests=True,
-                                  env={"DSH_PERMISSION_MODE": "workspace-write"})
+                                  env={"GLH_PERMISSION_MODE": "workspace-write"})
         try:
             harness.start()
             run = worker.submit(harness.run, args.prompt)

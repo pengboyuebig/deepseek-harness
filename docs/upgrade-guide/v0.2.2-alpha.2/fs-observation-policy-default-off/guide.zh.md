@@ -17,7 +17,7 @@ description: "fs-observation-policy 行随发行版禁用，write、edit 与 app
 
 ## 迁移
 
-1. 要保留先读后写行为，在 profile 的 `cordis.patch.yml`（`$DSH_HOME/profiles/<profile>/cordis.patch.yml`）中加入：
+1. 要保留先读后写行为，在 profile 的 `cordis.patch.yml`（`$GLH_HOME/profiles/<profile>/cordis.patch.yml`）中加入：
 
    ```yaml
    - id: fs-observation-policy
@@ -26,4 +26,4 @@ description: "fs-observation-policy 行随发行版禁用，write、edit 与 app
 
    已带有该行且 `disabled: false` 的 profile patch 无需改动；为退出策略而写 `disabled: true` 的可以删掉该覆盖。
 2. 要在没有 `apply_patch` 的情况下运行，为 `headless`、`sdk`、`acp` 在 profile 的 `cordis.patch.yml` 中加入 `- {id: tool-fs, config: {applyPatch: false}}`（随发行版交付的 [PTC overlay](../../../../apps/cli/config/examples/ptc.yml) 已这样做，与 Web `ptc` preset 一致）；对 Web `standard` preset，在 Agent presets 设置页编辑它，或在 `packages/bundle/web-app/presets/standard.patch.yml` 的 `tool-fs` 行上设置 `applyPatch: false`。
-3. 用 `dsh --profile <profile> --dump-config` 确认：`fs-observation-policy` 行显示预期的 `disabled` 值，`tool-fs` 行显示预期的 `applyPatch` 值。在会话中，行禁用时对未读文件执行 `edit` 成功，启用时以 `FS_NOT_OBSERVED` 失败。
+3. 用 `glh --profile <profile> --dump-config` 确认：`fs-observation-policy` 行显示预期的 `disabled` 值，`tool-fs` 行显示预期的 `applyPatch` 值。在会话中，行禁用时对未读文件执行 `edit` 成功，启用时以 `FS_NOT_OBSERVED` 失败。

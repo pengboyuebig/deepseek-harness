@@ -24,7 +24,7 @@ def main() -> None:
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     parser.add_argument("--preset", required=True)
     parser.add_argument("--provider", default="deepseek-official")
-    parser.add_argument("--model", default=os.environ.get("DSH_MODEL", "deepseek-v4-flash"))
+    parser.add_argument("--model", default=os.environ.get("GLH_MODEL", "deepseek-v4-flash"))
     args = parser.parse_args()
     if not args.preset.strip():
         parser.error("--preset must be non-blank")
@@ -32,12 +32,12 @@ def main() -> None:
     with DeepSeekHarness(
         dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
         profile="sdk", provider=args.provider, model=args.model,
-        env={"DSH_PERMISSION_MODE": "workspace-write"},
+        env={"GLH_PERMISSION_MODE": "workspace-write"},
     ) as harness:
         session = harness.start_session()
         display(session.run("Summarize the current file and approval policy in one sentence. Do not use tools."))
         display(session.run(f"/permission {args.preset}"))
-        print(f"Launch setting: {harness.config.env['DSH_PERMISSION_MODE']}")
+        print(f"Launch setting: {harness.config.env['GLH_PERMISSION_MODE']}")
         display(session.run("Summarize the current file and approval policy again. Do not use tools."))
 
 

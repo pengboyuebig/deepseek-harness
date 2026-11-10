@@ -35,7 +35,7 @@ void app.whenReady().then(async () => {
   })
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
   window.webContents.on('console-message', ({ message }) => {
-    const prefix = 'DSH_CUA_STATE '
+    const prefix = 'GLH_CUA_STATE '
     if (!message.startsWith(prefix)) return
     const state = JSON.parse(message.slice(prefix.length))
     const temporary = join(root, 'state.next.json')

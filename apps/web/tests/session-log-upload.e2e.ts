@@ -15,7 +15,7 @@ it.skipIf(webSnapshotMode() === 'record')('persists the upload switch and omits 
   onTestFinished(() => rm(root, { recursive: true, force: true }))
   const server = await startMockLlmServer({ sequence: ['success', 'success', 'success'], successText: 'UPLOAD_SETTING_DONE' })
   onTestFinished(() => server.close())
-  const key = credentialRef('DSH_UPLOAD_BROWSER_KEY')
+  const key = credentialRef('GLH_UPLOAD_BROWSER_KEY')
   const overlay = join(root, 'upload.yml')
   await writeFile(overlay, JSON.stringify([
     { id: 'llm-deepseek', config: { baseURL: server.baseURL, apiKeyEnv: key } },

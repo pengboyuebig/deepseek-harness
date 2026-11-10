@@ -7,13 +7,13 @@ English | [中文](2026-09-27-desktop-cli-runtime.zh.md)
 
 ## Problem
 
-Desktop contains dsh and its production dependencies. Users need terminal access to plugin management and other CLI functions without maintaining another installation.
+Desktop contains glh and its production dependencies. Users need terminal access to plugin management and other CLI functions without maintaining another installation.
 
 ## Decision
 
 A shell script on macOS and a command script on Windows run the private Desktop CLI entry through the installed Electron executable in Node mode. The entry delegates to the ordinary CLI dispatcher and supplies bundled pnpm through its package-operation options. Desktop Host startup and ASAR packaging retain their existing behavior.
 
-The Desktop-installed command can manage the initialized `desktop` profile while the application is quit. It uses the same profile write lock, package compatibility checks and reconciliation as existing plugin operations. Desktop owns profile initialization; the CLI refuses to initialize a missing Desktop profile as an ordinary CLI profile. npm-installed dsh cannot manage that reserved profile, and neither CLI boots it.
+The Desktop-installed command can manage the initialized `desktop` profile while the application is quit. It uses the same profile write lock, package compatibility checks and reconciliation as existing plugin operations. Desktop owns profile initialization; the CLI refuses to initialize a missing Desktop profile as an ordinary CLI profile. npm-installed glh cannot manage that reserved profile, and neither CLI boots it.
 
 Windows registers a console callback through Koffi to deliver SIGINT and SIGBREAK to the CLI's JavaScript listeners for asynchronous shutdown. Electron's native default exits before those listeners run. The existing Office engine resolver supplies physical paths for Web attachment conversion; CLI profile startup does not inject Office authoring-skill configuration.
 
@@ -25,7 +25,7 @@ The command's runtime version follows Desktop. The [Electron runtime decision](.
 
 ## Command registration
 
-The permanent **Manage dsh Command…** menu displays status and installation, repair, and removal actions. macOS uses a fixed `/usr/local/bin/dsh` link, with administrator authentication when needed, instead of editing shell startup files. Windows registers a dedicated directory containing only the public launcher in the current user's PATH. Registration and removal are optional menu actions after application installation; the installer and uninstaller do not perform them. Private installation helpers are outside that PATH directory.
+The permanent **Manage glh Command…** menu displays status and installation, repair, and removal actions. macOS uses a fixed `/usr/local/bin/dsh` link, with administrator authentication when needed, instead of editing shell startup files. Windows registers a dedicated directory containing only the public launcher in the current user's PATH. Registration and removal are optional menu actions after application installation; the installer and uninstaller do not perform them. Private installation helpers are outside that PATH directory.
 
 Switching an existing command requires confirmation. The executor rechecks the displayed fingerprint and carries that exact command entry through withdrawal; a concurrent replacement is preserved. A receipt retains the previous macOS launcher. If another installation replaces the Desktop link before reinstallation, any older backup is preserved and reported; Remove restores only the current receipt’s backup. Windows inserts one owned PATH occurrence and records the count of identical pre-existing occurrences so removal preserves them. Other command locations are reported without being modified. Concurrent dialogs share one operation, and update preparation waits for it to finish.
 

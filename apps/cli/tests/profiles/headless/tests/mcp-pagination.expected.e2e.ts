@@ -24,13 +24,13 @@ it('warns when MCP discovery exceeds the SDK page limit and completes the headle
     ],
     tsconfigPath: fileURLToPath(new URL('../../../../../../tsconfig.json', import.meta.url)),
     env: {
-      DSH_MCP_PAGINATION_FIXTURE: fileURLToPath(new URL('pagination-limit-server.ts', fixtureRoot)),
-      DSH_PERMISSION_MODE: 'danger-full-access',
-      DSH_TELEMETRY_DISABLED: '1',
+      GLH_MCP_PAGINATION_FIXTURE: fileURLToPath(new URL('pagination-limit-server.ts', fixtureRoot)),
+      GLH_PERMISSION_MODE: 'danger-full-access',
+      GLH_TELEMETRY_DISABLED: '1',
     },
   })
   expect(stdout).toBe('CLI tool round trip complete: CLI_TOOL_ROUND_TRIP\n')
-  expect(stderr).toContain('dsh: warning: 1 entry did not activate')
+  expect(stderr).toContain('glh: warning: 1 entry did not activate')
   expect(stderr).toContain('mcp-pagination-limit (@deepseek-ai/dsh-mcp-client)')
   expect(stderr).toContain('initial connection or tool synchronization failed')
   const cause = stderr.split('\n').find(line => line.includes('exceeded listMaxPages'))

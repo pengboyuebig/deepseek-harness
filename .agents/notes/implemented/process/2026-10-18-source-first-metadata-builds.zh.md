@@ -18,7 +18,7 @@ Host 包可以消费生成的 Remote 声明，而不必成为 Client 包。如�
 
 ## Measurements
 
-本地实验使用 macOS ARM64、Node 24.19.0 与 TypeScript 6.0.3。`DSH_GATE_CONCURRENCY=1 pnpm run build:artifacts --profile official` 按基线／候选／候选／基线顺序运行。每轮先执行 `pnpm run clean`，再在源码不变的情况下重跑。安装与清理不计时；native 准备、包编译、bundle、Desktop、Web 与构建记录发布计入时间。暂停本任务的其他重负载工作；主机上仍可能有无关负载。不清空文件系统缓存。
+本地实验使用 macOS ARM64、Node 24.19.0 与 TypeScript 6.0.3。`GLH_GATE_CONCURRENCY=1 pnpm run build:artifacts --profile official` 按基线／候选／候选／基线顺序运行。每轮先执行 `pnpm run clean`，再在源码不变的情况下重跑。安装与清理不计时；native 准备、包编译、bundle、Desktop、Web 与构建记录发布计入时间。暂停本任务的其他重负载工作；主机上仍可能有无关负载。不清空文件系统缓存。
 
 | 输入 | 干净构建基线／候选 (s) | 无改动构建基线／候选 (s) | 干净构建 RSS 峰值基线／候选 (MiB) |
 |---|---|---|---|

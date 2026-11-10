@@ -60,7 +60,7 @@ def test_bare_plan_and_off_change_only_plan_state_without_a_model_request(tmp_pa
         repeated = _command(runtime, session, "/plan off")
         assert runtime.model.captured() == []
         assert "already inactive" in repeated.result.text
-        assert runtime.harness.config.env["DSH_PERMISSION_MODE"] == "workspace-write"
+        assert runtime.harness.config.env["GLH_PERMISSION_MODE"] == "workspace-write"
     events = _read_events(runtime.logs)
     for execution in [on, off, repeated]:
         _command_pair(events, execution, "plan")

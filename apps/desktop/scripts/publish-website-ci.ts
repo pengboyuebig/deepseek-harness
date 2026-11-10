@@ -45,7 +45,7 @@ export async function publishWebsiteCi(mode: 'upload' | 'purge', env: NodeJS.Pro
     || !/^[1-9]\d*$/u.test(env.GITHUB_RUN_ATTEMPT || '')) throw new Error('website publication: invalid Actions identity or original machine')
   const root = desktopReleasesRoot(env)
   const manifest = await readRetainedDesktopManifest(root, route.runId, route.attempt)
-  const config = await readDesktopPublishConfig(env.DSH_PACKAGING_CONFIG_DIR!, 'production')
+  const config = await readDesktopPublishConfig(env.GLH_PACKAGING_CONFIG_DIR!, 'production')
   const approval = websiteApproval(manifest, config.bucket)
   if (!env.DESKTOP_WEBSITE_APPROVAL || env.DESKTOP_WEBSITE_APPROVAL !== approval) throw new Error('website publication: approved build or destination changed')
   const zoneId = env.DOWNLOAD_PROD_EO_ZONE_ID

@@ -42,8 +42,8 @@ def test_plan_example_reports_truncation_and_accepts_explicit_dismissal(
         monkeypatch.setattr(runtime_helpers, "_messages_response", truncated_response)
     terminal_input = tmp_path / "stdin.txt"
     terminal_input.write_text("d\n", encoding="utf-8")
-    monkeypatch.setenv("DSH_TELEMETRY_DISABLED", "1")
-    monkeypatch.setenv("DSH_TOOLS_MODE", "native")
+    monkeypatch.setenv("GLH_TELEMETRY_DISABLED", "1")
+    monkeypatch.setenv("GLH_TOOLS_MODE", "native")
     monkeypatch.setattr(sys, "argv", [str(_EXAMPLE), "--dsh-home", str(tmp_path / "home"),
                                      "--workspace", str(workspace), "Plan a small change."])
     with terminal_input.open(encoding="utf-8") as terminal, _ModelServer([completion]) as model:

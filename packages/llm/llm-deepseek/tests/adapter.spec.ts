@@ -46,7 +46,7 @@ async function endpoint(...args: Parameters<typeof server>) {
 async function context() {
   const home = await mkdtemp(join(tmpdir(), 'dsh-messages-test-'))
   cleanup.push(() => rm(home, { recursive: true, force: true }))
-  vi.stubEnv('DSH_HOME', home)
+  vi.stubEnv('GLH_HOME', home)
   const ctx = new Context()
   cleanup.push(() => ctx.fiber.dispose())
   return { ctx, home }
@@ -316,7 +316,7 @@ describe('Cordis provider composition', () => {
   it('resolves an attachment service loaded after the adapter and maps its read-only path', async () => {
     const http = await endpoint()
     const { ctx, home } = await context()
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(Messages, { baseURL: http.url })
     const model = 'deepseek-flash'
@@ -340,8 +340,8 @@ describe('Cordis provider composition', () => {
   async function boot(...args: Parameters<typeof server>) {
     const http = await endpoint(...args)
     const { ctx, home } = await context()
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
-    await writeFile(join(home, '.credentials.yaml'), 'version: 1\nrefs:\n  DEEPSEEK_API_KEY: stored-key\n', { mode: 0o600 })
+    vi.stubEnv('GLKJ_API_KEY', '')
+    await writeFile(join(home, '.credentials.yaml'), 'version: 1\nrefs:\n  GLKJ_API_KEY: stored-key\n', { mode: 0o600 })
     const template = await readFile(new URL('fixtures/cordis.yml', import.meta.url), 'utf8')
     await writeFile(join(home, 'cordis.yml'), template.replaceAll('{{endpoint}}', JSON.stringify(http.url)).replaceAll('{{credentials}}', JSON.stringify(join(home, '.credentials.yaml'))))
     ctx.baseUrl = pathToFileURL(home).href + '/'
@@ -599,7 +599,7 @@ describe('Cordis provider composition', () => {
     expect(http.requests[0]?.headers['x-api-key']).toBe('stored-key')
     const second = await endpoint()
     await ctx.settings.update(Messages.name, { baseURL: second.url, maxTokens: 51, retryPolicy: { mode: 'always' } })
-    await ctx.credentials.set(credentialRef('DEEPSEEK_API_KEY'), 'rotated')
+    await ctx.credentials.set(credentialRef('GLKJ_API_KEY'), 'rotated')
     await chunks(ctx.llm.stream(options()))
     expect(second.requests[0]).toMatchObject({ headers: { 'x-api-key': 'rotated' }, body: { max_tokens: 51 } })
     await ctx.settings.update(Messages.name, { models: [{ id: 'duplicate' }, { id: 'duplicate' }], baseURL: http.url })
@@ -619,16 +619,16 @@ describe('Cordis provider composition', () => {
   it('uses environment credentials and reports missing or malformed keys without network access', async () => {
     const http = await endpoint()
     const { ctx } = await context()
-    vi.stubEnv('DEEPSEEK_BASE_URL', http.url)
-    vi.stubEnv('DEEPSEEK_API_KEY', 'env-key')
+    vi.stubEnv('GLKJ_BASE_URL', http.url)
+    vi.stubEnv('GLKJ_API_KEY', 'env-key')
     await ctx.plugin(LlmRuntime)
     const fiber = ctx.plugin(Messages)
     await fiber
     await chunks(ctx.llm.stream(options()))
     expect(http.requests[0]?.headers['x-api-key']).toBe('env-key')
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     expect((await assemble(ctx.llm.stream(options()))).assembler.finish).toMatchObject({ kind: 'error', failure: { code: 'MISSING_CREDENTIAL' } })
-    vi.stubEnv('DEEPSEEK_API_KEY', 'bad\nkey')
+    vi.stubEnv('GLKJ_API_KEY', 'bad\nkey')
     expect((await assemble(ctx.llm.stream(options()))).assembler.finish).toMatchObject({ kind: 'error', failure: { code: 'INVALID_CREDENTIAL' } })
     await fiber.dispose()
     expect(ctx.llm.listProviders()).toEqual([])
@@ -641,14 +641,14 @@ it('rejects invalid catalog context windows at the options resolver', () => {
 
 
 it.each([
-  ['https://api.deepseek.com', 'account-token'],
+  ['https://api.glkj.example.com', 'account-token'],
   ['https://custom.example.test', 'ambient-key'],
 ] as const)('selects account or API-key credentials from the actual endpoint %s', async (baseURL, expected) => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'ambient-key')
+  vi.stubEnv('GLKJ_API_KEY', 'ambient-key')
   const { ctx } = await context()
   // This consumer uses only resolveToken; the real provider owns origin validation in its own suite.
   ctx.provide('deepseekAccount', {
-    resolveToken: (url: string) => Promise.resolve(url === 'https://api.deepseek.com' ? 'account-token' : undefined),
+    resolveToken: (url: string) => Promise.resolve(url === 'https://api.glkj.example.com' ? 'account-token' : undefined),
   } as DeepSeekAccount)
   await ctx.plugin(LlmRuntime)
   await ctx.plugin(expected === 'account-token' ? AccountProvider : Messages, { baseURL })

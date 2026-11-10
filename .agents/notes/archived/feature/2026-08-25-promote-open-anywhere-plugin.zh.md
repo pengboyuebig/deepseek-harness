@@ -7,7 +7,7 @@ Archived: 2026-09-30
 
 ## 问题
 
-社区插件 `@dsh-plugins/open-anywhere`（gitlab.deepseek.com/Ciyou/dsh-open-anywhere）在会话头部增加一个 "Open In..." 分体按钮，可在 Finder、Cursor、VS Code、Xcode、Git GUI 或终端中打开会话的 workspace 目录。它以手写 `lib/` JavaScript 形式经 `dsh plugin add` 安装：无类型、无测试、直接调用 `node:child_process`、手搓下拉菜单和 style 标签、自带针对 rc6–rc8 的浏览器端 DSH 版本门禁，并靠探测 `process.argv` 猜测运行中的 dsh 版本。用户希望该功能成为 Web profile 的内置部分，而 bundle 安装路径给不了这一点——且外部形态几乎违反了仓库的所有约定（locale 拥有文案、逐文件覆盖率、wire 边界校验、主机命令的能力接缝）。
+社区插件 `@dsh-plugins/open-anywhere`（gitlab.deepseek.com/Ciyou/dsh-open-anywhere）在会话头部增加一个 "Open In..." 分体按钮，可在 Finder、Cursor、VS Code、Xcode、Git GUI 或终端中打开会话的 workspace 目录。它以手写 `lib/` JavaScript 形式经 `glh plugin add` 安装：无类型、无测试、直接调用 `node:child_process`、手搓下拉菜单和 style 标签、自带针对 rc6–rc8 的浏览器端 DSH 版本门禁，并靠探测 `process.argv` 猜测运行中的 glh 版本。用户希望该功能成为 Web profile 的内置部分，而 bundle 安装路径给不了这一点——且外部形态几乎违反了仓库的所有约定（locale 拥有文案、逐文件覆盖率、wire 边界校验、主机命令的能力接缝）。
 
 ## 决定
 
@@ -57,6 +57,6 @@ Archived: 2026-09-30
 
 - 非 SSH 会话中，只要主机在 macOS、Windows 或 Linux 上探测到至少一个已安装的目录应用，Web profile 就会出现头部按钮；其余情况零渲染（探测目录为空 → 组件返回 null）。
 - 社区插件的安装路径仍然有效但已冗余；其原始路由与浏览器选择键独立于 `open-in-app`，因此使用第一方功能的安装应移除社区插件，避免出现重复的头部控件。
-- 解析与图标每主机进程惰性执行一次，dsh 运行期间安装的应用要重启后才出现——接受；卸载方向经 `ENOENT` 单条目刷新自愈。
+- 解析与图标每主机进程惰性执行一次，glh 运行期间安装的应用要重启后才出现——接受；卸载方向经 `ENOENT` 单条目刷新自愈。
 - 目录在编译期固定；扩展它意味着同时编辑 `OPEN_IN_APP_CATALOG` 与两份 locale 词典（README 已知限制）。平台覆盖不均——若干 Git GUI 与终端仅有 macOS 条目；Windows 图标受限于 .NET 标准接口的 32px 提取，Linux 跟随 hicolor 而非当前主题，没有 desktop 记录的纯 CLI 条目则保留通用图标。
 - 解析器、图标、路由、控制器与组件测试覆盖平台探测、启动结果、可用性缓存和 HMR 处置。[SSH Web 快照](../../../../snapshots/web/open-in-app-ssh/snapshot.yml) 在启用两个 Open In 配置项并记住应用选择的条件下渲染共享的录制会话，并仅捕获会话头部；输入框和统计栏由各自的快照负责。继承的 SSH 标记使空应用目录在不同平台上保持确定。普通 Web 快照仍禁用依赖主机的应用探测。

@@ -1,5 +1,5 @@
 /**
- * Isolated real `dsh web` instance for the three-mode acceptance driver.
+ * Isolated real `glh web` instance for the three-mode acceptance driver.
  *
  * The harness boots the shipped web profile in a private temp home and workspace and exposes the
  * shipped HTTP carrier. The model route is the deterministic keyless fixture beside this module;
@@ -380,7 +380,7 @@ export interface WebOwner {
  */
 export async function bootWebOwner(options: WebOwnerOptions = {}): Promise<WebOwner> {
   const cwd = options.existingCwd ?? await mkdtemp(join(tmpdir(), 'liveshare-web-'))
-  const home = join(cwd, '.dsh')
+  const home = join(cwd, '.glh')
   const sessionsRoot = join(home, 'sessions')
   const profileDir = join(home, 'profiles', 'web')
   // A restart reuses the tree its predecessor wrote, including the profile it composed.
@@ -423,10 +423,10 @@ export async function bootWebOwner(options: WebOwnerOptions = {}): Promise<WebOw
     tsconfigPath,
     sourceImport: 'tsx/esm',
     env: {
-      DSH_HOME: home,
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
-      DSH_TELEMETRY_DISABLED: '1',
-      DEEPSEEK_API_KEY: '',
+      GLH_HOME: home,
+      GLH_AGENTS_HOME: join(cwd, '.agents'),
+      GLH_TELEMETRY_DISABLED: '1',
+      GLKJ_API_KEY: '',
       // Diagnostic only: the fixture appends one line per adapter call to this temp file.
       BASE_LLM_LOG: join(cwd, 'base-llm.log'),
       // Diagnostic only: proves the loader activated the fixture plugin at all.
@@ -447,9 +447,9 @@ export async function bootWebOwner(options: WebOwnerOptions = {}): Promise<WebOw
   child.stderr?.on('data', (chunk: Buffer) => { stderrText = (stderrText + chunk.toString()).slice(-8000) })
   // Real artifact evidence: `lib` mode spawns the built bin under plain Node, never tsx source.
   const launchBin = String(launch.args[0])
-  facts.push(`launch: mode=${process.env.DSH_EXAMPLE_MODE ?? 'src'} bin=${launchBin}`
+  facts.push(`launch: mode=${process.env.GLH_EXAMPLE_MODE ?? 'src'} bin=${launchBin}`
     + ` args=${JSON.stringify(launch.args.slice(1))} envKeys=${JSON.stringify(Object.keys(launch.env).sort())}`)
-  if (process.env.DSH_EXAMPLE_MODE === 'lib') {
+  if (process.env.GLH_EXAMPLE_MODE === 'lib') {
     expect(launchBin, 'built-lib launch').toContain('/lib/')
     expect(launch.args.some(argument => argument.includes('tsx')), 'no tsx loader in lib mode').toBe(false)
   }

@@ -13,7 +13,7 @@ LangString decompressionFailed ${LANG_ENGLISH} "Payload extraction failed"
 !ifdef SOURCE_DLL
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
   !include "..\..\installer\strings.nsh"
-  !define DSH_INSTALLER_LOG_DIR "${REPORT_DIR}"
+  !define GLH_INSTALLER_LOG_DIR "${REPORT_DIR}"
   !include "..\..\scripts\installer.nsh"
 !else
   !include "..\..\scripts\installer-directories.nsh"

@@ -52,13 +52,13 @@ export async function runWindowsSigningConcurrencyExperiment(args = process.argv
   const modes = values['pipeline-control'] ? [{ name: 'pipeline4', jobs: 4, hardwareConcurrency: 1 } as const]
     : values.corpus ? CORPUS_MODES : MODES
   const environment = loadDesktopPackageEnvironment('win32', {
-    ...process.env, DSH_PACKAGING_PRESET: 'test', DSH_PACKAGING_CONFIG_DIR: values['config-root'],
+    ...process.env, GLH_PACKAGING_PRESET: 'test', GLH_PACKAGING_CONFIG_DIR: values['config-root'],
   })
-  const certificateFile = environment.DSH_DESKTOP_WINDOWS_CER_FILE!
-  const signTool = environment.DSH_DESKTOP_WINDOWS_SIGNTOOL!
+  const certificateFile = environment.GLH_DESKTOP_WINDOWS_CER_FILE!
+  const signTool = environment.GLH_DESKTOP_WINDOWS_SIGNTOOL!
   const stripTool = values['strip-tool'] ?? signTool
-  const tokenPin = environment.DSH_DESKTOP_WINDOWS_TOKEN_PIN!
-  const keyContainer = environment.DSH_DESKTOP_WINDOWS_KEY_CONTAINER!.trim()
+  const tokenPin = environment.GLH_DESKTOP_WINDOWS_TOKEN_PIN!
+  const keyContainer = environment.GLH_DESKTOP_WINDOWS_KEY_CONTAINER!.trim()
   // Construction validates the same signing inputs; the production serial hook is never invoked here.
   createWindowsTokenSigner({ certificateFile, signTool, tokenPin, keyContainer })
   const certificate = await readFile(certificateFile)

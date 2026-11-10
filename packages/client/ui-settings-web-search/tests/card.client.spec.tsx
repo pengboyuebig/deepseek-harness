@@ -72,7 +72,7 @@ function legacy(key: Partial<NonNullable<WebSearchCardState['legacyKey']>> = {})
   return {
     ...base,
     search: { ...base.search, selected: 'deepseek-official', kind: 'legacy' },
-    legacyKey: { ...field(''), ref: 'DEEPSEEK_API_KEY', configured: false, writable: true, ...key },
+    legacyKey: { ...field(''), ref: 'GLKJ_API_KEY', configured: false, writable: true, ...key },
   }
 }
 

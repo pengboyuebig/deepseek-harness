@@ -8,7 +8,7 @@ import type { SessionEvent } from '@deepseek-ai/dsh-session'
 import { bootProductionProfile } from './production-profile.ts'
 
 const NAME = 'headless-test-driver'
-const REQUIRED_ENTRY_ENV = 'DSH_LOADER_SMOKE_REQUIRED_ENTRY_ID'
+const REQUIRED_ENTRY_ENV = 'GLH_LOADER_SMOKE_REQUIRED_ENTRY_ID'
 const FIBER_ACTIVE = 2 as FiberState.ACTIVE
 const [configPath, ...taskParts] = process.argv.slice(2)
 if (configPath === undefined || taskParts.length === 0 || taskParts.every(part => part.trim() === '')) {

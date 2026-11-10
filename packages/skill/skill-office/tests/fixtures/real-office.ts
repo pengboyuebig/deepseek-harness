@@ -5,12 +5,12 @@ import { Session, SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
 /** @returns Model provider patches for the configured development or official API. */
 export function officeModelPatches() {
   const model = process.env.MODEL_NAME ?? 'deepseek-flash'
-  const completions = process.env.DSH_OFFICE_TEST_API === 'openai-completions'
+  const completions = process.env.GLH_OFFICE_TEST_API === 'openai-completions'
   return [
     ...completions ? [
       { id: 'llm-deepseek', disabled: true },
       { id: 'llm-pi-ai', config: { providers: { 'office-test': {
-        api: 'openai-completions', apiKeyEnv: 'DEEPSEEK_API_KEY', baseURL: process.env.DEEPSEEK_BASE_URL,
+        api: 'openai-completions', apiKeyEnv: 'GLKJ_API_KEY', baseURL: process.env.GLKJ_BASE_URL,
         compat: { thinkingFormat: 'deepseek' },
         models: [{ id: model, contextWindow: 128000, maxTokens: 8192, input: ['text', 'image'] }],
       } } } },

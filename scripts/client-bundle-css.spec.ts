@@ -100,7 +100,7 @@ async function assetPackage(
 
 /** Client-face configs of one package, as its tsdown.config.ts would return them. */
 function clientFaceConfigs(packageDir: string, dualClient = false): UserConfig[] {
-  return clientBundle(packageDir, ['lib/types/index.js'], { dualClient })({ env: { DSH_BUILD_FACE: 'client' } })
+  return clientBundle(packageDir, ['lib/types/index.js'], { dualClient })({ env: { GLH_BUILD_FACE: 'client' } })
 }
 
 function configPlugin(config: UserConfig | undefined, name: string): BundlePlugin {

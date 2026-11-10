@@ -9,7 +9,7 @@ Archived: 2026-09-30
 
 从全新 worktree 打出的 macOS Desktop 安装包启动即崩：`ERR_MODULE_NOT_FOUND: Cannot find package '@deepseek-ai/dsh-home-paths' imported from app.asar/lib/main.js`。打包日志给出了原因：rolldown 报告了 `[UNRESOLVED_IMPORT] Could not resolve '@deepseek-ai/dsh-home-paths' … treating it as an external dependency`，`@deepseek-ai/dsh-app-boot` 与 `@deepseek-ai/dsh-deepseek-account` 也是同样情况。这三个包是 `apps/desktop` 的工作区 devDependencies，主进程 bundle 必须把它们内联，因为 electron-builder 只把清单中的 `dependencies` 复制进 `app.asar/node_modules`。
 
-根 tsdown 配置并发构建所有匹配到的 workspace 成员（tsdown 0.22 对解析出的配置做 `Promise.all`，没有任何依赖排序），而 `apps/desktop` 是其中一员。它的 bundle 通过这三个包的 `exports` 解析到 `lib/index.js`，而其他并发构建此时还没有写出这些文件。在此前构建过的检出目录里，陈旧的 `lib/` 产物存在，bundle 会把它们内联，因此缺陷只在干净树上出现；两份配置里的 `clean: false` 一直掩盖着它。坏的 bundle 也更小（189 KB 而不是 315 KB），并且打包流程通过了所有已有检查，因为运行时载荷 smoke 检验的是 dsh 运行时，不是 Electron 主进程。
+根 tsdown 配置并发构建所有匹配到的 workspace 成员（tsdown 0.22 对解析出的配置做 `Promise.all`，没有任何依赖排序），而 `apps/desktop` 是其中一员。它的 bundle 通过这三个包的 `exports` 解析到 `lib/index.js`，而其他并发构建此时还没有写出这些文件。在此前构建过的检出目录里，陈旧的 `lib/` 产物存在，bundle 会把它们内联，因此缺陷只在干净树上出现；两份配置里的 `clean: false` 一直掩盖着它。坏的 bundle 也更小（189 KB 而不是 315 KB），并且打包流程通过了所有已有检查，因为运行时载荷 smoke 检验的是 glh 运行时，不是 Electron 主进程。
 
 ## 决策
 
@@ -19,7 +19,7 @@ Desktop 配置同时断言这次崩溃所违反的不变量。[`desktop-bundle-i
 
 ## 备选方案
 
-**把这三个包声明为运行时 `dependencies`，让 electron-builder 装进 asar。** `@deepseek-ai/cordis` 与 `@deepseek-ai/dsh-api-gateway` 今天就是这样进入 asar 的，这也消除了顺序问题。但 `dsh-app-boot` 会把一棵很大的依赖树带进 `app.asar/node_modules`，与 packed dsh 运行时内已有的副本重复，并扩大运行时文件策略必须筛查的载荷。
+**把这三个包声明为运行时 `dependencies`，让 electron-builder 装进 asar。** `@deepseek-ai/cordis` 与 `@deepseek-ai/dsh-api-gateway` 今天就是这样进入 asar 的，这也消除了顺序问题。但 `dsh-app-boot` 会把一棵很大的依赖树带进 `app.asar/node_modules`，与 packed glh 运行时内已有的副本重复，并扩大运行时文件策略必须筛查的载荷。
 
 **通过 `inputOptions.onLog` 或 `failOnWarn` 让 rolldown 的 `UNRESOLVED_IMPORT` warning 直接失败。** 它只覆盖未解析这一种情况，覆盖不了被误声明为 devDependency 的依赖：产物存在时它会被解析并内联，不存在时才留成外部导入。打包导入检查用一条规则同时覆盖两者。
 

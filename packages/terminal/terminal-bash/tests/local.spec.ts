@@ -139,8 +139,8 @@ function canReadLinuxProcessSyscall(pid: number): boolean {
 // Windows has no bash, and its pwsh counterpart lives in the describe below.
 describe.skipIf(process.platform === 'win32')('terminal-bash real shell', () => {
   it('persists cwd and environment across sends, scrubs secrets, and closes', async () => {
-    const previous = process.env.DSH_TEST_SECRET
-    process.env.DSH_TEST_SECRET = 'must-not-leak'
+    const previous = process.env.GLH_TEST_SECRET
+    process.env.GLH_TEST_SECRET = 'must-not-leak'
     try {
       const { ctx, root, agent } = await harness('danger-full-access')
       const created = await ctx.terminals.spawn(agent, { type: 'shell', name: 'main', cwd: root })
@@ -148,15 +148,15 @@ describe.skipIf(process.platform === 'win32')('terminal-bash real shell', () => 
 
       const first = ctx.terminals.startSend(agent, created.sessionId, { text: 'export KEEP=ok; cd /', submit: true })
       expect((await first.done).waitReason).toBe('stdin_read')
-      const second = ctx.terminals.startSend(agent, created.sessionId, { text: 'printf "cwd=%s keep=%s secret=%s\\n" "$PWD" "$KEEP" "${DSH_TEST_SECRET-unset}"', submit: true })
+      const second = ctx.terminals.startSend(agent, created.sessionId, { text: 'printf "cwd=%s keep=%s secret=%s\\n" "$PWD" "$KEEP" "${GLH_TEST_SECRET-unset}"', submit: true })
       expect((await second.done).viewport).toContain('cwd=/ keep=ok secret=unset')
 
       expect(ctx.terminals.read(agent, created.sessionId, { offset: 0, count: 20 }).text).toContain('cwd=/ keep=ok secret=unset')
       expect(await ctx.terminals.kill(agent, created.sessionId)).toBe(true)
       expect(ctx.terminals.list(agent)).toEqual([])
     } finally {
-      if (previous === undefined) delete process.env.DSH_TEST_SECRET
-      else process.env.DSH_TEST_SECRET = previous
+      if (previous === undefined) delete process.env.GLH_TEST_SECRET
+      else process.env.GLH_TEST_SECRET = previous
     }
   }, 10_000)
 
@@ -329,8 +329,8 @@ const hasPwsh = spawnSync(
 
 describe.skipIf(!hasPwsh)('terminal-bash pwsh real shell', () => {
   it.each([false, true])('bootstraps a persistent pwsh, persists state, and scrubs secrets (hold command: %s)', async (holdCommand) => {
-    const previous = process.env.DSH_TEST_SECRET
-    process.env.DSH_TEST_SECRET = 'must-not-leak'
+    const previous = process.env.GLH_TEST_SECRET
+    process.env.GLH_TEST_SECRET = 'must-not-leak'
     try {
       const { ctx, root, agent } = await harness('danger-full-access', {
         idleSilenceMs: 300,
@@ -353,7 +353,7 @@ describe.skipIf(!hasPwsh)('terminal-bash pwsh real shell', () => {
       })
       expect(['stdin_read', 'inferred_idle']).toContain((await first.done).waitReason)
       const expected = 'keep=ok cwd=/ secret=END'
-      const command = "Write-Output ('keep={0} cwd={1} secret={2}END' -f $env:KEEP, (Get-Location).Path, $env:DSH_TEST_SECRET)"
+      const command = "Write-Output ('keep={0} cwd={1} secret={2}END' -f $env:KEEP, (Get-Location).Path, $env:GLH_TEST_SECRET)"
       expect(command).not.toContain(expected)
       const second = ctx.terminals.startSend(agent, created.sessionId, { text: command, submit: true })
       const result = await second.done
@@ -372,8 +372,8 @@ describe.skipIf(!hasPwsh)('terminal-bash pwsh real shell', () => {
       expect(await ctx.terminals.kill(agent, created.sessionId)).toBe(true)
       expect(ctx.terminals.list(agent)).toEqual([])
     } finally {
-      if (previous === undefined) delete process.env.DSH_TEST_SECRET
-      else process.env.DSH_TEST_SECRET = previous
+      if (previous === undefined) delete process.env.GLH_TEST_SECRET
+      else process.env.GLH_TEST_SECRET = previous
     }
   }, 30_000)
 

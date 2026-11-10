@@ -270,10 +270,10 @@ export class RepositoryCache {
     // written after a completed fetch records the commit instead, and eviction removes it with the repository.
     const head = this.heads.get(url)
     const known = commit ?? (head !== undefined && head.expiresAt > Date.now() ? head.value : undefined)
-    if (known !== undefined && !(await this.git(['show-ref', '--verify', '--quiet', `refs/dsh/${known}`], repository, signal)).failed) return known
+    if (known !== undefined && !(await this.git(['show-ref', '--verify', '--quiet', `refs/glh/${known}`], repository, signal)).failed) return known
     await this.fetch(repository, commit ?? 'HEAD', signal)
     const fetched = commit ?? (await this.run(repository, ['rev-parse', 'FETCH_HEAD'], signal)).toString('utf8').trim()
-    await this.run(repository, ['update-ref', `refs/dsh/${fetched}`, fetched], signal)
+    await this.run(repository, ['update-ref', `refs/glh/${fetched}`, fetched], signal)
     if (commit === undefined) this.heads.set(url, { value: fetched, expiresAt: Date.now() + this.options.ttlMs })
     return fetched
   }

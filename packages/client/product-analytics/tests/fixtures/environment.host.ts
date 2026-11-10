@@ -24,7 +24,7 @@ try {
   await once(receiver, 'listening')
   const address = receiver.address()
   if (address === null || typeof address === 'string') throw new Error('environment collector has no port')
-  process.env.DSH_PRODUCT_TELEMETRY_TEST_ENDPOINT = `http://127.0.0.1:${address.port}/logs`
+  process.env.GLH_PRODUCT_TELEMETRY_TEST_ENDPOINT = `http://127.0.0.1:${address.port}/logs`
   const ctx = await bootProductionProfile({ binName: 'environment-test', profile: 'headless', overlayPaths: [overlay],
     prepare: (root) => { root.provide('deepseekAccount', { getDeviceIdentity: async () => undefined } as never) },
   })

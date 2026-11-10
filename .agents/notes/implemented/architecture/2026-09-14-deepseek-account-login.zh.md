@@ -16,7 +16,7 @@ Status: implemented
 
 本地取消具有决定权。提供者停止回调并忽略迟到的兑换结果；auth_cancel 使用 authorize_id 和原始 PKCE verifier 作废远程申请及未兑换的 code。后台请求不延迟本地取消，失败也不会恢复登录。session.commit 在第一次 await 前同步准入持久化，并拒绝已取消的流程。准入后的取消等待提交结果。回调只有在授权结束确认存储后才跳转 auth_exchange.biz_data.authorized_url。
 
-授权在 Host webServer 上注册临时 /oauth/callback 路由。已鉴权的发起客户端提供浏览器可访问的本机 HTTP 来源，包含 SSH 本地转发端口。不支持非本机域名反向代理。清理仅移除路由，保留共享连接。兑换失败返回 Web 登录界面，或通过账号状态聚焦 Desktop；重试由用户明确发起。PKCE 私密数据不经过 UI 传输。模型和文件请求的 token 仅为配置的 inferenceOrigin 解析，默认为 `https://api.deepseek.com`；请求拒绝重定向。显式配置其他来源时，要求授权由配置的 Platform 来源签发，因此仅修改请求地址不会转发账号凭证。本机开发授权记录不能认证生产请求。API Key 引用独立保存。
+授权在 Host webServer 上注册临时 /oauth/callback 路由。已鉴权的发起客户端提供浏览器可访问的本机 HTTP 来源，包含 SSH 本地转发端口。不支持非本机域名反向代理。清理仅移除路由，保留共享连接。兑换失败返回 Web 登录界面，或通过账号状态聚焦 Desktop；重试由用户明确发起。PKCE 私密数据不经过 UI 传输。模型和文件请求的 token 仅为配置的 inferenceOrigin 解析，默认为 `https://api.glkj.example.com`；请求拒绝重定向。显式配置其他来源时，要求授权由配置的 Platform 来源签发，因此仅修改请求地址不会转发账号凭证。本机开发授权记录不能认证生产请求。API Key 引用独立保存。
 
 平台导航与授权共享 Cordis 配置中同一个经过校验的 platformOrigin。私有 profile patch 或环境表达式提供部署来源，开发地址不进入仓库。
 
@@ -24,7 +24,7 @@ Platform 客户端身份属于发起调用的界面，而不属于 Host。每个
 
 ## 替代方案
 
-把协议放在 Electron 会为 Web 使用方重复实现，并让外壳拥有凭证。把 token 放入 DEEPSEEK_API_KEY 会丢失账号授权与用户 API Key 的区别。在持久化前将浏览器回调视为成功会产生虚假成功。等待远程取消确认会使本地取消依赖网络。在 Host 中记住一份客户端身份，会让共享该 Host 或经转发接入的其他调用方被标错。这些方案均被拒绝。
+把协议放在 Electron 会为 Web 使用方重复实现，并让外壳拥有凭证。把 token 放入 GLKJ_API_KEY 会丢失账号授权与用户 API Key 的区别。在持久化前将浏览器回调视为成功会产生虚假成功。等待远程取消确认会使本地取消依赖网络。在 Host 中记住一份客户端身份，会让共享该 Host 或经转发接入的其他调用方被标错。这些方案均被拒绝。
 
 ## 影响
 

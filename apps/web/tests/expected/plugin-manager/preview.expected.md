@@ -5,7 +5,7 @@
 - text: v{{version}} 实验性
 - paragraph:
   - code: "@deepseek-ai/dsh-experimental-badge-skill-bundle"
-- paragraph: 让 Agent 为文档、PR 等产出添加「powered by dsh」徽章。
+- paragraph: 让 Agent 为文档、PR 等产出添加「powered by glh」徽章。
 - region "详细介绍":
   - paragraph:
     - img "DSH 徽章技能功能预览"

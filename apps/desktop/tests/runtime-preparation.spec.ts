@@ -52,7 +52,7 @@ beforeEach(() => {
   state.pnpm = '11.7.0'
   state.failure = undefined
   process.argv = [process.execPath, 'prepare-runtime.ts']
-  vi.stubEnv('DSH_DESKTOP_PACKAGING_RUN_DIR', undefined)
+  vi.stubEnv('GLH_DESKTOP_PACKAGING_RUN_DIR', undefined)
   state.extractElectron.mockImplementation(async () => {
     if (state.failure === 'electron') throw new Error('Electron extraction failed')
   })

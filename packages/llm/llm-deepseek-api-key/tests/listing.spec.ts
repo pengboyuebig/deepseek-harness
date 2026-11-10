@@ -5,7 +5,7 @@ import LlmRuntime from '@deepseek-ai/dsh-llm'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 import * as ApiKey from '../src/index.ts'
 
-const LISTING_URL = 'https://api.deepseek.com/models'
+const LISTING_URL = 'https://api.glkj.example.com/models'
 const MESSAGES = { output_modalities: ['text'], api_capabilities: { anthropic_messages: {} } }
 const FLASH = {
   id: 'deepseek-flash', name: 'DeepSeek-V4.1-Flash', context_window: 1_048_576, max_output_tokens: 393_216,
@@ -38,7 +38,7 @@ function officialListing(reply: (request: Request, index: number) => Response) {
 const listing = (...rows: object[]) => () => new Response(JSON.stringify({ object: 'list', data: rows }), { headers: { 'content-type': 'application/json' } })
 
 async function host(key: string | undefined = 'fixture-api-key') {
-  vi.stubEnv('DEEPSEEK_API_KEY', key)
+  vi.stubEnv('GLKJ_API_KEY', key)
   const diagnostics = vi.spyOn(console, 'error').mockImplementation(() => {})
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const ctx = new Context()
@@ -117,10 +117,10 @@ it('refuses listed models this build cannot serve before any inference request',
 it("leaves a malformed replacement key to the request instead of refusing by the previous key's listing", async () => {
   const requests = officialListing(listing(FLASH, PRO, { ...PRO, id: 'deepseek-v5-next', ...requires('99.0.0-alpha.1') }))
   const { ctx } = await host()
-  vi.stubEnv('MALFORMED_DEEPSEEK_API_KEY', 'invalid\nheader')
+  vi.stubEnv('MALFORMED_GLKJ_API_KEY', 'invalid\nheader')
   const live = await liveConfig(ctx, ApiKey, {})
   await expect(ctx.llm.prepareCall({ provider: 'deepseek-official', model: 'deepseek-v5-next' })).rejects.toMatchObject({ code: 'CLIENT_UPGRADE_REQUIRED' })
-  await live.update({ apiKeyEnv: 'MALFORMED_DEEPSEEK_API_KEY' })
+  await live.update({ apiKeyEnv: 'MALFORMED_GLKJ_API_KEY' })
   await expect(ctx.llm.prepareCall({ provider: 'deepseek-official', model: 'deepseek-v5-next' })).resolves.toBeDefined()
   expect(requests).toHaveLength(1)
 })

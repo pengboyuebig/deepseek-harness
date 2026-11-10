@@ -18,12 +18,12 @@ import {
 // Graph fixtures select their own browser pool instead of inheriting the CI
 // host's pool, and coverage gates take their shape from the values each case
 // sets, not from the lane that runs this file (a partitioned lane exports
-// DSH_COVERAGE_PARTITIONS to every child).
+// GLH_COVERAGE_PARTITIONS to every child).
 beforeEach(() => {
-  vi.stubEnv('DSH_WEB_SNAPSHOT_WORKERS', undefined)
-  vi.stubEnv('DSH_COVERAGE_MAX_WORKERS', undefined)
-  vi.stubEnv('DSH_COVERAGE_PARTITIONS', undefined)
-  vi.stubEnv('DSH_CLI_HELP_CONCURRENCY', undefined)
+  vi.stubEnv('GLH_WEB_SNAPSHOT_WORKERS', undefined)
+  vi.stubEnv('GLH_COVERAGE_MAX_WORKERS', undefined)
+  vi.stubEnv('GLH_COVERAGE_PARTITIONS', undefined)
+  vi.stubEnv('GLH_CLI_HELP_CONCURRENCY', undefined)
 })
 afterEach(() => vi.unstubAllEnvs())
 
@@ -168,30 +168,30 @@ describe('CI worker allocation', () => {
   it.each([1, 2, 4, 8, 16, 64])('shares a %i CPU coverage budget without multiplying pools', (cpus) => {
     const env = ciWorkerEnvironment('ci-coverage', { CI: 'true' }, cpus)
     const exempt = Math.max(1, Math.floor(cpus / 3))
-    const instrumented = Number(env.DSH_COVERAGE_PARTITIONS ?? 1)
-    expect(Number(env.DSH_COVERAGE_MAX_WORKERS)).toBe(cpus)
+    const instrumented = Number(env.GLH_COVERAGE_PARTITIONS ?? 1)
+    expect(Number(env.GLH_COVERAGE_MAX_WORKERS)).toBe(cpus)
     expect(instrumented + exempt).toBe(Math.max(2, cpus))
     expect(defaultConcurrency('ci-coverage', 3, cpus, { CI: 'true' }).workers).toBe(Math.min(3, cpus))
-    if (cpus <= 2) expect(env.DSH_COVERAGE_PARTITIONS).toBeUndefined()
+    if (cpus <= 2) expect(env.GLH_COVERAGE_PARTITIONS).toBeUndefined()
   })
 
   it('bounds overlapping readers and lets the isolated browser pool use the runner', () => {
     const env = ciWorkerEnvironment('ci-consumers', { CI: 'true' }, 16)
     expect(env).toMatchObject({
-      DSH_OXLINT_THREADS: '8',
-      DSH_PUBLINT_CONCURRENCY: '8',
-      DSH_SNAPSHOT_MAX_WORKERS: '1',
-      DSH_SNAPSHOT_MAX_CONCURRENCY: '8',
-      DSH_WEB_SNAPSHOT_WORKERS: '16',
+      GLH_OXLINT_THREADS: '8',
+      GLH_PUBLINT_CONCURRENCY: '8',
+      GLH_SNAPSHOT_MAX_WORKERS: '1',
+      GLH_SNAPSHOT_MAX_CONCURRENCY: '8',
+      GLH_WEB_SNAPSHOT_WORKERS: '16',
     })
   })
 
   it('caps local defaults below the CPU count Node reports', () => {
     expect(ciWorkerEnvironment('ci-coverage', {}, 256)).toMatchObject({
-      DSH_OXLINT_THREADS: '6',
-      DSH_COVERAGE_MAX_WORKERS: '48',
-      DSH_COVERAGE_PARTITIONS: '32',
-      DSH_WEB_SNAPSHOT_WORKERS: '12',
+      GLH_OXLINT_THREADS: '6',
+      GLH_COVERAGE_MAX_WORKERS: '48',
+      GLH_COVERAGE_PARTITIONS: '32',
+      GLH_WEB_SNAPSHOT_WORKERS: '12',
     })
     expect(defaultConcurrency('ci-static', 60, 256, {})).toEqual({
       workers: 12,
@@ -202,35 +202,35 @@ describe('CI worker allocation', () => {
 
   it('preserves serial reference overrides on large hosts', () => {
     const inherited = {
-      DSH_GATE_CONCURRENCY: '1',
-      DSH_COVERAGE_MAX_WORKERS: '1',
-      DSH_OXLINT_THREADS: '1',
-      DSH_PUBLINT_CONCURRENCY: '1',
-      DSH_SNAPSHOT_MAX_CONCURRENCY: '1',
-      DSH_WEB_SNAPSHOT_WORKERS: '1',
+      GLH_GATE_CONCURRENCY: '1',
+      GLH_COVERAGE_MAX_WORKERS: '1',
+      GLH_OXLINT_THREADS: '1',
+      GLH_PUBLINT_CONCURRENCY: '1',
+      GLH_SNAPSHOT_MAX_CONCURRENCY: '1',
+      GLH_WEB_SNAPSHOT_WORKERS: '1',
     }
     const additions = ciWorkerEnvironment('ci-primary', inherited, 64)
-    expect(additions).toEqual({ DSH_SNAPSHOT_MAX_WORKERS: '1' })
-    expect(inherited.DSH_COVERAGE_MAX_WORKERS).toBe('1')
+    expect(additions).toEqual({ GLH_SNAPSHOT_MAX_WORKERS: '1' })
+    expect(inherited.GLH_COVERAGE_MAX_WORKERS).toBe('1')
   })
 
   it('honors an explicit coverage budget and partition override', () => {
-    expect(ciWorkerEnvironment('ci-coverage', { DSH_COVERAGE_MAX_WORKERS: '6' }, 16))
-      .toHaveProperty('DSH_COVERAGE_PARTITIONS', '4')
-    expect(ciWorkerEnvironment('ci-coverage', { DSH_COVERAGE_PARTITIONS: '3' }, 16))
-      .not.toHaveProperty('DSH_COVERAGE_PARTITIONS')
+    expect(ciWorkerEnvironment('ci-coverage', { GLH_COVERAGE_MAX_WORKERS: '6' }, 16))
+      .toHaveProperty('GLH_COVERAGE_PARTITIONS', '4')
+    expect(ciWorkerEnvironment('ci-coverage', { GLH_COVERAGE_PARTITIONS: '3' }, 16))
+      .not.toHaveProperty('GLH_COVERAGE_PARTITIONS')
   })
 
   it('leaves the plain unit inventory with the environment pnpm run test finds', () => {
-    // A 3-CPU host would otherwise receive DSH_COVERAGE_PARTITIONS=2, which
+    // A 3-CPU host would otherwise receive GLH_COVERAGE_PARTITIONS=2, which
     // the inventory's own coverage-gate tests read as a partitioned lane.
     expect(ciWorkerEnvironment('ci-unit', {}, 3)).toEqual({})
     expect(ciWorkerEnvironment('ci-unit', {}, 16)).toEqual({})
   })
 
   it.each(['0', '-1', 'NaN', '2.5'])('rejects invalid worker budget %s', (raw) => {
-    expect(() => ciWorkerEnvironment('ci-coverage', { DSH_COVERAGE_MAX_WORKERS: raw }, 16))
-      .toThrow('DSH_COVERAGE_MAX_WORKERS must be a positive integer')
+    expect(() => ciWorkerEnvironment('ci-coverage', { GLH_COVERAGE_MAX_WORKERS: raw }, 16))
+      .toThrow('GLH_COVERAGE_MAX_WORKERS must be a positive integer')
   })
 
   it('keeps local documentation defaults unchanged', () => {
@@ -307,18 +307,18 @@ describe('gate graph validation', () => {
   })
 
   it.each([undefined, ''])('allocates one CLI help child inside each aggregate when its allowance is %j', (raw) => {
-    vi.stubEnv('DSH_CLI_HELP_CONCURRENCY', raw)
+    vi.stubEnv('GLH_CLI_HELP_CONCURRENCY', raw)
     for (const mode of ['doc-sync', 'ci-static', 'ci-windows-observational-ready'] as const) {
       const gates = withPnpmEntrypoint(() => gatesForMode(mode))
-      expect(gates.find(gate => gate.id === 'cli-help')).toMatchObject({ env: { DSH_CLI_HELP_CONCURRENCY: '1' } })
-      expect(gates.filter(gate => gate.id !== 'cli-help').every(gate => gate.env?.DSH_CLI_HELP_CONCURRENCY === undefined)).toBe(true)
+      expect(gates.find(gate => gate.id === 'cli-help')).toMatchObject({ env: { GLH_CLI_HELP_CONCURRENCY: '1' } })
+      expect(gates.filter(gate => gate.id !== 'cli-help').every(gate => gate.env?.GLH_CLI_HELP_CONCURRENCY === undefined)).toBe(true)
     }
   })
 
   it.each(['3', 'invalid'])('passes an explicit CLI help allowance %j to its owner', (raw) => {
-    vi.stubEnv('DSH_CLI_HELP_CONCURRENCY', raw)
+    vi.stubEnv('GLH_CLI_HELP_CONCURRENCY', raw)
     const gates = withPnpmEntrypoint(() => gatesForMode('ci-windows-observational-ready'))
-    expect(gates.find(gate => gate.id === 'cli-help')).toMatchObject({ env: { DSH_CLI_HELP_CONCURRENCY: raw } })
+    expect(gates.find(gate => gate.id === 'cli-help')).toMatchObject({ env: { GLH_CLI_HELP_CONCURRENCY: raw } })
   })
 
   it('keeps the concrete terminology policy in the documentation gate', () => {
@@ -594,7 +594,7 @@ describe('gate graph validation', () => {
   })
 
   it.each([undefined, '3'])('provisions Electron before Windows coverage with partition count %s', async (partitions) => {
-    const gates = withEnv('DSH_COVERAGE_PARTITIONS', partitions, () =>
+    const gates = withEnv('GLH_COVERAGE_PARTITIONS', partitions, () =>
       withPnpmEntrypoint(() => gatesForMode('ci-windows-complete')))
     const installers = gates.filter(gate => gate.id === 'electron-install')
     expect(installers).toHaveLength(1)
@@ -664,17 +664,17 @@ describe('gate graph validation', () => {
 
   it('restores the platform descriptor when coverage configuration is rejected', () => {
     const original = Object.getOwnPropertyDescriptor(process, 'platform')
-    expect(() => withEnv('DSH_COVERAGE_PARTITIONS', '1', () =>
+    expect(() => withEnv('GLH_COVERAGE_PARTITIONS', '1', () =>
       withPlatform('win32', () => withPnpmEntrypoint(() => gatesForMode('ci-coverage')))))
-      .toThrow('DSH_COVERAGE_PARTITIONS must be an integer greater than 1')
+      .toThrow('GLH_COVERAGE_PARTITIONS must be an integer greater than 1')
     expect(Object.getOwnPropertyDescriptor(process, 'platform')).toEqual(original)
   })
 
   it('leaves the lane test budget to the inherited environment on both coverage gates', () => {
-    // vitest.config.ts reads DSH_COVERAGE_TEST_TIMEOUT_MS per inline project
+    // vitest.config.ts reads GLH_COVERAGE_TEST_TIMEOUT_MS per inline project
     // (coverageTestTimeoutOptions); a gate argument would add a second owner.
     for (const budget of ['15000', undefined]) {
-      const gates = withEnv('DSH_COVERAGE_TEST_TIMEOUT_MS', budget, () =>
+      const gates = withEnv('GLH_COVERAGE_TEST_TIMEOUT_MS', budget, () =>
         withPnpmEntrypoint(() => gatesForMode('ci-windows-complete')))
       for (const id of ['coverage', 'coverage-exempt-heavy']) {
         const gate = gates.find(subject => subject.id === id)
@@ -682,7 +682,7 @@ describe('gate graph validation', () => {
         expect(gate.args).not.toEqual(expect.arrayContaining([
           expect.stringMatching(/^--(?:testTimeout|expect\.poll\.timeout|hookTimeout)=/),
         ]))
-        expect(gate.env ?? {}).not.toHaveProperty('DSH_COVERAGE_TEST_TIMEOUT_MS')
+        expect(gate.env ?? {}).not.toHaveProperty('GLH_COVERAGE_TEST_TIMEOUT_MS')
       }
     }
   })
@@ -695,12 +695,12 @@ describe('gate graph validation', () => {
 
     // The aggregate is the `test` package script's two segments, in order,
     // so a step added to one cannot silently leave the other. The lane sets
-    // DSH_COVERAGE_TEST_TIMEOUT_MS; vitest.config.ts reads it per inline
+    // GLH_COVERAGE_TEST_TIMEOUT_MS; vitest.config.ts reads it per inline
     // project (coverageTestTimeoutOptions), so the gate passes no budget flag.
     const [nativeBuild, unitRun, ...rest] = (scripts.test ?? '').split(' && ')
     expect(rest).toEqual([])
     for (const budget of ['15000', undefined]) {
-      const gates = withEnv('DSH_COVERAGE_TEST_TIMEOUT_MS', budget, () =>
+      const gates = withEnv('GLH_COVERAGE_TEST_TIMEOUT_MS', budget, () =>
         withPnpmEntrypoint(() => gatesForMode('ci-unit')))
       expect(gates.map(gate => gate.id)).toEqual(['native-system', 'unit'])
       expect(gates[0]).toMatchObject({ displayCommand: nativeBuild })
@@ -711,26 +711,26 @@ describe('gate graph validation', () => {
         streamOutput: true,
         args: ['/private/pnpm.cjs', 'exec', 'vitest', 'run'],
       })
-      expect(gates[1]?.env ?? {}).not.toHaveProperty('DSH_COVERAGE_TEST_TIMEOUT_MS')
+      expect(gates[1]?.env ?? {}).not.toHaveProperty('GLH_COVERAGE_TEST_TIMEOUT_MS')
     }
   })
 
   it('selects partitioned coverage only when explicitly configured', () => {
-    const coverage = withEnv('DSH_COVERAGE_PARTITIONS', '3', () =>
+    const coverage = withEnv('GLH_COVERAGE_PARTITIONS', '3', () =>
       withPnpmEntrypoint(() => gatesForMode('ci-windows-complete').find(subject => subject.id === 'coverage')))
 
     expect(coverage).toMatchObject({
-      displayCommand: 'DSH_COVERAGE_PARTITIONS=3 pnpm run test:coverage:partitioned',
+      displayCommand: 'GLH_COVERAGE_PARTITIONS=3 pnpm run test:coverage:partitioned',
       args: ['/private/pnpm.cjs', 'run', 'test:coverage:partitioned'],
-      env: { DSH_COVERAGE_EXEMPT_HEAVY: '1' },
+      env: { GLH_COVERAGE_EXEMPT_HEAVY: '1' },
       streamOutput: true,
     })
   })
 
   it('rejects an invalid coverage partition count before starting a gate', () => {
-    expect(() => withEnv('DSH_COVERAGE_PARTITIONS', '1', () =>
+    expect(() => withEnv('GLH_COVERAGE_PARTITIONS', '1', () =>
       withPnpmEntrypoint(() => gatesForMode('ci-windows-complete'))))
-      .toThrow('DSH_COVERAGE_PARTITIONS must be an integer greater than 1')
+      .toThrow('GLH_COVERAGE_PARTITIONS must be an integer greater than 1')
   })
 
   it.each([
@@ -792,7 +792,7 @@ describe('gate graph validation', () => {
 
 describe('Oxlint gate', () => {
   it('uses the package script when no worker bound is configured', () => {
-    const subject = withEnv('DSH_OXLINT_THREADS', undefined, () =>
+    const subject = withEnv('GLH_OXLINT_THREADS', undefined, () =>
       withPnpmEntrypoint(() => gatesForMode('ci-lint-contracts-ready')[0]))
 
     expect(subject).toMatchObject({
@@ -804,12 +804,12 @@ describe('Oxlint gate', () => {
   })
 
   it('surfaces the configured worker bound on the shared package script', () => {
-    const subject = withEnv('DSH_OXLINT_THREADS', '4', () =>
+    const subject = withEnv('GLH_OXLINT_THREADS', '4', () =>
       withPnpmEntrypoint(() => gatesForMode('ci-lint-contracts-ready')[0]))
 
     expect(subject).toMatchObject({
       id: 'lint',
-      displayCommand: 'DSH_OXLINT_THREADS=4 pnpm run lint:contracts-ready',
+      displayCommand: 'GLH_OXLINT_THREADS=4 pnpm run lint:contracts-ready',
       command: process.execPath,
       args: ['/private/pnpm.cjs', 'run', 'lint:contracts-ready'],
     })
@@ -818,7 +818,7 @@ describe('Oxlint gate', () => {
 
 describe('Typert contract preparation', () => {
   it('prepares primary source consumers once before they run', () => {
-    const subject = withEnv('DSH_OXLINT_THREADS', undefined, () =>
+    const subject = withEnv('GLH_OXLINT_THREADS', undefined, () =>
       withPnpmEntrypoint(() => gatesForMode('ci-primary')))
 
     expect(subject.find(item => item.id === 'typert-contracts')).toMatchObject({
@@ -910,7 +910,7 @@ describe('Node compatibility graph', () => {
 
   it.each([undefined, '1'])('builds the complete Node 24.9 artifacts once with skip-typecheck=%s', (skipTypecheck) => {
     const subject = withNodeVersion('24.9.0', () =>
-      withEnv('DSH_NODE_COMPAT_SKIP_TYPECHECK', skipTypecheck, () =>
+      withEnv('GLH_NODE_COMPAT_SKIP_TYPECHECK', skipTypecheck, () =>
         withPnpmEntrypoint(() => gatesForMode('node-compat'))))
 
     expect(subject.filter(item => item.displayCommand === 'pnpm run build:artifacts')).toHaveLength(1)
@@ -920,13 +920,13 @@ describe('Node compatibility graph', () => {
     expect(subject.map(item => item.id)).not.toContain('build:web')
     expect(subject.find(item => item.id === 'cli-lazy-search-startup-smoke')).toMatchObject({
       needs: ['build'],
-      env: { DSH_REQUIRE_BUILT_CLI_SMOKE: '1' },
+      env: { GLH_REQUIRE_BUILT_CLI_SMOKE: '1' },
     })
   })
 
   it.each(['passed', 'failed'] as const)('runs the Node 24.9 lazy-search smoke only after a passed build (%s)', async (buildStatus) => {
     const subject = withNodeVersion('24.9.0', () =>
-      withEnv('DSH_NODE_COMPAT_SKIP_TYPECHECK', '1', () =>
+      withEnv('GLH_NODE_COMPAT_SKIP_TYPECHECK', '1', () =>
         withPnpmEntrypoint(() => gatesForMode('node-compat'))))
     let buildCompleted = false
     let smokeStarted = false
@@ -979,10 +979,10 @@ describe('Node 24 lane ownership', () => {
     // type checks belong to the master lanes, not to every pull request.
     expect(subject.find(item => item.id === 'build')).toMatchObject({
       displayCommand: 'pnpm run build:artifacts',
-      env: { DSH_BUILD_CLIENT_PROFILE: 'official' },
+      env: { GLH_BUILD_CLIENT_PROFILE: 'official' },
     })
     expect(subject.find(item => item.id === 'node-compat')?.env).toEqual({
-      DSH_BUILD_CLIENT_PROFILE: 'official',
+      GLH_BUILD_CLIENT_PROFILE: 'official',
     })
     for (const id of [
       'snapshot',
@@ -994,11 +994,11 @@ describe('Node 24 lane ownership', () => {
     ]) {
       expect(subject.find(item => item.id === id)?.needs).toEqual(['build'])
     }
-    expect(subject.find(item => item.id === 'snapshot')?.env).toEqual({ DSH_EXAMPLE_MODE: 'lib' })
-    expect(subject.find(item => item.id === 'expected-output')?.env).toEqual({ DSH_EXAMPLE_MODE: 'lib' })
-    expect(subject.find(item => item.id === 'built-bin-smoke')?.env).toEqual({ DSH_EXAMPLE_MODE: 'lib' })
+    expect(subject.find(item => item.id === 'snapshot')?.env).toEqual({ GLH_EXAMPLE_MODE: 'lib' })
+    expect(subject.find(item => item.id === 'expected-output')?.env).toEqual({ GLH_EXAMPLE_MODE: 'lib' })
+    expect(subject.find(item => item.id === 'built-bin-smoke')?.env).toEqual({ GLH_EXAMPLE_MODE: 'lib' })
     expect(subject.find(item => item.id === 'doc-typecheck')?.env).toEqual({
-      DSH_DOC_TYPECHECK_USE_BUILD_OUTPUT: '1',
+      GLH_DOC_TYPECHECK_USE_BUILD_OUTPUT: '1',
     })
     expect(subject.find(item => item.id === 'built-bin-smoke')?.args).toEqual(
       expect.arrayContaining([
@@ -1011,8 +1011,8 @@ describe('Node 24 lane ownership', () => {
       ]),
     )
     expect(subject.find(item => item.id === 'web-snapshot')).toMatchObject({
-      displayCommand: 'DSH_SNAPSHOT=replay pnpm run test:web:built',
-      env: { DSH_SNAPSHOT: 'replay' },
+      displayCommand: 'GLH_SNAPSHOT=replay pnpm run test:web:built',
+      env: { GLH_SNAPSHOT: 'replay' },
       after: [
         'publint',
         'snapshot',
@@ -1031,8 +1031,8 @@ describe('Linux primary graph', () => {
     const web = subject.find(item => item.id === 'web-snapshot')
 
     expect(web).toMatchObject({
-      displayCommand: 'DSH_SNAPSHOT=replay pnpm run test:web:built',
-      env: { DSH_SNAPSHOT: 'replay' },
+      displayCommand: 'GLH_SNAPSHOT=replay pnpm run test:web:built',
+      env: { GLH_SNAPSHOT: 'replay' },
       needs: ['build'],
     })
   })

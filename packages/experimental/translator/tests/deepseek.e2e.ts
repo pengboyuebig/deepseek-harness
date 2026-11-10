@@ -11,12 +11,12 @@ import { join } from 'node:path'
 import { expect, it } from 'vitest'
 import Translator from '../src/index.ts'
 
-const enabled = process.env.DSH_TRANSLATION_DEEPSEEK_LIVE === '1' && (process.env.DEEPSEEK_API_KEY?.length ?? 0) > 0
+const enabled = process.env.GLH_TRANSLATION_GLKJ_LIVE === '1' && (process.env.GLKJ_API_KEY?.length ?? 0) > 0
 
 it.skipIf(!enabled)('translates a small independent billed query with exact Flash and thinking off', async () => {
   const root = await mkdtemp(join(tmpdir(), 'dsh-paid-translation-live-'))
-  const previousHome = process.env.DSH_HOME
-  process.env.DSH_HOME = root
+  const previousHome = process.env.GLH_HOME
+  process.env.GLH_HOME = root
   let close: (() => Promise<void>) | undefined
   try {
     const configPath = join(root, 'cordis.yml')
@@ -65,8 +65,8 @@ it.skipIf(!enabled)('translates a small independent billed query with exact Flas
     expect(events[1]).toMatchObject({ type: 'plugin:translator/result', ignorable: true, data: { requestSeq: 0, text: result } })
   } finally {
     await close?.()
-    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'DSH_HOME')
-    else process.env.DSH_HOME = previousHome
+    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'GLH_HOME')
+    else process.env.GLH_HOME = previousHome
     await rm(root, { recursive: true, force: true })
   }
 })

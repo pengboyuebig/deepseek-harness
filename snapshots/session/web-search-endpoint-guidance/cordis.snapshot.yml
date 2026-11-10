@@ -28,6 +28,6 @@
 - id: web-deepseek-api
   name: '@deepseek-ai/dsh-web-deepseek-api'
   config:
-    searchApiKeyEnv: DSH_SNAPSHOT_SEARCH_KEY
+    searchApiKeyEnv: GLH_SNAPSHOT_SEARCH_KEY
     # The fixture maps this recorded authority to its OS-assigned listener.
     searchBaseURL: http://127.0.0.1:43118/api/v1/tools

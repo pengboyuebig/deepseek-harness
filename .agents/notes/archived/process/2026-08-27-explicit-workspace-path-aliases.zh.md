@@ -9,7 +9,7 @@ Archived: 2026-09-04
 
 `tsconfig.base.json` 是整个仓库的解析门面：每个包的 project 都 extends 它，两个聚合配置都读它，每个 Vitest 配置都把 `vite-tsconfig-paths` 指向它。其中两条别名按包**分组**而不是按包各写一条候选——`@deepseek-ai/dsh-*` 列了 49 个候选 glob，`@deepseek-ai/dsh-*/invariant` 列了 45 个。
 
-TypeScript 与 tsx 按顺序逐个尝试这些候选、取第一个存在的，因此一个位于列表靠后位置的包，其说明符要为前面每一次未命中买单。在 `dsh` 源码启动下，每次未命中都是一个 `ERR_MODULE_NOT_FOUND`，而 Node 会用 `decorateErrorWithCommonJSHints` 装饰它——每次失败都跑一遍完整的 CommonJS 解析走查。一次源码启动的 profile 把 **934.6 ms（占启动 35%）**单独归给了这条装饰路径，来源是 60,942 次失败解析。
+TypeScript 与 tsx 按顺序逐个尝试这些候选、取第一个存在的，因此一个位于列表靠后位置的包，其说明符要为前面每一次未命中买单。在 `glh` 源码启动下，每次未命中都是一个 `ERR_MODULE_NOT_FOUND`，而 Node 会用 `decorateErrorWithCommonJSHints` 装饰它——每次失败都跑一遍完整的 CommonJS 解析走查。一次源码启动的 profile 把 **934.6 ms（占启动 35%）**单独归给了这条装饰路径，来源是 60,942 次失败解析。
 
 代价最重的恰好落在被引用最多的包上：`packages/util/*` 排在 49 个候选里的第 44 位，却装着几乎每个插件都要引用的叶子工具，因此 `dsh-timeout` 每次解析约付 9 ms，而一个有显式别名的说明符只要 0.05 ms。
 

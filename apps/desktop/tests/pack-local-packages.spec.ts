@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url)
 const pnpmEntry = join(dirname(require.resolve('pnpm')), 'bin/pnpm.cjs')
 const tsxHook = pathToFileURL(require.resolve('tsx/esm')).href
 const roots: string[] = []
-const metadata = { DSH_CLIENT_COMMIT_HASH: 'abcdef0', DSH_CLIENT_VERSION: '1.2.3' }
+const metadata = { GLH_CLIENT_COMMIT_HASH: 'abcdef0', GLH_CLIENT_VERSION: '1.2.3' }
 const testTimeout = Math.max(120_000, coverageTestTimeoutOptions(process.env[COVERAGE_TEST_TIMEOUT_ENV]).testTimeout ?? 0)
 const activeRuns = new Map<AbortController, ReturnType<typeof runGate>>()
 
@@ -52,7 +52,7 @@ async function pack(root: string, release = false, extra: string[] = []) {
       command: process.execPath,
       args: [pnpmEntry, '--dir', root, 'exec', process.execPath, '--import', tsxHook, script,
         ...(release ? ['--family', 'dsh'] : []), '--out', 'packed', '--concurrency', '2', ...extra],
-      env: { npm_execpath: pnpmEntry, DSH_CLIENT_COMMIT_HASH: metadata.DSH_CLIENT_COMMIT_HASH },
+      env: { npm_execpath: pnpmEntry, GLH_CLIENT_COMMIT_HASH: metadata.GLH_CLIENT_COMMIT_HASH },
     }, controller.signal)
     activeRuns.set(controller, pending)
     const result = await pending
@@ -89,7 +89,7 @@ it.each(['official', 'stale', 'missing'] as const)('rejects %s client artifacts 
   write(root, 'packed/retained.txt', 'previous output\n')
   const result = await pack(root)
   expect(result.code).not.toBe(0)
-  expect(result.output).toMatch(kind === 'official' ? /DSH_CLIENT_BUILD_PROFILE/ : kind === 'stale' ? /artifacts differ/ : /client build record/)
+  expect(result.output).toMatch(kind === 'official' ? /GLH_CLIENT_BUILD_PROFILE/ : kind === 'stale' ? /artifacts differ/ : /client build record/)
   expect(readFileSync(join(root, 'packed/retained.txt'), 'utf8')).toBe('previous output\n')
 }, testTimeout)
 
@@ -97,7 +97,7 @@ it('rejects local client artifacts in the release packing command', async () => 
   const root = fixture()
   const result = await pack(root, true)
   expect(result.code).not.toBe(0)
-  expect(result.output).toMatch(/DSH_CLIENT_BUILD_PROFILE/)
+  expect(result.output).toMatch(/GLH_CLIENT_BUILD_PROFILE/)
   expect(existsSync(join(root, 'packed'))).toBe(false)
 }, testTimeout)
 

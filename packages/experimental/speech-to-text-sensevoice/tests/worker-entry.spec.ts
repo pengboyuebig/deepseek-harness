@@ -21,8 +21,8 @@ interface Exit {
 /** Launch the entry and collect its complete output; the child is always awaited to exit. */
 async function launch(argument: string | undefined, token: string | undefined): Promise<Exit> {
   const env: NodeJS.ProcessEnv = { ...process.env, TSX_TSCONFIG_PATH: TSCONFIG }
-  delete env.DSH_SPEECH_TOKEN
-  if (token !== undefined) env.DSH_SPEECH_TOKEN = token
+  delete env.GLH_SPEECH_TOKEN
+  if (token !== undefined) env.GLH_SPEECH_TOKEN = token
   const child = spawn(process.execPath, ['--import', import.meta.resolve('tsx/esm'), ENTRY, ...argument === undefined ? [] : [argument]], {
     env, stdio: ['ignore', 'pipe', 'pipe'],
   })

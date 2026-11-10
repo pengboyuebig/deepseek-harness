@@ -10,7 +10,7 @@ import {
 } from './transport.ts'
 
 /** Stable id the Fetch API provider registers under in the fetch registry. */
-export const DEEPSEEK_FETCH_API_PROVIDER_ID = 'deepseek-fetch-api'
+export const GLKJ_FETCH_API_PROVIDER_ID = 'deepseek-fetch-api'
 
 /** Authentication and endpoint settings snapshotted for one fetch. */
 export interface DeepSeekFetchApiOptions {
@@ -28,7 +28,7 @@ export interface DeepSeekFetchApiOptions {
  * content, so a success is the requested page retrieved with HTTP 200.
  */
 export class DeepSeekFetchApiProvider implements WebFetchProvider {
-  readonly id = DEEPSEEK_FETCH_API_PROVIDER_ID
+  readonly id = GLKJ_FETCH_API_PROVIDER_ID
   /** Picker description: what this provider suits and what it costs or cannot do. */
   readonly description: NonNullable<WebFetchProvider['description']> = {
     en: 'Fetches public URLs on DeepSeek servers and returns Markdown. Uses the DeepSeek account of the current conversation, or a DeepSeek API key, may incur API charges, and cannot reach intranet or loopback addresses.',

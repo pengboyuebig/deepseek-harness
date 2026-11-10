@@ -17,7 +17,7 @@ Affected: the base-backed profiles (`headless`, `web`, `sdk`, `acp`; `sdk-minima
 
 ## Migration
 
-1. To keep read-before-write behavior, add to the profile's `cordis.patch.yml` (`$DSH_HOME/profiles/<profile>/cordis.patch.yml`):
+1. To keep read-before-write behavior, add to the profile's `cordis.patch.yml` (`$GLH_HOME/profiles/<profile>/cordis.patch.yml`):
 
    ```yaml
    - id: fs-observation-policy
@@ -26,4 +26,4 @@ Affected: the base-backed profiles (`headless`, `web`, `sdk`, `acp`; `sdk-minima
 
    A profile patch that already carries this row with `disabled: false` needs no change; one that set `disabled: true` to opt out can drop that override.
 2. To run without `apply_patch`, add `- {id: tool-fs, config: {applyPatch: false}}` to the profile's `cordis.patch.yml` for `headless`, `sdk`, and `acp` (the shipped [PTC overlay](../../../../apps/cli/config/examples/ptc.yml) already does so, matching the Web `ptc` preset); for the Web `standard` preset, edit it from the Agent presets settings page or set `applyPatch: false` on its `tool-fs` row in `packages/bundle/web-app/presets/standard.patch.yml`.
-3. Confirm with `dsh --profile <profile> --dump-config`: the `fs-observation-policy` row shows the intended `disabled` value, and the `tool-fs` rows show the intended `applyPatch` value. In a session, an `edit` of a file that was not read succeeds with the row disabled and fails with `FS_NOT_OBSERVED` with it enabled.
+3. Confirm with `glh --profile <profile> --dump-config`: the `fs-observation-policy` row shows the intended `disabled` value, and the `tool-fs` rows show the intended `applyPatch` value. In a session, an `edit` of a file that was not read succeeds with the row disabled and fails with `FS_NOT_OBSERVED` with it enabled.

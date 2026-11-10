@@ -26,7 +26,7 @@ import { initProfile, removeLinkProjections, sanitizeProfile } from '@deepseek-a
 import { PROFILE_TEMPLATES, type ProfileTemplate } from '@deepseek-ai/dsh-official-bundles'
 
 const PROJECT_NAME = '@deepseek-ai/dsh-desktop-runtime'
-const DSH_PACKAGE = '@deepseek-ai/dsh'
+const GLH_PACKAGE = '@deepseek-ai/dsh'
 const CORE_BUILD_PACKAGE = '@deepseek-ai/dsh-subprocess-local'
 const WEB_PROFILE = PROFILE_TEMPLATES.web as ProfileTemplate
 const WORKSPACE_SETTINGS = 'nodeLinker: hoisted\nautoInstallPeers: false\n'
@@ -160,7 +160,7 @@ export function createDevelopmentProjectMetadata(projectDir: string, release: De
     private: true,
     version: '0.0.0',
     dependencies: {
-      [DSH_PACKAGE]: release.version,
+      [GLH_PACKAGE]: release.version,
       [DESKTOP_HOST_PACKAGE]: release.version,
     },
     dsh: { profile: { bundles: [...WEB_PROFILE.bundles] } },

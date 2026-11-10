@@ -48,20 +48,20 @@ export async function signWindowsDesktopRuntime(root: string, version: string,
 async function main(): Promise<void> {
   if (process.platform !== 'win32' || resolveDesktopBuildTarget() !== 'win-x64') throw new Error('primary runtime signing requires Windows x64')
   const { signatureCacheConcurrency } = resolveWindowsPackageSettings(process.env)
-  const runDirectory = process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
+  const runDirectory = process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
   if (!runDirectory) throw new Error('primary runtime signing requires a supervised packaging run')
   await readFile(join(runDirectory, 'run.json'))
-  const certificateFile = process.env.DSH_DESKTOP_WINDOWS_CER_FILE
+  const certificateFile = process.env.GLH_DESKTOP_WINDOWS_CER_FILE
   if (!certificateFile) throw new Error('primary runtime signing requires the configured certificate')
   const thumbprint = new X509Certificate(await readFile(certificateFile)).fingerprint.replaceAll(':', '')
   const record = (event: object): void => { recordPackagingEvent(runDirectory, event) }
   try {
     await withWindowsSigningStage({ stage: process.argv.includes('--dsh') ? 'dsh-runtime' : 'primary-runtime', record }, async () => {
       const paths = resolveDesktopTargetBuildPaths()
-      const sign = createWindowsTokenSigner({ certificateFile, signTool: process.env.DSH_DESKTOP_WINDOWS_SIGNTOOL,
-        keyContainer: process.env.DSH_DESKTOP_WINDOWS_KEY_CONTAINER, tokenPin: process.env.DSH_DESKTOP_WINDOWS_TOKEN_PIN })
+      const sign = createWindowsTokenSigner({ certificateFile, signTool: process.env.GLH_DESKTOP_WINDOWS_SIGNTOOL,
+        keyContainer: process.env.GLH_DESKTOP_WINDOWS_KEY_CONTAINER, tokenPin: process.env.GLH_DESKTOP_WINDOWS_TOKEN_PIN })
       const identity = await signatureCacheIdentity([
-        await realpath(certificateFile), await realpath(process.env.DSH_DESKTOP_WINDOWS_SIGNTOOL!),
+        await realpath(certificateFile), await realpath(process.env.GLH_DESKTOP_WINDOWS_SIGNTOOL!),
         join(import.meta.dirname, 'windows-sign.cmd'), join(import.meta.dirname, 'windows-sign.mjs'),
         join(import.meta.dirname, 'windows-timestamp.mjs'),
       ])

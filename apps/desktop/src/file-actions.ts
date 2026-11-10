@@ -32,9 +32,9 @@ function saveRequest(value: unknown): { url: URL; name?: string; mediaType?: str
 export function installFileActions(
   assertOwner: (event: IpcMainInvokeEvent) => BrowserWindow, hostUrl: () => string | undefined = () => undefined,
 ): void {
-  const timeoutMs = resolveDurationMs(process.env, 'DSH_DESKTOP_IMAGE_READ_TIMEOUT_MS', 30_000)
-  const maxBytes = Number(process.env.DSH_DESKTOP_IMAGE_READ_MAX_BYTES ?? 64 * 1024 * 1024)
-  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1) throw new Error('DSH_DESKTOP_IMAGE_READ_MAX_BYTES must be a positive integer')
+  const timeoutMs = resolveDurationMs(process.env, 'GLH_DESKTOP_IMAGE_READ_TIMEOUT_MS', 30_000)
+  const maxBytes = Number(process.env.GLH_DESKTOP_IMAGE_READ_MAX_BYTES ?? 64 * 1024 * 1024)
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1) throw new Error('GLH_DESKTOP_IMAGE_READ_MAX_BYTES must be a positive integer')
   const pending = new Map<string, {
     event: IpcMainInvokeEvent
     owner: BrowserWindow
@@ -96,7 +96,7 @@ export function installFileActions(
       entry.finish(error instanceof Error ? error : new Error('File download unavailable'))
     }
   })
-  const downloadTimeoutMs = resolveDurationMs(process.env, 'DSH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', 300_000)
+  const downloadTimeoutMs = resolveDurationMs(process.env, 'GLH_DESKTOP_FILE_DOWNLOAD_TIMEOUT_MS', 300_000)
   ipcMain.handle(DESKTOP_IPC.fileSave, (event, value: unknown): Promise<FileSaveResult> => {
     const owner = assertOwner(event)
     const request = saveRequest(value)

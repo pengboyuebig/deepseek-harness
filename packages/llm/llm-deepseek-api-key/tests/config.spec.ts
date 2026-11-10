@@ -3,14 +3,14 @@ import { expect, it } from 'vitest'
 import { resolveAdapterOptions as resolveProtocolOptions } from '@deepseek-ai/dsh-llm-deepseek'
 import { Config, plainOptions, resolveAdapterOptions } from '../src/config.ts'
 
-const LISTING = { url: 'https://api.deepseek.com/models', timeoutMs: 5_000, maxAgeMs: 600_000 }
+const LISTING = { url: 'https://api.glkj.example.com/models', timeoutMs: 5_000, maxAgeMs: 600_000 }
 
 it('follows the official listing while the catalog is the built-in one', () => {
   expect(resolveAdapterOptions({}).listing).toEqual(LISTING)
   expect(resolveAdapterOptions(plainOptions(Config({}))).listing).toEqual(LISTING)
   expect(resolveAdapterOptions({ models: [...resolveProtocolOptions({}).models] }).listing).toEqual(LISTING)
-  expect(resolveAdapterOptions({ baseURL: 'https://api.deepseek.com/anthropic/v1', modelsTimeoutMs: 7, modelsMaxAgeMs: 0 }).listing)
-    .toEqual({ url: 'https://api.deepseek.com/models', timeoutMs: 7, maxAgeMs: 0 })
+  expect(resolveAdapterOptions({ baseURL: 'https://api.glkj.example.com/anthropic/v1', modelsTimeoutMs: 7, modelsMaxAgeMs: 0 }).listing)
+    .toEqual({ url: 'https://api.glkj.example.com/models', timeoutMs: 7, maxAgeMs: 0 })
 })
 
 it.each([

@@ -48,9 +48,9 @@ afterEach(async () => {
 
 function unsignedWindowsConfig(appId: string, source: string) {
   return createElectronBuilderConfig({
-    DSH_DESKTOP_APP_ID: appId, DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
-    DSH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
-    DSH_DESKTOP_UNSIGNED: '1',
+    GLH_DESKTOP_APP_ID: appId, GLH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
+    GLH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
+    GLH_DESKTOP_UNSIGNED: '1',
   }, 'win32', 'x64', source)
 }
 
@@ -222,10 +222,10 @@ it.each([true, false])('validates the real builder hook for unsigned=%s', async 
   const certificate = join(input.root, 'certificate.cer')
   await writeFile(certificate, 'fixture public certificate')
   const config = createElectronBuilderConfig({
-    DSH_DESKTOP_APP_ID: 'com.example.unpack', DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
-    DSH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
-    DSH_DESKTOP_TARGET_PLATFORM: 'win32', DSH_DESKTOP_TARGET_ARCH: 'x64', DSH_DESKTOP_UNSIGNED: unsigned ? '1' : '0',
-    DSH_DESKTOP_WINDOWS_CER_FILE: certificate, DOWNLOAD_TEST_ORIGIN: 'https://updates.example.com', DOWNLOAD_TEST_RELEASE_ID: '0123456789abcdef0123456789abcdef',
+    GLH_DESKTOP_APP_ID: 'com.example.unpack', GLH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
+    GLH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
+    GLH_DESKTOP_TARGET_PLATFORM: 'win32', GLH_DESKTOP_TARGET_ARCH: 'x64', GLH_DESKTOP_UNSIGNED: unsigned ? '1' : '0',
+    GLH_DESKTOP_WINDOWS_CER_FILE: certificate, DOWNLOAD_TEST_ORIGIN: 'https://updates.example.com', DOWNLOAD_TEST_RELEASE_ID: '0123456789abcdef0123456789abcdef',
   }, 'win32', 'x64', input.source)
   // Qualification replaces files after creating the base configuration; builder owns a separate config object.
   input.config.asarUnpack = [...config.asarUnpack]

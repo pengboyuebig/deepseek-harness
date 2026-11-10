@@ -93,7 +93,7 @@ describe.skipIf(MODE === 'record')('web e2e: first-run DeepSeek credential setup
     expect(await page.locator('#root').evaluate(root => (root as HTMLElement).inert)).toBe(false)
 
     const stored = await readFile(join(scaffold.harnessHome, '.credentials.yaml'), 'utf8')
-    expect(stored.includes(`DEEPSEEK_API_KEY: ${secret}`)).toBe(true)
+    expect(stored.includes(`GLKJ_API_KEY: ${secret}`)).toBe(true)
     expect((await page.content()).includes(secret)).toBe(false)
     expect((await page.locator('body').ariaSnapshot()).includes(secret)).toBe(false)
     expect(browserConsole.some(line => line.includes(secret))).toBe(false)
@@ -297,7 +297,7 @@ describe.skipIf(MODE === 'record')('web e2e: first-run DeepSeek credential setup
     onTestFailed(() => saveFailureShot(page, 'web-e2e-model-catalog-empty'))
     await page.keyboard.press('Escape')
     const selection = scaffold.ctx.agentDefaultModel.currentSelection()
-    await scaffold.ctx.credentials.unset(credentialRef('DEEPSEEK_API_KEY'))
+    await scaffold.ctx.credentials.unset(credentialRef('GLKJ_API_KEY'))
     const seat = page.getByRole('button', { name: '请选择模型', exact: true })
     await seat.waitFor()
     await seat.click()

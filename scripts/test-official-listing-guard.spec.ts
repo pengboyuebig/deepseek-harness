@@ -9,11 +9,11 @@ afterEach(async () => {
 })
 
 it.each([
-  ['string', () => fetch('https://api.deepseek.com/models')],
-  ['URL', () => fetch(new URL('https://api.deepseek.com/models'))],
-  ['Request', () => fetch(new Request('https://api.deepseek.com/models', { headers: { 'x-api-key': 'fixture-key' } }))],
+  ['string', () => fetch('https://api.glkj.example.com/models')],
+  ['URL', () => fetch(new URL('https://api.glkj.example.com/models'))],
+  ['Request', () => fetch(new Request('https://api.glkj.example.com/models', { headers: { 'x-api-key': 'fixture-key' } }))],
 ])('rejects the official model listing given as a %s', async (_kind, request) => {
-  await expect(request()).rejects.toThrow('unit suites do not reach https://api.deepseek.com/models; answer it with a fetch stub')
+  await expect(request()).rejects.toThrow('unit suites do not reach https://api.glkj.example.com/models; answer it with a fetch stub')
 })
 
 it('passes every other request to the ambient fetch', async () => {

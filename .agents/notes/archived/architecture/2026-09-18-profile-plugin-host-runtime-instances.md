@@ -13,7 +13,7 @@ Issue #4573 is that failure in production. While this package reached both runti
 
 ## Decision
 
-An out-of-tree plugin package declares every host runtime whose cross-instance identity matters in matching `peerDependencies` and `devDependencies`, never in `dependencies`. Profile pnpm settings are `nodeLinker: hoisted` with `autoInstallPeers: false`, so such a peer is not installed into the profile, and the import reaches the installation's single instance through the runtime resolution's interception layer at `$DSH_HOME/profiles/node_modules` ([lookup order](2026-09-19-profile-resolution-lookup-order.md)).
+An out-of-tree plugin package declares every host runtime whose cross-instance identity matters in matching `peerDependencies` and `devDependencies`, never in `dependencies`. Profile pnpm settings are `nodeLinker: hoisted` with `autoInstallPeers: false`, so such a peer is not installed into the profile, and the import reaches the installation's single instance through the runtime resolution's interception layer at `$GLH_HOME/profiles/node_modules` ([lookup order](2026-09-19-profile-resolution-lookup-order.md)).
 
 `@deepseek-ai/dsh-scope` carries that identity through `createScope` as well as through the readers `scopeOf`, `carrierKeyOf`, and `scopeTarget`: the writer mints the tag its readers compare. `@deepseek-ai/dsh-mcp-client` joins it because its live `serverName` reservations are module-local, so a second copy keeps a second reservation table for the same namespace. `@deepseek-ai/dsh-experimental-browser-use-runtime` therefore declares both as peers with matching dev entries and keeps `@deepseek-ai/schemastery` as its only runtime dependency, which carries no instance-local state.
 

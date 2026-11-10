@@ -11,7 +11,7 @@ Archived: 2026-09-30
 
 ## 决策
 
-每个可能运行在 `vm-backup` 池的 Linux lane（`ci.yml` static/coverage/snapshots——默认 hosted，仅 `DSH_CI_FAILOVER_LINUX=selfhosted` 时自托管；`ci-master.yml` serial standby——始终自托管）都把 `NODE_COMPILE_CACHE` 重定向到 per-runner 数据卷临时目录 `${{ runner.temp }}/node-compile-cache`。`runner.temp` 在 `/data_local`（1 TB，inode 用量约 1%）上，per-runner（`_workNN/_temp`），因此缓存不再消耗根分区 inode。
+每个可能运行在 `vm-backup` 池的 Linux lane（`ci.yml` static/coverage/snapshots——默认 hosted，仅 `GLH_CI_FAILOVER_LINUX=selfhosted` 时自托管；`ci-master.yml` serial standby——始终自托管）都把 `NODE_COMPILE_CACHE` 重定向到 per-runner 数据卷临时目录 `${{ runner.temp }}/node-compile-cache`。`runner.temp` 在 `/data_local`（1 TB，inode 用量约 1%）上，per-runner（`_workNN/_temp`），因此缓存不再消耗根分区 inode。
 
 重定向是在 `actions/checkout` 之后的一个 step，把 `NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache` 写入 `$GITHUB_ENV`，因此 lane 中后续每个 step——`pnpm/action-setup`、store 路径探测、安装、Playwright 安装和测试门禁——都会继承该变量。必须用注入而非 job 级 env：`runner` 上下文在 job 级 `env` 不可用（与早前 TMPDIR 工作相同的约束）；而仅给门禁 step 设 step 级 env 会让更早的 pnpm 调用继续写根分区 `/tmp`。sandbox（bwrap/Landlock）未授权 `runner.temp` 路径的受限子进程会继承该变量但**静默跳过缓存**——已在虚拟机上验证：`NODE_COMPILE_CACHE` 指向 bwrap 内未授权路径时，`node` 正常运行（exit 0），与 `mkdtemp` 的只读文件系统硬失败不同。编译缓存按设计是尽力而为；写失败只是缓存未命中，不是崩溃。
 
@@ -20,7 +20,7 @@ Archived: 2026-09-30
 - VM 探针：`NODE_COMPILE_CACHE=/data_local/ci/compile-cache-probe node -e 'require("node:fs")'` 在数据盘写出了 `v22.23.2-x64-*` 缓存子目录（位置切换生效）。
 - VM 探针（bwrap）：`NODE_COMPILE_CACHE` 指向 bwrap profile 未授权的路径时，`node` 正常运行（exit 0）——缓存写失败被容忍。
 - `scripts/ci-workflow.spec.ts` 断言每个 Linux lane 都在 `pnpm/action-setup` 之前把 `NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache`（`$GITHUB_ENV` 的 `KEY=VALUE` 行）注入 `$GITHUB_ENV`；位置断言在注入移出首次 pnpm 调用之后时会失败。
-- CI lane：三个必需的 Linux job（默认 hosted，`DSH_CI_FAILOVER_LINUX` 时自托管 `vm-backup`）会在新 env 下跑完整套件；缓存处理回归会表现为 lane 失败。
+- CI lane：三个必需的 Linux job（默认 hosted，`GLH_CI_FAILOVER_LINUX` 时自托管 `vm-backup`）会在新 env 下跑完整套件；缓存处理回归会表现为 lane 失败。
 
 ## 备选方案
 

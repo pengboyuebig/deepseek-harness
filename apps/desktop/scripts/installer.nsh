@@ -131,9 +131,9 @@ ManifestDPIAware true
 
 ; The report outlives $PLUGINSDIR so a user can send it; silent installs keep only the file. The updater cache
 ; directory is never an installation target and leaves with the application on uninstall.
-; The directory smoke fixture predefines DSH_INSTALLER_LOG_DIR to keep reports inside its scratch tree.
-!ifndef DSH_INSTALLER_LOG_DIR
-  !define DSH_INSTALLER_LOG_DIR "$LOCALAPPDATA\${DSH_UPDATER_CACHE_NAME}\installer-logs"
+; The directory smoke fixture predefines GLH_INSTALLER_LOG_DIR to keep reports inside its scratch tree.
+!ifndef GLH_INSTALLER_LOG_DIR
+  !define GLH_INSTALLER_LOG_DIR "$LOCALAPPDATA\${GLH_UPDATER_CACHE_NAME}\installer-logs"
 !endif
 
 !macro customInstallerExtractFailed Archive
@@ -146,7 +146,7 @@ ManifestDPIAware true
   Push $6
   ; GetTime yields zero-padded day, month, year, weekday, hour, minute, second.
   ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  StrCpy $0 "${DSH_INSTALLER_LOG_DIR}\extract-failure-$2$1$0-$4$5$6.log"
+  StrCpy $0 "${GLH_INSTALLER_LOG_DIR}\extract-failure-$2$1$0-$4$5$6.log"
   StrCpy $1 1
   ${If} ${Silent}
     StrCpy $1 0

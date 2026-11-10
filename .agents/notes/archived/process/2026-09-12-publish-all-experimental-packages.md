@@ -11,7 +11,7 @@ Users need npm access to Auto review, the Inspector, the CPython PTC backend, an
 
 ## Decision
 
-Every current package under `packages/experimental/` publishes in the dsh release family and the local npm baseline. Each manifest omits `private` and sets `publishConfig.access: public`. The [publication denylist](2026-09-12-experimental-publication-denylist.md) remains available for future private exceptions but contains no directories. Experimental npm names, opt-in composition, dependency isolation, compatibility expectations, and support limits remain unchanged.
+Every current package under `packages/experimental/` publishes in the glh release family and the local npm baseline. Each manifest omits `private` and sets `publishConfig.access: public`. The [publication denylist](2026-09-12-experimental-publication-denylist.md) remains available for future private exceptions but contains no directories. Experimental npm names, opt-in composition, dependency isolation, compatibility expectations, and support limits remain unchanged.
 
 The Inspector tarball includes `lib/worker.js`, which its Host entry starts by a sibling URL. Its built-artifact test packs and extracts the package before starting that Worker. The WebWorker packer imports module-proxy and replacement-package tables through the runtime's public library entry; its compiled repository chunk requires no runtime TypeScript source. Its packed-consumer test imports both extracted tarballs under plain Node and mounts the resulting base image and data overlay without either package's source tree.
 

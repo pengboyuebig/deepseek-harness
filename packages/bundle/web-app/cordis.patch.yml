@@ -10,7 +10,7 @@
 # Loader resolves their expressions only after it exists. The web-runtime row
 # validates the advertised public URL; Connection reads invocation authorities
 # directly from `webStartup`.
-# `dsh --profile web --help` provides no `webStartup`, so no server binds.
+# `glh --profile web --help` provides no `webStartup`, so no server binds.
 
 # ── surface-specific values the base deliberately omits ─────────────────────
 
@@ -43,15 +43,15 @@
         exportTimeoutMillis: 20000
         shutdownTimeoutMillis: 2000
         serviceName: deepseek-harness-desktop
-        serviceVersion: !!js process.env.DSH_CLIENT_VERSION
-        endpoint: !!js process.env.DSH_PRODUCT_ANALYTICS_OTLP_URL
+        serviceVersion: !!js process.env.GLH_CLIENT_VERSION
+        endpoint: !!js process.env.GLH_PRODUCT_ANALYTICS_OTLP_URL
 
     - id: product-analytics
       name: '@deepseek-ai/dsh-client-product-analytics'
       disabled: !!js "ctx.get('profileContext')?.name !== 'desktop'"
       config:
         enabled: true
-        appVersion: !!js process.env.DSH_CLIENT_VERSION
+        appVersion: !!js process.env.GLH_CLIENT_VERSION
 
     # Host-owned authorization sampled at Agent creation. The Plugins page
     # edits this settings namespace independently of the selected preset.
@@ -487,7 +487,7 @@
 # the composition.
 
 # `shell-env` STAYS in the host plane: `apps/cli/src/web.ts` injects it to
-# publish `DSH_WEB_URL`/`DSH_WEB_MODE`, and a host row that injects a service is
+# publish `GLH_WEB_URL`/`GLH_WEB_MODE`, and a host row that injects a service is
 # the criterion for host-plane ownership — injection resolves before any session
 # exists, so there is no agent to key by. Behind a preset realm those variables
 # would never reach the model's shell at all.

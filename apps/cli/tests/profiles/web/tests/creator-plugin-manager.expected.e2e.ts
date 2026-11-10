@@ -46,8 +46,8 @@ it('configures MCP on a live profile, restores it on restart, and removes its to
   const start = async () => {
     const child = spawn(process.execPath, [join(repo, 'apps/cli/lib/bin.js'), '--profile', 'web', '--patch', patch,
       '--port', '0', '--no-open'], { cwd: join(root, 'workspace'),
-      env: { ...process.env, DSH_HOME: join(root, 'home'), DSH_AGENTS_HOME: join(root, 'agents'),
-        DSH_TELEMETRY_DISABLED: '1', DEEPSEEK_API_KEY: 'keyless-no-model-calls' },
+      env: { ...process.env, GLH_HOME: join(root, 'home'), GLH_AGENTS_HOME: join(root, 'agents'),
+        GLH_TELEMETRY_DISABLED: '1', GLKJ_API_KEY: 'keyless-no-model-calls' },
       stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
     })
     let output = ''
@@ -60,7 +60,7 @@ it('configures MCP on a live profile, restores it on restart, and removes its to
     for (const stream of [child.stdout, child.stderr]) stream!.on('data', (data) => { output = (output + String(data)).slice(-30_000) })
     await expect.poll(() => {
       if (child.exitCode !== null) throw new Error(output)
-      return output.includes('dsh web: http://')
+      return output.includes('glh web: http://')
     }, { timeout: 60_000 }).toBe(true)
     return { stop, request: (phase: string): Promise<Observation> => new Promise((resolve, reject) => {
       child.once('message', (value: { result: Observation; error?: string }) => {
@@ -87,7 +87,7 @@ it('configures MCP on a live profile, restores it on restart, and removes its to
   expect(initial.after).toContain('mcp__demo__ping')
   expect(initial.other).toContain('mcp__demo__ping')
   expect(JSON.stringify(initial.ping)).toContain('pong')
-  const saved = readProfileManifest('dsh', join(root, 'home/profiles/web'))
+  const saved = readProfileManifest('glh', join(root, 'home/profiles/web'))
   expect(saved.dsh?.profile?.bundles).toContain('@test/creator-mcp')
   expect(saved.dependencies).toHaveProperty('@test/creator-mcp')
   await first.stop()

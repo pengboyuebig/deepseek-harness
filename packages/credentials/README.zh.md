@@ -9,7 +9,7 @@ kind: "package-group"
 
 ## 概述
 
-`credentials/` 组让配置引用机密的名字，而不嵌入机密值。使用 `credentials/` 存储、查询和移除凭据；使用 `credentials-local/` 将凭据私密地存储在本机，并以环境作为后备来源；当需要向人询问以获取凭据时，使用 `authorization/`。轮换后的存储值会作用于下一次模型请求，且存储值优先于 `DEEPSEEK_API_KEY=… dsh`。配置文件只包含凭据名称；本地机密值只有同一 OS 用户可读。
+`credentials/` 组让配置引用机密的名字，而不嵌入机密值。使用 `credentials/` 存储、查询和移除凭据；使用 `credentials-local/` 将凭据私密地存储在本机，并以环境作为后备来源；当需要向人询问以获取凭据时，使用 `authorization/`。轮换后的存储值会作用于下一次模型请求，且存储值优先于 `GLKJ_API_KEY=… glh`。配置文件只包含凭据名称；本地机密值只有同一 OS 用户可读。
 
 ## 目录
 

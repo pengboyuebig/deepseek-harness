@@ -21,7 +21,7 @@ Python sidecar 组装仅复制所选引擎及其依赖闭包。wheel 打包和�
 
 **在所有平台移除 WASM。** 没有已发布原生引擎的目标仍需转换能力。共享 WASM 包为这些目标提供转换，无需引入新的原生发布目标。
 
-**将 Python Office 伴随目录设为可选。** 运行时承载共享的 `dsh` CLI 及其 Web profile，而不只有默认 SDK profile。强制携带目标引擎使已安装 wheel 具备完整的内置 profile 集合，并在启动前报告载荷不完整。SDK 和 headless 用户也承担引擎的下载与安装体积。
+**将 Python Office 伴随目录设为可选。** 运行时承载共享的 `glh` CLI 及其 Web profile，而不只有默认 SDK profile。强制携带目标引擎使已安装 wheel 具备完整的内置 profile 集合，并在启动前报告载荷不完整。SDK 和 headless 用户也承担引擎的下载与安装体积。
 
 ## Consequences
 

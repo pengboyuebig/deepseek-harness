@@ -1,4 +1,4 @@
-# Agent Note: dsh source launch through the tsx ESM hook
+# Agent Note: glh source launch through the tsx ESM hook
 
 Status: implemented
 
@@ -14,7 +14,7 @@ Startup latency also mattered: the off-thread `module.register()` hooks worker s
 
 ## Decision
 
-The `dsh` CLI source launches run `node --import tsx/esm`: tsx's ESM-only hook owns both TypeScript transformation and tsconfig `paths` projection. The root `dsh` script uses that vector directly from the repository root; artifact generation is a separate operation under the [source-launch/build separation decision](../../archived/simplification/2026-08-12-separate-source-launch-from-build.md). The CJS hook stays off because the CLI source graph is ESM-only; the implementation-time measurement to the TUI banner was ~0.7s versus ~1.1s under the full tsx default and ~0.75s under the removed native chain.
+The `glh` CLI source launches run `node --import tsx/esm`: tsx's ESM-only hook owns both TypeScript transformation and tsconfig `paths` projection. The root `glh` script uses that vector directly from the repository root; artifact generation is a separate operation under the [source-launch/build separation decision](../../archived/simplification/2026-08-12-separate-source-launch-from-build.md). The CJS hook stays off because the CLI source graph is ESM-only; the implementation-time measurement to the TUI banner was ~0.7s versus ~1.1s under the full tsx default and ~0.75s under the removed native chain.
 
 tsx owns workspace `paths` mapping without checking whether the importer declares each package as a runtime dependency. Declaration completeness rests on the static gates: `verify-cordis-config` for configured bare plugins, and workspace constraints for manifests. The removed repo-owned paths loaders enforced those declarations at runtime and caught imports of `@deepseek-ai/dsh-llm` declared only in devDependencies; tsx does not provide that check.
 

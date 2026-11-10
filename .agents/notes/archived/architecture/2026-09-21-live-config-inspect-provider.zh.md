@@ -19,7 +19,7 @@ provider 遍历 `ctx.loader.entries()` 和每个 fiber 的运行时 Config，而
 
 **在 Host 内重跑 `generateConfigSchema`。** 它会在第二层拦截下重新导入每个插件模块，而收集器禁止在已安装拦截时重叠，并且它描述的是 profile 文件而非已挂载的树。
 
-**让出货的 skill 去运行 CLI dump。** 它需要 agent 的 shell 里有 profile 名和 PATH 上的 `dsh` 可执行文件，会话都不保证，而且输出无界。
+**让出货的 skill 去运行 CLI dump。** 它需要 agent 的 shell 里有 profile 名和 PATH 上的 `glh` 可执行文件，会话都不保证，而且输出无界。
 
 ## Consequences
 

@@ -17,7 +17,7 @@ const removedEnvironment = Object.fromEntries([
   'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_VERTEX', 'CLAUDE_CODE_USE_FOUNDRY',
 ].map(name => [name, null]))
 
-it.skipIf(process.env.DSH_OAR_NATIVE_PERMISSIONS !== '1').for([
+it.skipIf(process.env.GLH_OAR_NATIVE_PERMISSIONS !== '1').for([
   { mode: 'dontAsk', writes: false },
   { mode: 'acceptEdits', writes: true },
   { mode: 'plan', writes: false },

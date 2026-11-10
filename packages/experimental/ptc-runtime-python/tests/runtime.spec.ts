@@ -400,7 +400,7 @@ describe('PythonPtcRuntime — seam descriptors and misuse', () => {
   it('resolves pythonBin once so a later PATH change cannot switch interpreters', async () => {
     const firstDir = await mkdtemp(join(tmpdir(), 'dsh-python-first-'))
     const secondDir = await mkdtemp(join(tmpdir(), 'dsh-python-second-'))
-    const wrapper = (marker: string): string => `#!/bin/sh\nDSH_TEST_PYTHON=${marker}\nexport DSH_TEST_PYTHON\nexec "${PYABS}" "$@"\n`
+    const wrapper = (marker: string): string => `#!/bin/sh\nGLH_TEST_PYTHON=${marker}\nexport GLH_TEST_PYTHON\nexec "${PYABS}" "$@"\n`
     await writeFile(join(firstDir, 'python3'), wrapper('first'), { mode: 0o755 })
     await writeFile(join(secondDir, 'python3'), wrapper('second'), { mode: 0o755 })
     vi.stubEnv('PATH', firstDir)
@@ -410,7 +410,7 @@ describe('PythonPtcRuntime — seam descriptors and misuse', () => {
       fiber = mounted.fiber
       vi.stubEnv('PATH', secondDir)
       const result = await mounted.runtime.run(mounted.runtime.resolve({
-        program: 'import os\nreturn os.environ.get("DSH_TEST_PYTHON")',
+        program: 'import os\nreturn os.environ.get("GLH_TEST_PYTHON")',
         bindings: [],
       }))
       expect(result.error).toBeUndefined()
@@ -985,7 +985,7 @@ describe('PythonPtcRuntime — programs and bindings', () => {
         '    "tmpdir": os.environ.get("TMPDIR"),',
         '    "path": os.environ.get("PATH"),',
         '    "home": os.environ.get("HOME"),',
-        '    "token": os.environ.get("DEEPSEEK_API_KEY"),',
+        '    "token": os.environ.get("GLKJ_API_KEY"),',
         '}',
       ].join('\n'),
       bindings: [],

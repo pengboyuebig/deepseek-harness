@@ -19,7 +19,7 @@ The provider walks `ctx.loader.entries()` and each fiber's runtime Config instea
 
 **Re-run `generateConfigSchema` inside the Host.** It would re-import every plugin module under a second interception, which the collector forbids while one is installed, and it describes the profile files rather than the mounted tree.
 
-**Teach the shipped skill to run the CLI dump.** It requires the profile name in the agent's shell and a `dsh` executable on its PATH, neither of which the session guarantees, and its output is unbounded.
+**Teach the shipped skill to run the CLI dump.** It requires the profile name in the agent's shell and a `glh` executable on its PATH, neither of which the session guarantees, and its output is unbounded.
 
 ## Consequences
 

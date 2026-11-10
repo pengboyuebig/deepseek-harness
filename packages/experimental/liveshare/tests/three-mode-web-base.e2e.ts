@@ -1,7 +1,7 @@
 /**
  * Real web-profile base for the three-mode acceptance driver.
  *
- * One isolated `dsh web` instance answers over its own HTTP carrier; two prompts really run against
+ * One isolated `glh web` instance answers over its own HTTP carrier; two prompts really run against
  * a real Session, controller, and tool executor behind a keyless deterministic model route. The
  * three viewer mode cases attach on top of this same harness.
  */

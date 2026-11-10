@@ -5,7 +5,7 @@
  * {@link LOCAL_PARALLELISM_CAP}, or {@link LOCAL_TEST_PARALLELISM_CAP} for Vitest forks, because
  * `os.availableParallelism()` reports host CPUs rather than a container's CPU quota and local runs share
  * the workstation. Each tool's explicit override
- * (`DSH_GATE_CONCURRENCY`, `DSH_OXLINT_THREADS`, `DSH_COVERAGE_MAX_WORKERS`, `--maxWorkers`) still wins.
+ * (`GLH_GATE_CONCURRENCY`, `GLH_OXLINT_THREADS`, `GLH_COVERAGE_MAX_WORKERS`, `--maxWorkers`) still wins.
  */
 
 import { availableParallelism } from 'node:os'

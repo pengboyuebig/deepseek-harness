@@ -31,7 +31,7 @@ it.each(['macos', 'windows'])('%s packaging accepts test branches but preserves 
     git('tag', 'dsh-v2.0.0')
     const run = (preset: string, ref: string) => {
       const result = spawnSync(process.execPath, ['-e', script], {
-        cwd: root, encoding: 'utf8', env: { ...env, DSH_PACKAGING_PRESET: preset, PACKAGE_SOURCE_REF: ref },
+        cwd: root, encoding: 'utf8', env: { ...env, GLH_PACKAGING_PRESET: preset, PACKAGE_SOURCE_REF: ref },
       })
       expect(result.error).toBeUndefined()
       expect(result.signal).toBeNull()

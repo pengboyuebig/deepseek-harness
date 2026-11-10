@@ -9,7 +9,7 @@ English | [中文](2026-08-27-explicit-workspace-path-aliases.zh.md)
 
 `tsconfig.base.json` is the resolution facade for the whole repository: every package project extends it, both aggregates read it, and every Vitest config points `vite-tsconfig-paths` at it. Two of its aliases carried one candidate per package *group* rather than one per package — `@deepseek-ai/dsh-*` listed 49 candidate globs and `@deepseek-ai/dsh-*/invariant` listed 45.
 
-TypeScript and tsx try those candidates in order and take the first that exists, so a specifier whose package sits late in the list pays for every earlier miss. Under the `dsh` source launch each miss is an `ERR_MODULE_NOT_FOUND` that Node decorates with `decorateErrorWithCommonJSHints`, which runs a full CommonJS resolution walk per failure. A profile of a source-launch boot attributed 934.6 ms — 35% of the boot — to that decoration path alone, from 60,942 failed resolutions.
+TypeScript and tsx try those candidates in order and take the first that exists, so a specifier whose package sits late in the list pays for every earlier miss. Under the `glh` source launch each miss is an `ERR_MODULE_NOT_FOUND` that Node decorates with `decorateErrorWithCommonJSHints`, which runs a full CommonJS resolution walk per failure. A profile of a source-launch boot attributed 934.6 ms — 35% of the boot — to that decoration path alone, from 60,942 failed resolutions.
 
 The cost fell hardest on the most-imported packages. `packages/util/*` sat at position 44 of 49 and holds the leaf utilities nearly every plugin imports, so `dsh-timeout` paid roughly 9 ms per resolution against 0.05 ms for a specifier with an explicit alias.
 

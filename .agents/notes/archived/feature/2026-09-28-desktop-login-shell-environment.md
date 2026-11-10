@@ -11,7 +11,7 @@ macOS Dock, Finder, and Linux desktop launches start Desktop with only the sessi
 
 ## Decision
 
-Before creating the first Host, [Desktop](../../../../apps/desktop/README.md) runs one delimited `env -0` dump through `<shell> -ilc`, where `<shell>` is the account record's login shell, followed by `/bin/zsh`, `/bin/bash`, and `/bin/sh`. Every Host in the application process uses the merged result. Shell values replace inherited values except probe-session variables and the `DSH_*` and `ELECTRON_*` namespaces. The read completes at the closing delimiter. A timeout or quit kills the probe's process group, and a failed read falls back to the inherited environment without blocking startup. Windows skips the read.
+Before creating the first Host, [Desktop](../../../../apps/desktop/README.md) runs one delimited `env -0` dump through `<shell> -ilc`, where `<shell>` is the account record's login shell, followed by `/bin/zsh`, `/bin/bash`, and `/bin/sh`. Every Host in the application process uses the merged result. Shell values replace inherited values except probe-session variables and the `GLH_*` and `ELECTRON_*` namespaces. The read completes at the closing delimiter. A timeout or quit kills the probe's process group, and a failed read falls back to the inherited environment without blocking startup. Windows skips the read.
 
 ## Alternatives considered
 
@@ -19,10 +19,10 @@ Before creating the first Host, [Desktop](../../../../apps/desktop/README.md) ru
 
 **Non-interactive `-lc` only.** Most users export PATH additions from `~/.zshrc`, which only interactive shells read. Interactive mode requires the probe variables that stop oh-my-zsh update prompts and tmux autostart from blocking.
 
-**Let shell values replace `DSH_*` variables.** Desktop resolves `DSH_HOME` and its profile paths before the read, so a `DSH_HOME` exported from `~/.zshrc` would give the Host a different home from the one Desktop prepared.
+**Let shell values replace `GLH_*` variables.** Desktop resolves `GLH_HOME` and its profile paths before the read, so a `GLH_HOME` exported from `~/.zshrc` would give the Host a different home from the one Desktop prepared.
 
 **Wait for stdout to close.** Background processes that startup files start inherit stdout and can hold it open indefinitely, which turns every read into a timeout.
 
 ## Consequences
 
-Dock and Finder launches give the Host the environment a terminal launch provides. Changes to startup files apply only after Desktop restarts. Startup waits for the read, up to `DSH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS` per candidate. Account shells that cannot run the POSIX dump, such as csh, tcsh, and nushell, receive the first system shell's environment instead. `DSH_*` settings must come from the launcher's environment rather than startup files. Unit tests run stand-in shells for the early completion, timeout, abort, and fallback paths, and the Desktop startup test verifies that the Host waits for the read.
+Dock and Finder launches give the Host the environment a terminal launch provides. Changes to startup files apply only after Desktop restarts. Startup waits for the read, up to `GLH_DESKTOP_LOGIN_SHELL_TIMEOUT_MS` per candidate. Account shells that cannot run the POSIX dump, such as csh, tcsh, and nushell, receive the first system shell's environment instead. `GLH_*` settings must come from the launcher's environment rather than startup files. Unit tests run stand-in shells for the early completion, timeout, abort, and fallback paths, and the Desktop startup test verifies that the Host waits for the read.

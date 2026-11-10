@@ -17,7 +17,7 @@ const MODEL_MODALITIES = ['text', 'image'] as const satisfies readonly ModelModa
 
 /** Shared Messages request configuration, without provider credential selection. */
 export interface Config {
-  /** Endpoint base; falls back to $DEEPSEEK_BASE_URL from a trusted environment layer, then the public API. */
+  /** Endpoint base; falls back to $GLKJ_BASE_URL from a trusted environment layer, then the public API. */
   baseURL: Volatile<string | undefined>
   /** Deployment thinking policy; `disabled` limits every conversation request to `off`. */
   thinking: Volatile<'enabled' | 'disabled' | undefined>
@@ -112,11 +112,11 @@ export const deepSeekConfigFields = {
 
 export const Config = z.object(deepSeekConfigFields)
 
-/** Public API default; the internal endpoint comes from $DEEPSEEK_BASE_URL. */
-export const PUBLIC_BASE_URL = 'https://api.deepseek.com/anthropic'
+/** Public API default; the internal endpoint comes from $GLKJ_BASE_URL. */
+export const PUBLIC_BASE_URL = 'https://api.glkj.example.com/anthropic'
 
 /** Environment variable naming this provider's endpoint, honored only from trusted layers. */
-const BASE_URL_ENV = 'DEEPSEEK_BASE_URL'
+const BASE_URL_ENV = 'GLKJ_BASE_URL'
 
 /** Complete protocol settings captured for one request operation. */
 export type ResolvedDeepSeekOptions = DeepSeekConnectionOptions

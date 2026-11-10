@@ -561,7 +561,7 @@ This change does not promise to preserve differences expressed only through a Ho
 
 ## Verification Commands
 
-Changes to this decision use `dsh-pre-push-checks` to select commands for the final diff. Required evidence includes:
+Changes to this decision use `glh-pre-push-checks` to select commands for the final diff. Required evidence includes:
 
 - focused Session Controller history/transport tests;
 - ui-chat and ui-trajectory Tool Definition tests;
@@ -571,7 +571,7 @@ Changes to this decision use `dsh-pre-push-checks` to select commands for the fi
 - affected Host and Client TypeScript faces;
 - lint and duplication;
 - per-file 100% coverage for affected source files;
-- `DSH_SNAPSHOT=replay pnpm run test:web`, without refreshing existing presentation goldens;
+- `GLH_SNAPSHOT=replay pnpm run test:web`, without refreshing existing presentation goldens;
 - authored Remote type and TypeScript checks;
 - `pnpm run doc-sync`;
 - `git diff --check`.

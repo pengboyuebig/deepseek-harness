@@ -13,7 +13,7 @@ The earlier [direct core entry-point decision](../architecture/2026-08-09-headle
 
 ## Decision
 
-`headless-runner` observes `agent/assistant-stream` for the exact Agent it creates after startup quiescence and before submitting the task. Once the owned interval opens with `turn/start`, each non-empty `reasoning-delta` chunk frame is written immediately to stderr. A contiguous reasoning phase starts with `dsh: reasoning:` on its own line; deltas retain provider order without token-boundary decoration. Reasoning block boundaries and usage metadata keep that phase open; a later non-reasoning block or output delta, stream end, new turn, or listener disposal terminates it with one newline when the provider supplied none.
+`headless-runner` observes `agent/assistant-stream` for the exact Agent it creates after startup quiescence and before submitting the task. Once the owned interval opens with `turn/start`, each non-empty `reasoning-delta` chunk frame is written immediately to stderr. A contiguous reasoning phase starts with `glh: reasoning:` on its own line; deltas retain provider order without token-boundary decoration. Reasoning block boundaries and usage metadata keep that phase open; a later non-reasoning block or output delta, stream end, new turn, or listener disposal terminates it with one newline when the provider supplied none.
 
 This output is a transient projection of the process-local Assistant stream. The runner still derives final text and exit status from the flushed durable Session settlements rather than from progress-presentation state. SDK projections do not expose the live frames.
 

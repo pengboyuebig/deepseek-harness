@@ -12,7 +12,7 @@ it.skipIf(process.platform !== 'win32')('resolves an account cache independently
 })
 
 it('accepts an explicit local cache directory', () => {
-  expect(resolveWindowsSignatureCacheDirectory({ DSH_DESKTOP_WINDOWS_SIGNATURE_CACHE_DIR: 'D:/private-cache' }))
+  expect(resolveWindowsSignatureCacheDirectory({ GLH_DESKTOP_WINDOWS_SIGNATURE_CACHE_DIR: 'D:/private-cache' }))
     .toBe('D:\\private-cache')
 })
 
@@ -27,7 +27,7 @@ it.skipIf(process.platform !== 'win32')('prepares storage when the inherited pro
 
 it.each(['', 'cache', 'C:cache', '\\cache', '\\\\server\\share', '\\\\?\\C:\\cache', 'C:\\cache:stream'])
 ('rejects unsupported cache path %j', (path) => {
-  expect(() => resolveWindowsSignatureCacheDirectory({ DSH_DESKTOP_WINDOWS_SIGNATURE_CACHE_DIR: path })).toThrow(/absolute local/u)
+  expect(() => resolveWindowsSignatureCacheDirectory({ GLH_DESKTOP_WINDOWS_SIGNATURE_CACHE_DIR: path })).toThrow(/absolute local/u)
 })
 
 it.skipIf(process.platform !== 'win32')('creates private storage and rejects linked or publicly readable cache roots', async (t) => {

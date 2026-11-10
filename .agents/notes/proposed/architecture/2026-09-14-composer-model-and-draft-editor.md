@@ -12,7 +12,7 @@ The current [SessionInputShell](../../../../packages/client/ui-conversation/src/
 
 [ConversationController](../../../../packages/client/ui-conversation/src/client/service.ts) already owns attachment entities and upload tasks centrally; the shell retains only ordered attachment IDs. Selecting a skill inserts ordinary `/name` text whose highlighting derives from a lexicon; atomic file and Session references use chips carrying source identity. A shared draft must not lose these references by synchronizing text alone, and does not require copying attachment entities.
 
-This proposal details editor isolation for [#3951](https://github.com/deepseek-ai/deepseek-harness/pull/3951), following [Client Session and UI ownership](../../implemented/architecture/2026-08-20-client-session-conversation-ownership.md). The Session activity view, residency states, and eviction policy are designed independently; [#4138](https://github.com/deepseek-ai/deepseek-harness/pull/4138) is only a Host lifecycle reference. This proposal implements none of those features and does not repeat the Conversation component decomposition in #3984.
+This proposal details editor isolation for [#3951](https://git.glkj.example.com/glkj/harness/pull/3951), following [Client Session and UI ownership](../../implemented/architecture/2026-08-20-client-session-conversation-ownership.md). The Session activity view, residency states, and eviction policy are designed independently; [#4138](https://git.glkj.example.com/glkj/harness/pull/4138) is only a Host lifecycle reference. This proposal implements none of those features and does not repeat the Conversation component decomposition in #3984.
 
 ## Proposal
 

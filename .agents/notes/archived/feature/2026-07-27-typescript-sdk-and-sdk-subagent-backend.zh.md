@@ -18,16 +18,16 @@ stdio JSON-RPC 对外服务接口（`@deepseek-ai/dsh-sdk-jsonrpc-server`，见[
 - **`@deepseek-ai/dsh-subagent-dsh-sdk`**（`packages/subagent/subagent-dsh-sdk/`）—— 第二个进程外 `SubagentProvider`，采用与 `subagent-acp` 对等的结构，但声明 `agentOptions: true`：每次运行都会把提供方／模型／推理强度／maxTokens 合并到实例默认值之上，并且只把这些字段送入子进程 `initialize`。其他启动能力保持 false，`inheritsParentContext: false`。提供方保留握手后发布所有权事务、通过 `onError` sink 将结果归一为绝不拒绝，以及父命名空间 run id。子答案从流式 `session.event` 读取——最后一条完整 `assistant/message`，否则累积的 `text-delta` 块，部分答案在取消时得以保留。停止原因由子进程的结构化 `TurnEndReason` 映射：`completed`、`max-tokens` 与普通 `aborted` 直通，`blocked` 变为 `refusal`，其他非完成值变为 `error`。可达子失败与 SDK 错误会附加[进程外诊断决策](2026-08-21-out-of-process-subagent-minimal-diagnostics.zh.md)定义的有界安全诊断，只使用一个 category 和当前提供方 stage。其 `dshBin`／profile／patch／home 配置选择隔离的 SDK 应用，`env` 则提供子进程专用的显式值，例如其 API key。
 - **subagent seam 新增 `out-of-process.ts`**：两个进程外后端共享的 provider 侧词汇——`NO_START_CAPABILITIES`、时限校验、子进程 cwd 解析（配置覆盖、否则发起委托的父会话工作区）、绝不拒绝的 `settleRunResult`、以及 `subprocessRunHandle` 发布。进程机制（spawn、环境清理、进程树清理）属于 `dsh-subprocess` seam；`subagent-acp` 经 `ctx.subprocess` spawn 子进程，本后端则经 SDK 客户端 spawn 子进程（subprocess README 记载的 SDK 托管传输例外）并自行应用该 seam 的 `scrubbedParentEnv()`。
 
-`dsh-sdk-jsonrpc-server` 会在 `initialize` 期间校验确切的提供方／模型／推理强度路由，只保存显式提供的推理强度与 token 值，并使用这条固定的进程级路由创建每个 SDK 根 Agent。由于 JSON-RPC 请求可能并发分派，它会在一次初始化成功完成前拒绝 `session/prompt`，避免待定或非法路由回退到构造期默认值。TypeScript 与 Python 客户端都通过 `dsh --profile sdk` 公开同一组初始化字段；Python wheel 会打包该 CLI 及其封闭依赖树。
+`dsh-sdk-jsonrpc-server` 会在 `initialize` 期间校验确切的提供方／模型／推理强度路由，只保存显式提供的推理强度与 token 值，并使用这条固定的进程级路由创建每个 SDK 根 Agent。由于 JSON-RPC 请求可能并发分派，它会在一次初始化成功完成前拒绝 `session/prompt`，避免待定或非法路由回退到构造期默认值。TypeScript 与 Python 客户端都通过 `glh --profile sdk` 公开同一组初始化字段；Python wheel 会打包该 CLI 及其封闭依赖树。
 
 ## 测试
 
 四层，依[测试政策](../../../../docs/testing.zh.md)：
 
 - **免密钥单元**——`sdk-client` 通过真实 stdio 驱动脚本化伪运行时（`tests/fake-runtime.ts`，环境变量脚本化、纯协议——即 Python `test_client.py` 的模式）；`subagent-dsh-sdk` 经真实提供方驱动同一伪运行时，覆盖逐次路由覆盖、可达子原因、typed 错误，以及 initialize/session-run/shutdown 诊断。三个包全部 100% 逐文件覆盖。
-- **免密钥 Loader 组合**——`subagent-dsh-sdk/tests/loader-composition.e2e.ts` 启动包自有测试组合（`packages/subagent/subagent-dsh-sdk/tests/fixtures/loader/`），其中子进程是真实的第二个 `dsh --profile sdk` 运行时，拥有独立 home 与有序 patch；工具结果与持久化请求 header 会证明提供方、模型、推理强度、maxTokens 与父会话 cwd，失败场景则固定与部分输出分离的模型可见子错误诊断。
-- **免密钥快照**——`snapshots/sdk/sdk.snapshot.ts` 通过真实 `dsh-sdk-client` 驱动真实 `dsh --profile sdk` 运行时，并通过有序 `llm-replay` patch 回放已录制 fixture（测试前置数据）。一个 DSH SDK 场景把模型选择的路由固定在委派工具、第二个 SDK 运行时及子级持久化请求 header 中；另一个场景固定安全诊断的规范化通知流、SDK 结果、持久日志与前台/后台失败文本。
-- **带密钥 e2e**——快照套件的 `DSH_SNAPSHOT=record` 模式即真实 API 路径（已提交 fixture 由它产出）；组合 e2e 设计上无需密钥。
+- **免密钥 Loader 组合**——`subagent-dsh-sdk/tests/loader-composition.e2e.ts` 启动包自有测试组合（`packages/subagent/subagent-dsh-sdk/tests/fixtures/loader/`），其中子进程是真实的第二个 `glh --profile sdk` 运行时，拥有独立 home 与有序 patch；工具结果与持久化请求 header 会证明提供方、模型、推理强度、maxTokens 与父会话 cwd，失败场景则固定与部分输出分离的模型可见子错误诊断。
+- **免密钥快照**——`snapshots/sdk/sdk.snapshot.ts` 通过真实 `dsh-sdk-client` 驱动真实 `glh --profile sdk` 运行时，并通过有序 `llm-replay` patch 回放已录制 fixture（测试前置数据）。一个 DSH SDK 场景把模型选择的路由固定在委派工具、第二个 SDK 运行时及子级持久化请求 header 中；另一个场景固定安全诊断的规范化通知流、SDK 结果、持久日志与前台/后台失败文本。
+- **带密钥 e2e**——快照套件的 `GLH_SNAPSHOT=record` 模式即真实 API 路径（已提交 fixture 由它产出）；组合 e2e 设计上无需密钥。
 
 ## 考虑过的替代方案
 
@@ -37,7 +37,7 @@ stdio JSON-RPC 对外服务接口（`@deepseek-ai/dsh-sdk-jsonrpc-server`，见[
 
 **把 SDK 后端折进 `subagent-acp`、用传输开关区分。** 两个后端共享子进程生命周期，但协议（ACP SDK 连接 vs harness JSON-RPC）、子进程约定（任意 ACP agent vs harness 运行时）、结果提取（`agent_message_chunk` 累积 vs 会话事件读取）毫无共享。配置判别字段会把两个协议埋进一个包；真正共享的提供方侧部分移入 subagent seam 的 `out-of-process.ts`，进程机制则住在 `dsh-subprocess` seam。
 
-**只从 `PATH` 解析 `dsh`。** 拒绝：Node 消费方不一定继承项目本地 `.bin` 目录。同版本包依赖为已安装消费方提供构建后 CLI，并为干净 checkout 提供源码入口。
+**只从 `PATH` 解析 `glh`。** 拒绝：Node 消费方不一定继承项目本地 `.bin` 目录。同版本包依赖为已安装消费方提供构建后 CLI，并为干净 checkout 提供源码入口。
 
 **导出源模块、规范化辅助函数和订阅投递端操作。** 这些都是调用方不需要的实现细节；暴露它们会让调用方不得不理解客户端如何校验与分发协议输入。各包根转而枚举受支持的客户端接口与协议接口，客户端则只重新导出调用方必须区分的那一种协议错误。
 

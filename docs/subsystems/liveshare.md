@@ -10,7 +10,7 @@ Source: [`packages/experimental/liveshare/src/host/fork-enforcement.ts`](../../p
 
 ## Enabling and visibility
 
-The package ships with dsh but stays out of the plugin manager's lists until a profile enables it. A profile either inserts the two rows the bundle declares into its own `cordis.patch.yml`, which keeps the bundle unselected while its plugins run, or selects the bundle in `dsh.profile.bundles`. The [package README](../../packages/experimental/liveshare/README.md#default-visibility-and-enabling) owns the exact entries and the placeholders a deployment replaces.
+The package ships with glh but stays out of the plugin manager's lists until a profile enables it. A profile either inserts the two rows the bundle declares into its own `cordis.patch.yml`, which keeps the bundle unselected while its plugins run, or selects the bundle in `dsh.profile.bundles`. The [package README](../../packages/experimental/liveshare/README.md#default-visibility-and-enabling) owns the exact entries and the placeholders a deployment replaces.
 
 The plugin manager lists the card under **Experimental plugins** only while at least one row the bundle declares runs, and removing the rows, disabling them, or deselecting the bundle takes it out of both that list and **More** again. Both routes apply on the profile's next recomposition rather than mid-task: with HMR enabled the profile is re-read, and without it the change waits for the next start.
 

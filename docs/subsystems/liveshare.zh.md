@@ -10,7 +10,7 @@
 
 ## 启用与可见性
 
-本包随 dsh 一同交付，但在 profile 启用它之前不会出现在插件管理器的任何列表中。profile 可以把自己的 `cordis.patch.yml` 插入组合包声明的两条行，这样组合包本身保持未选中而插件照常运行；也可以改在 `dsh.profile.bundles` 中选中该组合包。[包 README](../../packages/experimental/liveshare/README.zh.md#default-visibility-and-enabling)负责具体条目和部署需要替换的占位符。
+本包随 glh 一同交付，但在 profile 启用它之前不会出现在插件管理器的任何列表中。profile 可以把自己的 `cordis.patch.yml` 插入组合包声明的两条行，这样组合包本身保持未选中而插件照常运行；也可以改在 `dsh.profile.bundles` 中选中该组合包。[包 README](../../packages/experimental/liveshare/README.zh.md#default-visibility-and-enabling)负责具体条目和部署需要替换的占位符。
 
 插件管理器只有在组合包声明的行至少有一条在运行时才把卡片列在**实验性插件**下；删除这些行、把它们置为 disabled，或取消选中组合包，卡片会再次从该列表和**更多**页消失。两条路线都在 profile 下一次重新组合时生效，而不是在当前任务中途：启用 HMR 时会重新读取 profile，未启用时则等下一次启动。
 

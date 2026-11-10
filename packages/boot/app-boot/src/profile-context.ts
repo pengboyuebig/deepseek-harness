@@ -25,7 +25,7 @@ export interface ProfileContext {
   readonly startedBundles: readonly string[]
   /** Parsed command-line overlays, applied above profile and home patches. */
   readonly overlays: readonly PatchOptions[]
-  /** Launch-time DSH_TELEMETRY_DISABLED value; any non-empty value opts out. */
+  /** Launch-time GLH_TELEMETRY_DISABLED value; any non-empty value opts out. */
   readonly telemetryDisabledEnv: string | undefined
 }
 
@@ -45,7 +45,7 @@ const TELEMETRY_ROW_ID = 'session-telemetry-otel'
  * exports nothing, so the switch is then trivially satisfied and no patch is
  * generated — custom profiles need not mount telemetry to run with the
  * switch set.
- * @param disabledEnv - the raw `DSH_TELEMETRY_DISABLED` value (`undefined` when unset).
+ * @param disabledEnv - the raw `GLH_TELEMETRY_DISABLED` value (`undefined` when unset).
  * @param hasRow - whether the composition carries the telemetry row.
  * @returns the disable patch, or `undefined` when no hard-disable patch is required.
  */

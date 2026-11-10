@@ -42,8 +42,8 @@ async function main(): Promise<void> {
   })
   console.log(`CUA_PACKAGING_RECORD ${journal.directory}`)
   const scratch = mkdtempSync(join(tmpdir(), 'dsh-cua-package-'))
-  const previousDirectory = process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
-  process.env.DSH_DESKTOP_PACKAGING_RUN_DIR = journal.directory
+  const previousDirectory = process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
+  process.env.GLH_DESKTOP_PACKAGING_RUN_DIR = journal.directory
   const controller = new AbortController()
   const stop = (): void => { controller.abort() }
   process.once('SIGINT', stop)
@@ -98,8 +98,8 @@ async function main(): Promise<void> {
   } finally {
     process.off('SIGINT', stop)
     process.off('SIGTERM', stop)
-    if (previousDirectory === undefined) delete process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
-    else process.env.DSH_DESKTOP_PACKAGING_RUN_DIR = previousDirectory
+    if (previousDirectory === undefined) delete process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
+    else process.env.GLH_DESKTOP_PACKAGING_RUN_DIR = previousDirectory
     rmSync(scratch, { recursive: true, force: true })
   }
   journal.finish(true)

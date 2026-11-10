@@ -35,7 +35,7 @@ async function run(root: string): Promise<ProfileReport> {
   ].join('\n'))
   const env: NodeJS.ProcessEnv = {
     PATH: process.env.PATH, HOME: home, USERPROFILE: home,
-    DSH_AGENTS_HOME: join(home, 'agents'),
+    GLH_AGENTS_HOME: join(home, 'agents'),
   }
   const harness = new DeepSeekHarness({
     dshBin: join(import.meta.dirname, '..', '..', '..', 'apps', 'cli', 'lib', 'bin.js'),

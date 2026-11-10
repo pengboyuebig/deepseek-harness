@@ -7,8 +7,8 @@ import { executeToolFixture } from '@deepseek-ai/dsh-tool-testkit'
 // record cannot hang on a live model answering differently); assertion steps
 // run in replay/refresh only. Streaming fidelity is asserted from the durable
 // embedded Assistant stream, not transient DOM.
-// Record: DSH_SNAPSHOT=record writes the current Session generation, then a keyless
-// DSH_SNAPSHOT=refresh regenerates ui.expected.md.
+// Record: GLH_SNAPSHOT=record writes the current Session generation, then a keyless
+// GLH_SNAPSHOT=refresh regenerates ui.expected.md.
 // Suite setup (beforeAll, not per step): one fixed page clock
 // (page.clock.setFixedTime) and one routed Remote mux socket
 // (page.routeWebSocket) serve every step below, so the reconnect checkpoints
@@ -226,7 +226,7 @@ describe('web e2e: fresh round trip through the real assembly', () => {
     if (system === undefined) throw new Error('the settled Web request has no system prompt')
     const paragraphs = system.split('\n\n')
     expect(paragraphs.slice(0, 2)).toEqual([
-      'You are an AI agent powered by DeepSeek Harness.',
+      'You are an AI agent powered by GLKJ Harness.',
       'You are a coding agent powered by the deepseek-v4-flash model.',
     ])
     const cwd = agent.session.header.cwd
@@ -236,7 +236,7 @@ describe('web e2e: fresh round trip through the real assembly', () => {
       .flatMap(message => message.content.flatMap(block => block.type === 'text' ? [block.text] : []))
     expect(userText.some(text => text.includes(`Current working directory: ${JSON.stringify(cwd)}.`))).toBe(true)
     expect(system).not.toContain(scaffold.baseUrl)
-    expect(userText.some(text => text.includes(`Current DeepSeek Harness Web GUI URL: ${JSON.stringify(scaffold.baseUrl)}.`))).toBe(true)
+    expect(userText.some(text => text.includes(`Current GLKJ Harness Web GUI URL: ${JSON.stringify(scaffold.baseUrl)}.`))).toBe(true)
     const suffix = paragraphs.slice(-2).join('\n\n')
       .split(REPO_ROOT).join('{{sourceRoot}}')
       .split(join(scaffold.workspaceCwd, 'workspace')).join('{{cwd}}')
@@ -259,7 +259,7 @@ describe('web e2e: fresh round trip through the real assembly', () => {
           callId: ToolCallId('web-url-probe'),
           name: 'bash',
           arguments: {
-            command: 'printf \'%s\\n\' "$DSH_WEB_URL"',
+            command: 'printf \'%s\\n\' "$GLH_WEB_URL"',
             description: 'Print current Web runtime',
           },
           agent: handle.agent,

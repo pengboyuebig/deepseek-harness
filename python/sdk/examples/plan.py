@@ -153,7 +153,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dsh-home", required=True, type=Path)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
-    parser.add_argument("--model", default=os.environ.get("DSH_MODEL", "deepseek-v4-flash"))
+    parser.add_argument("--model", default=os.environ.get("GLH_MODEL", "deepseek-v4-flash"))
     parser.add_argument("task", help="Task to plan; implementation waits for your approval")
     args = parser.parse_args()
     if not args.task.strip():
@@ -161,7 +161,7 @@ def main() -> None:
     with _PlanReviews() as reviews, DeepSeekHarness(
         dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
         profile="sdk", model=args.model, on_user_question=reviews.answer,
-        env={"DSH_PERMISSION_MODE": "workspace-write"},
+        env={"GLH_PERMISSION_MODE": "workspace-write"},
     ) as harness:
         session = harness.start_session()
         result = session.run(f"/plan {args.task}", on_notification=lambda notice: display(notice, session.id))

@@ -904,7 +904,7 @@ describe('web e2e: plugin manager', () => {
   it('enables both default-hidden shipped bundles by name without adding a profile dependency', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-plugin-manager-bundled-enable'))
     const profileDir = join(scaffold.harnessHome, 'profiles', 'scaffold')
-    const before = readProfileManifest('dsh', profileDir).dependencies
+    const before = readProfileManifest('glh', profileDir).dependencies
     for (const [name, title] of [
       ['@deepseek-ai/dsh-experimental-session-search', '会话搜索'],
       ['@deepseek-ai/dsh-experimental-ralph-bundle', 'Ralph 循环'],
@@ -923,7 +923,7 @@ describe('web e2e: plugin manager', () => {
       const card = panel.locator(`[data-plugin-package="${name}"]`)
       await card.waitFor()
       expect((await scaffold.ctx.pluginManager.listBundles()).find(bundle => bundle.name === name)?.enabled).toBe(true)
-      expect(readProfileManifest('dsh', profileDir).dependencies).toEqual(before)
+      expect(readProfileManifest('glh', profileDir).dependencies).toEqual(before)
       await card.getByRole('switch', { name: `启用 ${title}`, exact: true }).click()
       await card.waitFor({ state: 'hidden' })
       expect((await scaffold.ctx.pluginManager.listBundles()).find(bundle => bundle.name === name)?.enabled).toBe(false)

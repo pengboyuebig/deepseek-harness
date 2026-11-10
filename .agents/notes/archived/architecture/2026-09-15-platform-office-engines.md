@@ -21,7 +21,7 @@ Python sidecar assembly copies only the selected engine and its dependency closu
 
 **Remove WASM on every platform.** Targets without a released native engine still need conversion. The shared WASM package serves those targets without introducing a new native release target.
 
-**Make the Python Office sidecar optional.** The runtime carries the shared `dsh` CLI and its Web profile as well as the default SDK profile. Requiring the target engine gives the installed wheel a complete shipped profile set and reports an incomplete payload before launch. SDK and headless users also pay the engine download and installed-size cost.
+**Make the Python Office sidecar optional.** The runtime carries the shared `glh` CLI and its Web profile as well as the default SDK profile. Requiring the target engine gives the installed wheel a complete shipped profile set and reports an incomplete payload before launch. SDK and headless users also pay the engine download and installed-size cost.
 
 ## Consequences
 

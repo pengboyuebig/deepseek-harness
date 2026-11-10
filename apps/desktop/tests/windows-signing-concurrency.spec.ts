@@ -67,7 +67,7 @@ vi.mock('../scripts/packaging-run.mjs', () => ({
       } else if (stage.startsWith('remove-signature-')) {
         state.removals.push({ executable, args, environment: options.env })
       } else {
-        state.signed.add(options.env.DSH_DESKTOP_WINDOWS_SIGN_TARGET!)
+        state.signed.add(options.env.GLH_DESKTOP_WINDOWS_SIGN_TARGET!)
       }
     }),
   })),
@@ -119,11 +119,11 @@ beforeEach(async () => {
   state.identity = 'matched'; state.failure = ''; state.successes = 0; state.failures = 0
   state.signed.clear(); state.completed.clear(); state.stages = []; state.events = []; state.removals = []
   state.environment = {
-    DSH_DESKTOP_WINDOWS_CER_FILE: join(state.root, 'certificate.cer'),
-    DSH_DESKTOP_WINDOWS_SIGNTOOL: 'forbidden-signer', DSH_DESKTOP_WINDOWS_TOKEN_PIN: 'fixture-pin',
-    DSH_DESKTOP_WINDOWS_KEY_CONTAINER: '  fixture-container  ', API_KEY: 'fixture-secret', NODE_OPTIONS: 'forbidden-option',
+    GLH_DESKTOP_WINDOWS_CER_FILE: join(state.root, 'certificate.cer'),
+    GLH_DESKTOP_WINDOWS_SIGNTOOL: 'forbidden-signer', GLH_DESKTOP_WINDOWS_TOKEN_PIN: 'fixture-pin',
+    GLH_DESKTOP_WINDOWS_KEY_CONTAINER: '  fixture-container  ', API_KEY: 'fixture-secret', NODE_OPTIONS: 'forbidden-option',
   }
-  await writeFile(state.environment.DSH_DESKTOP_WINDOWS_CER_FILE!, 'inert certificate')
+  await writeFile(state.environment.GLH_DESKTOP_WINDOWS_CER_FILE!, 'inert certificate')
   Object.defineProperty(process, 'platform', { value: 'win32', configurable: true })
   const { createWindowsTokenSigner } = await import('../scripts/windows-sign.mjs')
   vi.mocked(createWindowsTokenSigner).mockReturnValue(vi.fn(async () => { throw new Error('Production signer is forbidden') }))

@@ -9,7 +9,7 @@ English | [中文](guide.zh.md)
 
 ## Change
 
-The headless bundle reads `--add-dir` through `headlessStartup` before activating its sandbox policy. An overlay that disables `headless-startup` must also remove that dependency from `sandbox-policy`. Otherwise the policy and its dependent tools remain pending. Ordinary `dsh headless` invocations need no configuration change.
+The headless bundle reads `--add-dir` through `headlessStartup` before activating its sandbox policy. An overlay that disables `headless-startup` must also remove that dependency from `sandbox-policy`. Otherwise the policy and its dependent tools remain pending. Ordinary `glh headless` invocations need no configuration change.
 
 ## Migration
 
@@ -19,7 +19,7 @@ The headless bundle reads `--add-dir` through `headlessStartup` before activatin
    - id: sandbox-policy
      inject: []
      config:
-       mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+       mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
        workspaceRoot: !!js process.cwd()
    ```
 

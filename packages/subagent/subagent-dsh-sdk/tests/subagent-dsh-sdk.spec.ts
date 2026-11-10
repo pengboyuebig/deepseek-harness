@@ -290,22 +290,22 @@ describe('dsh-subagent-dsh-sdk provider', () => {
   })
 
   it('scrubs ambient credentials but forwards explicit config env', async () => {
-    process.env.DSH_TEST_AMBIENT_SECRET_KEY = 'leak-me-not'
+    process.env.GLH_TEST_AMBIENT_SECRET_KEY = 'leak-me-not'
     try {
       const ctx = await setup({
-        FAKE_ECHO_ENV: 'DSH_TEST_AMBIENT_SECRET_KEY,DEEPSEEK_API_KEY',
-        DEEPSEEK_API_KEY: 'explicit-child-key',
+        FAKE_ECHO_ENV: 'GLH_TEST_AMBIENT_SECRET_KEY,GLKJ_API_KEY',
+        GLKJ_API_KEY: 'explicit-child-key',
         FAKE_TEXT: 'done',
       })
       const run = await startExternalActivation(ctx, 'dsh-sdk', request())
       const result = await run.result
       const answer = text(result.output)
-      expect(answer).toContain('DSH_TEST_AMBIENT_SECRET_KEY=\n')
-      expect(answer).toContain('DEEPSEEK_API_KEY=explicit-child-key')
+      expect(answer).toContain('GLH_TEST_AMBIENT_SECRET_KEY=\n')
+      expect(answer).toContain('GLKJ_API_KEY=explicit-child-key')
       await run.dispose()
       await ctx.fiber.dispose()
     } finally {
-      delete process.env.DSH_TEST_AMBIENT_SECRET_KEY
+      delete process.env.GLH_TEST_AMBIENT_SECRET_KEY
     }
   })
 

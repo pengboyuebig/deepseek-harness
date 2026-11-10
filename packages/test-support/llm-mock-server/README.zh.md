@@ -42,9 +42,9 @@ pnpm run mock:llm \
 将发布的 DeepSeek 适配器指向服务器；它会向服务器 `/v1` 根路径下的 `/messages` 发送请求：
 
 ```sh
-DEEPSEEK_BASE_URL=http://127.0.0.1:8000/v1 \
-DEEPSEEK_API_KEY=mock-key \
-pnpm dsh --profile headless "test provider recovery"
+GLKJ_BASE_URL=http://127.0.0.1:8000/v1 \
+GLKJ_API_KEY=mock-key \
+pnpm glh --profile headless "test provider recovery"
 ```
 
 仓库脚本将 JSONL 写入 stdout：`ready` 记录携带以 `/v1` 结尾的 base URL 与随机种子，后续请求/结果记录同时命名脚本行为与实际选中的具体行为。本包不公开可安装的二进制命令。

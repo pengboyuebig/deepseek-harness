@@ -87,7 +87,7 @@ describe('ui-settings-web-search apply', () => {
     await vi.waitFor(() => { expect(describeCredentials).toHaveBeenCalled() })
     describeCredentials.mockClear()
 
-    for (const ref of ['UNWATCHED_KEY', 'DEEPSEEK_SEARCH_API_KEY', 'DEEPSEEK_FETCH_API_KEY']) {
+    for (const ref of ['UNWATCHED_KEY', 'GLKJ_SEARCH_API_KEY', 'GLKJ_FETCH_API_KEY']) {
       remote.emit('credentials/reference-updated', [ref])
     }
     await Promise.resolve()
@@ -95,7 +95,7 @@ describe('ui-settings-web-search apply', () => {
 
     // A key written on another surface changes no settings section, so this
     // event is the only thing that reaches the page.
-    remote.emit('credentials/reference-updated', ['DEEPSEEK_API_KEY'])
+    remote.emit('credentials/reference-updated', ['GLKJ_API_KEY'])
     await vi.waitFor(() => { expect(describeCredentials).toHaveBeenCalledTimes(1) })
   })
 

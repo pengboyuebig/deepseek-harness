@@ -8,8 +8,8 @@ import { pathToFileURL } from 'node:url'
 
 export const inject = ['agents', 'agentPresets']
 export async function apply(ctx) {
-  const root = process.env.DSH_WORKSPACE_UPDATE_ROOT
-  const token = process.env.DSH_WORKSPACE_UPDATE_TOKEN
+  const root = process.env.GLH_WORKSPACE_UPDATE_ROOT
+  const token = process.env.GLH_WORKSPACE_UPDATE_TOKEN
   if (!root || !token) throw new Error('Private workspace qualification configuration is missing')
   const require = createRequire(join(process.cwd(), 'package.json'))
   const { createUserMessage } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-llm')).href)

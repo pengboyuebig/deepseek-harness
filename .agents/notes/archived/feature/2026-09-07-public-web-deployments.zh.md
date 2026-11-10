@@ -11,7 +11,7 @@ Archived: 2026-09-30
 
 ## Decision
 
-`--public-url` 是可选的对外公告 HTTP(S) 应用根——`http(s)://`，可带转发前缀，不允许凭据、query 或 fragment——经由 `src/public-url.ts` 抵达 Web bundle 的 `publicUrl` 配置。它提供打印与打开的 URL、`DSH_WEB_URL` 与 web 表层定位，且不配置任何路由、客户端传输或 cookie 作用域。配置字段与 CLI flag 都只是公告：浏览器可见的 authority 必须用可重复的 `--trusted-host` 点名，栅栏才会接受它；栅栏仍逐请求校验 `Host` 与 `Origin`，因此公告既不授予身份，也不代表已认证。
+`--public-url` 是可选的对外公告 HTTP(S) 应用根——`http(s)://`，可带转发前缀，不允许凭据、query 或 fragment——经由 `src/public-url.ts` 抵达 Web bundle 的 `publicUrl` 配置。它提供打印与打开的 URL、`GLH_WEB_URL` 与 web 表层定位，且不配置任何路由、客户端传输或 cookie 作用域。配置字段与 CLI flag 都只是公告：浏览器可见的 authority 必须用可重复的 `--trusted-host` 点名，栅栏才会接受它；栅栏仍逐请求校验 `Host` 与 `Origin`，因此公告既不授予身份，也不代表已认证。
 
 公告根是首个可能携带挂载前缀的生产输入，因此启动流程加上启动 token 时不会压平该挂载。网络监听始终显式且独立——随附 CLI 拒绝通配的 `--host`——外部链路归代理所有，部署必须提供的操作发布在[公开部署指南](../../../../docs/user/guide/public-deployments.zh.md)。
 
@@ -35,4 +35,4 @@ Archived: 2026-09-30
 
 ## Testing
 
-`tests/public-url.spec.ts` 覆盖 URL 校验与归一化；`tests/startup.spec.ts` 在真实 Loader 树上覆盖该 flag，包括公告主机不会改动被接受的 authority；`tests/web-app.spec.ts` 覆盖打印 URL、交接、web 表层提示词、`DSH_WEB_URL`，以及字段为 `null` 时公告 loopback；`apps/cli/tests/profiles/web/tests/public-url.expected.e2e.ts` 以 `--public-url` 在参考剥前缀代理之后启动已构建的 profile，并同时经公告挂载与 loopback 完成认证，因此 bundle patch 中的 `publicUrl` 表达式按出厂形态得到执行。
+`tests/public-url.spec.ts` 覆盖 URL 校验与归一化；`tests/startup.spec.ts` 在真实 Loader 树上覆盖该 flag，包括公告主机不会改动被接受的 authority；`tests/web-app.spec.ts` 覆盖打印 URL、交接、web 表层提示词、`GLH_WEB_URL`，以及字段为 `null` 时公告 loopback；`apps/cli/tests/profiles/web/tests/public-url.expected.e2e.ts` 以 `--public-url` 在参考剥前缀代理之后启动已构建的 profile，并同时经公告挂载与 loopback 完成认证，因此 bundle patch 中的 `publicUrl` 表达式按出厂形态得到执行。

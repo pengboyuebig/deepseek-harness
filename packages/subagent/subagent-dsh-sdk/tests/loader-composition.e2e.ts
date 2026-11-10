@@ -63,9 +63,9 @@ async function childLaunch(failure = false): Promise<{
   return {
     childHome,
     env: {
-      DSH_TEST_CHILD_PATCHES: JSON.stringify([childPatch]),
-      DSH_TEST_CHILD_HOME: childHome,
-      ...(failure ? { DSH_TEST_CHILD_FAILURE: '1' } : {}),
+      GLH_TEST_CHILD_PATCHES: JSON.stringify([childPatch]),
+      GLH_TEST_CHILD_HOME: childHome,
+      ...(failure ? { GLH_TEST_CHILD_FAILURE: '1' } : {}),
     },
   }
 }
@@ -91,7 +91,7 @@ describe('SDK subagent routing and diagnostics through the production profile', 
         processTimeoutMs: 120_000,
         env: {
           ...child.env,
-          DSH_TEST_PARENT_MODEL_RECORD: '.parent-model-routes',
+          GLH_TEST_PARENT_MODEL_RECORD: '.parent-model-routes',
         },
         inspect: async (cwd) => {
           // The child reports realpaths; canonicalize the temp workspace to match.
@@ -147,7 +147,7 @@ describe('SDK subagent routing and diagnostics through the production profile', 
         configPath,
         tsconfigPath: repoTsconfig,
         processTimeoutMs: 120_000,
-        env: { ...child.env, DSH_TEST_CHILD_EFFORT_ONLY: '1' },
+        env: { ...child.env, GLH_TEST_CHILD_EFFORT_ONLY: '1' },
         inspect: async (cwd) => {
           const logs = await jsonlFiles(join(cwd, '.sessions'))
           expect(logs).toHaveLength(1)

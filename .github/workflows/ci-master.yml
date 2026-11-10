@@ -29,7 +29,7 @@ env:
   PRIMARY_NODE_VERSION: '24'
   # CI runs must never report to the production telemetry endpoint baked
   # into apps/cli/cordis.yml (AppCLIEntry disables the row when set).
-  DSH_TELEMETRY_DISABLED: '1'
+  GLH_TELEMETRY_DISABLED: '1'
 
 jobs:
   ssh-helper:
@@ -48,7 +48,7 @@ jobs:
       targets: node24-linux-arm64,node24-macos-arm64,node24-macos-x64
       ci: true
     secrets:
-      DEEPSEEK_API_KEY_EXTERNAL: ${{ secrets.DEEPSEEK_API_KEY_EXTERNAL }}
+      GLKJ_API_KEY_EXTERNAL: ${{ secrets.GLKJ_API_KEY_EXTERNAL }}
 
   # Wine runs on master pushes or an explicit suite=wine dispatch, independently of native standbys.
   windows:
@@ -133,7 +133,7 @@ jobs:
   # re-runs the complete unsharded aggregate on the persistent 64-core VM,
   # continuously proving that environment can take over a required lane if
   # the hosted pools degrade (the switch is then setting the writer-manageable
-  # DSH_CI_FAILOVER_LINUX variable — see the failover runbook, no merge required).
+  # GLH_CI_FAILOVER_LINUX variable — see the failover runbook, no merge required).
   # Push-triggered, so this lane always executes the base branch's own
   # workflow definition. This workflow never listens to pull_request, so the
   # drill does not appear in PR checks. No cache steps because the VM's
@@ -144,7 +144,7 @@ jobs:
     name: serial / linux (self-hosted standby)
     runs-on: [self-hosted, linux, x64, vm-backup]
     steps:
-      # DSH_ARCHIVE_BASE_REF below compares the frozen-archive gate against
+      # GLH_ARCHIVE_BASE_REF below compares the frozen-archive gate against
       # github.event.before, so full history is required: depth 2 would miss it
       # on multi-commit or force pushes; full fetch is cheap here because
       # checkout resolves against the VM's local mirror.
@@ -182,13 +182,13 @@ jobs:
 
       - name: Run complete unsharded primary Node CI serially
         env:
-          DSH_ARCHIVE_BASE_REF: ${{ github.event.before }}
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_E2E_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_OXLINT_THREADS: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
-          DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
+          GLH_ARCHIVE_BASE_REF: ${{ github.event.before }}
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_E2E_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_OXLINT_THREADS: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
+          GLH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci:linux-primary
 
   # TODO(hosted-serial-ci): Re-enable the one remaining disabled hosted serial
@@ -215,18 +215,18 @@ jobs:
 
       - name: Run complete unsharded primary Node CI serially
         env:
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_E2E_MAX_WORKERS: '1'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
-          DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_E2E_MAX_WORKERS: '1'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
+          GLH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci
 
   # Hot-standby drill for the in-house self-hosted Windows pool: every master
   # move re-runs the complete unsharded Windows gate inventory on the persistent
   # VM, continuously proving that environment can take over the required
   # `windows` lane if the hosted pool degrades (the switch is setting the
-  # writer-manageable DSH_CI_FAILOVER_WINDOWS variable — see the failover
+  # writer-manageable GLH_CI_FAILOVER_WINDOWS variable — see the failover
   # runbook, no merge required). Push-triggered, so this lane always executes
   # the base branch's own workflow definition. This workflow never listens to
   # pull_request, so the drill does not appear in PR checks. No cache steps
@@ -279,10 +279,10 @@ jobs:
       - name: Run complete unsharded Windows gate inventory serially
         shell: pwsh
         env:
-          DSH_COVERAGE_MAX_WORKERS: '1'
-          DSH_COVERAGE_TEST_TIMEOUT_MS: '90000'
-          DSH_GATE_CONCURRENCY: '1'
-          DSH_PUBLINT_CONCURRENCY: '1'
+          GLH_COVERAGE_MAX_WORKERS: '1'
+          GLH_COVERAGE_TEST_TIMEOUT_MS: '90000'
+          GLH_GATE_CONCURRENCY: '1'
+          GLH_PUBLINT_CONCURRENCY: '1'
         run: pnpm run check:ci:windows-complete
 
   # Manual, bounded comparison of the actual critical Linux and Windows lanes.
@@ -294,8 +294,8 @@ jobs:
     # 32 vCPU) move onto their Blacksmith equivalents, while the 64/96-core
     # rows keep the fleet labels because Blacksmith has no such tier.
     runs-on: >-
-      ${{ (matrix.platform == 'linux' && vars.DSH_CI_FAILOVER_LINUX == 'blacksmith'
-            || matrix.platform == 'windows' && vars.DSH_CI_FAILOVER_WINDOWS == 'blacksmith')
+      ${{ (matrix.platform == 'linux' && vars.GLH_CI_FAILOVER_LINUX == 'blacksmith'
+            || matrix.platform == 'windows' && vars.GLH_CI_FAILOVER_WINDOWS == 'blacksmith')
           && matrix.blacksmith
           || matrix.runner }}
     timeout-minutes: 15
@@ -405,8 +405,8 @@ jobs:
     # 32 vCPU) move onto their Blacksmith equivalents, while the 64/96-core
     # rows keep the fleet labels because Blacksmith has no such tier.
     runs-on: >-
-      ${{ (matrix.platform == 'linux' && vars.DSH_CI_FAILOVER_LINUX == 'blacksmith'
-            || matrix.platform == 'windows' && vars.DSH_CI_FAILOVER_WINDOWS == 'blacksmith')
+      ${{ (matrix.platform == 'linux' && vars.GLH_CI_FAILOVER_LINUX == 'blacksmith'
+            || matrix.platform == 'windows' && vars.GLH_CI_FAILOVER_WINDOWS == 'blacksmith')
           && matrix.blacksmith
           || matrix.runner }}
     timeout-minutes: 15
@@ -517,16 +517,16 @@ jobs:
       - name: Run complete unsharded primary Node CI concurrently
         if: matrix.platform == 'linux'
         env:
-          DSH_COVERAGE_MAX_WORKERS: ${{ matrix.workers }}
-          DSH_GATE_CONCURRENCY: ${{ matrix.workers }}
-          DSH_OXLINT_THREADS: ${{ matrix.workers }}
-          DSH_PUBLINT_CONCURRENCY: ${{ matrix.workers }}
-          DSH_SNAPSHOT_MAX_CONCURRENCY: ${{ matrix.workers }}
+          GLH_COVERAGE_MAX_WORKERS: ${{ matrix.workers }}
+          GLH_GATE_CONCURRENCY: ${{ matrix.workers }}
+          GLH_OXLINT_THREADS: ${{ matrix.workers }}
+          GLH_PUBLINT_CONCURRENCY: ${{ matrix.workers }}
+          GLH_SNAPSHOT_MAX_CONCURRENCY: ${{ matrix.workers }}
         run: pnpm run check:ci
 
       - name: Run blocking Windows builds concurrently
         if: matrix.platform == 'windows'
         shell: pwsh
         env:
-          DSH_GATE_CONCURRENCY: ${{ matrix.workers }}
+          GLH_GATE_CONCURRENCY: ${{ matrix.workers }}
         run: pnpm run check:ci:windows-blocking

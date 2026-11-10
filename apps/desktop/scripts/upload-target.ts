@@ -43,7 +43,7 @@ export function resolveCredentialUploadEnvironment(
   if (destination.environment !== selected || destination.bucket !== bucket) {
     throw new DesktopUploadUsageError('desktop upload: credential launcher deployment or bucket differs from the packaged release destination')
   }
-  if (injectedEnvironment.DSH_DESKTOP_AUTO_UPDATE_ENV !== selected
+  if (injectedEnvironment.GLH_DESKTOP_AUTO_UPDATE_ENV !== selected
     || injectedEnvironment[`${selected === 'test' ? 'DOWNLOAD_TEST' : 'DOWNLOAD_PROD'}_COS_BUCKET`] !== bucket) {
     throw new DesktopUploadUsageError('desktop upload: credential launcher environment differs from its explicit arguments')
   }
@@ -103,7 +103,7 @@ export async function uploadDesktopTarget(args: string[]): Promise<void> {
   try {
     resolveDesktopAutoUpdateEnvironment(environment)
   } catch (error) {
-    throw new DesktopUploadUsageError('DSH_DESKTOP_AUTO_UPDATE_ENV must be "test" or "production".')
+    throw new DesktopUploadUsageError('GLH_DESKTOP_AUTO_UPDATE_ENV must be "test" or "production".')
   }
   const recordsRoot = resolve(import.meta.dirname, '../.desktop-build/upload-records')
   if (values['purge-only']) {

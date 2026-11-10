@@ -115,7 +115,7 @@ it.each([false, true])('tracks the Web carrier lifetime when server-first is %s'
 it('publishes this package version and the build commit as the Host release in every composed graph', async () => {
   const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string }
   const mount = async (commit: string | undefined) => {
-    vi.stubEnv('DSH_CLIENT_COMMIT_HASH', commit)
+    vi.stubEnv('GLH_CLIENT_COMMIT_HASH', commit)
     const ctx = new Context()
     contexts.push({ ctx })
     ctx.provide('loader', { entries: () => [] })

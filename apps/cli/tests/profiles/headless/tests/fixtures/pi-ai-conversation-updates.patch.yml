@@ -13,7 +13,7 @@
     providers:
       moonshotai:
         apiKeyEnv: MOONSHOT_API_KEY
-        baseURL: !!js process.env.DSH_SNAPSHOT_BASE_URL
+        baseURL: !!js process.env.GLH_SNAPSHOT_BASE_URL
         streamIdleTimeoutMs: 1000
 
 - id: agent-loop
@@ -38,5 +38,5 @@
 - id: sandbox-policy
   inject: []
   config:
-    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+    mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
     workspaceRoot: !!js process.cwd()

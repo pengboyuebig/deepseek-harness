@@ -281,11 +281,11 @@ describe.skipIf(MODE === 'record')('web e2e: App-only desktop onboarding', () =>
     expect(await page.locator('[data-desktop-onboarding]').evaluate(element => getComputedStyle(element).filter)).toBe('none')
     expect(await page.getByRole('dialog').evaluate(element => getComputedStyle(element.previousElementSibling!).backdropFilter)).toBe('none')
     await page.getByRole('button', { name: '前往充值', exact: true }).click()
-    await page.getByRole('button', { name: '返回 DeepSeek Harness', exact: true }).waitFor()
+    await page.getByRole('button', { name: '返回 GLKJ Harness', exact: true }).waitFor()
     expect((scaffold.ctx.settings.describe().find(row => row.ns === NS)?.value as { step: string }).step).toBe('credit')
     balanceFailure = true
     const readsBefore = balanceReads
-    await page.getByRole('button', { name: '返回 DeepSeek Harness', exact: true }).click()
+    await page.getByRole('button', { name: '返回 GLKJ Harness', exact: true }).click()
     await page.getByRole('heading', { name: '准备可用额度', exact: true }).waitFor()
     await expect.poll(() => balanceReads).toBeGreaterThan(readsBefore)
     await expect.poll(() => page.getByRole('button', { name: '下一步', exact: true }).isEnabled()).toBe(true)
@@ -475,7 +475,7 @@ describe.skipIf(MODE === 'record')('web e2e: App-only desktop onboarding', () =>
 
   it('applies API-key defaults without opening App onboarding or repeating after account login', async () => {
     await scaffold.ctx.credentials.deleteRecord(credentialKey('deepseek-account-platform', 'default'))
-    await scaffold.ctx.credentials.set(credentialRef('DEEPSEEK_API_KEY'), 'fixture-api-key')
+    await scaffold.ctx.credentials.set(credentialRef('GLKJ_API_KEY'), 'fixture-api-key')
     await scaffold.ctx.settings.mutate(NS, Object.entries(INITIAL).map(([field, value]) => ({ op: 'set', path: [field], value })))
     page = await desktopPage()
     // Completion follows client activation, credential metadata, and three ordered Host writes.

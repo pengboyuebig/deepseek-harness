@@ -3,8 +3,8 @@ import { DeepSeekFetchApiProvider, DeepSeekSearchApiProvider } from '@deepseek-a
 import { customGuidance } from './guidance.ts'
 
 /** Real Search and Fetch API probes; the base names the deployment the key authenticates. */
-const apiKey = process.env.DEEPSEEK_API_KEY
-const baseURL = process.env.DEEPSEEK_SEARCH_API_TEST_BASE_URL ?? ''
+const apiKey = process.env.GLKJ_API_KEY
+const baseURL = process.env.GLKJ_SEARCH_API_TEST_BASE_URL ?? ''
 const maybe = apiKey !== undefined && apiKey.length > 0 && baseURL.length > 0 ? describe : describe.skip
 
 maybe('DeepSeek Search and Fetch real API', () => {

@@ -11,7 +11,7 @@ import { controlEnvironment } from './control-spawn.ts'
 import { SUBPROCESS_CONTROL_FD } from '@deepseek-ai/dsh-subprocess/control'
 
 /** The one private environment variable consumed before target state is restored. */
-export const SUBPROCESS_RUNNER_ENV = 'DSH_SUBPROCESS_RUNNER' as const
+export const SUBPROCESS_RUNNER_ENV = 'GLH_SUBPROCESS_RUNNER' as const
 
 /** Sentinel used by the packaged bootstrap for the Windows IPC runner. */
 export const WINDOWS_RUNNER_SELECTION = 'windows' as const

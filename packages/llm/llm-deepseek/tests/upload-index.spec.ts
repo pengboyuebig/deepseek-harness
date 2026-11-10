@@ -17,16 +17,16 @@ afterEach(async () => {
 
 describe('DeepSeekUploadIndex', () => {
   it('normalizes trailing endpoint slashes in the credential scope', () => {
-    expect(deepSeekFileScope('https://api.deepseek.com///', 'key'))
-      .toBe(deepSeekFileScope('https://api.deepseek.com', 'key'))
+    expect(deepSeekFileScope('https://api.glkj.example.com///', 'key'))
+      .toBe(deepSeekFileScope('https://api.glkj.example.com', 'key'))
   })
 
   it('isolates API-key namespaces and reuses only records above the refresh margin', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-upload-index-'))
     roots.push(dir)
     const index = new DeepSeekUploadIndex(join(dir, 'index.json'))
-    const first = deepSeekFileScope('https://api.deepseek.com', 'first-key')
-    const second = deepSeekFileScope('https://api.deepseek.com', 'second-key')
+    const first = deepSeekFileScope('https://api.glkj.example.com', 'first-key')
+    const second = deepSeekFileScope('https://api.glkj.example.com', 'second-key')
     const record = {
       scope: first,
       attachmentId: ATTACHMENT,
@@ -47,7 +47,7 @@ describe('DeepSeekUploadIndex', () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-upload-index-'))
     roots.push(dir)
     const index = new DeepSeekUploadIndex(join(dir, 'index.json'))
-    const scope = deepSeekFileScope('https://api.deepseek.com', 'key')
+    const scope = deepSeekFileScope('https://api.glkj.example.com', 'key')
     const first = {
       scope, attachmentId: ATTACHMENT, variantId: VARIANT,
       fileId: DeepSeekFileId('file-api-first'), bytes: 3, createdAt: 1, expiresAt: 10_000,
@@ -66,7 +66,7 @@ describe('DeepSeekUploadIndex', () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-upload-index-'))
     roots.push(dir)
     const index = new DeepSeekUploadIndex(join(dir, 'index.json'))
-    const scope = deepSeekFileScope('https://api.deepseek.com', 'key')
+    const scope = deepSeekFileScope('https://api.glkj.example.com', 'key')
     const record = (digest: string) => ({
       scope, attachmentId: ATTACHMENT, variantId: ImageVariantId(`sha256:${digest.repeat(64)}`),
       fileId: DeepSeekFileId(`file-api-${digest}`), bytes: 3, createdAt: 1, expiresAt: 10_000,
@@ -92,7 +92,7 @@ describe('DeepSeekUploadIndex', () => {
     const path = join(dir, 'index.json')
     await writeFile(path, '{bad', 'utf8')
     const index = new DeepSeekUploadIndex(path)
-    const scope = deepSeekFileScope('https://api.deepseek.com', 'key')
+    const scope = deepSeekFileScope('https://api.glkj.example.com', 'key')
     const record = {
       scope,
       attachmentId: ATTACHMENT,
@@ -166,7 +166,7 @@ describe('DeepSeekUploadIndex', () => {
     await writeFile(path, text, 'utf8')
     const index = new DeepSeekUploadIndex(path)
     await expect(index.get(
-      deepSeekFileScope('https://api.deepseek.com', 'key'), VARIANT, 1, 1,
+      deepSeekFileScope('https://api.glkj.example.com', 'key'), VARIANT, 1, 1,
     )).resolves.toBeUndefined()
   })
 
@@ -174,7 +174,7 @@ describe('DeepSeekUploadIndex', () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-upload-index-'))
     roots.push(dir)
     const path = join(dir, 'index.json')
-    const scope = deepSeekFileScope('https://api.deepseek.com', 'key')
+    const scope = deepSeekFileScope('https://api.glkj.example.com', 'key')
     const record = {
       scope, attachmentId: ATTACHMENT, variantId: VARIANT,
       fileId: DeepSeekFileId('file-api-one'), bytes: 3, createdAt: 1, expiresAt: 10_000,
@@ -188,8 +188,8 @@ describe('DeepSeekUploadIndex', () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-upload-index-'))
     roots.push(dir)
     const index = new DeepSeekUploadIndex(join(dir, 'index.json'))
-    const first = deepSeekFileScope('https://api.deepseek.com', 'first')
-    const second = deepSeekFileScope('https://api.deepseek.com', 'second')
+    const first = deepSeekFileScope('https://api.glkj.example.com', 'first')
+    const second = deepSeekFileScope('https://api.glkj.example.com', 'second')
     const expired = {
       scope: first, attachmentId: ATTACHMENT, variantId: VARIANT,
       fileId: DeepSeekFileId('file-api-expired'), bytes: 3, createdAt: 1, expiresAt: 2,
@@ -212,7 +212,7 @@ describe('DeepSeekUploadIndex', () => {
     await mkdir(path)
     const index = new DeepSeekUploadIndex(path)
     await expect(index.get(
-      deepSeekFileScope('https://api.deepseek.com', 'key'), VARIANT, 1, 1,
+      deepSeekFileScope('https://api.glkj.example.com', 'key'), VARIANT, 1, 1,
     )).rejects.toBeInstanceOf(Error)
   })
 })

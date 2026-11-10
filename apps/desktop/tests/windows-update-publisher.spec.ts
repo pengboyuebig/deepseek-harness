@@ -49,11 +49,11 @@ async function withCertificate(subject: unknown, action: (file: string, signTool
 
 describe('Windows update publisher', () => {
   beforeAll(() => {
-    vi.stubEnv('DSH_DESKTOP_APP_ID', 'com.example.publisher-test')
-    vi.stubEnv('DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN', 'https://policy.example.com')
-    vi.stubEnv('DSH_DESKTOP_MANDATORY_UPDATE_CONFIG', JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }))
-    vi.stubEnv('DSH_DESKTOP_TARGET_PLATFORM', 'win32')
-    vi.stubEnv('DSH_DESKTOP_UNSIGNED', '1')
+    vi.stubEnv('GLH_DESKTOP_APP_ID', 'com.example.publisher-test')
+    vi.stubEnv('GLH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN', 'https://policy.example.com')
+    vi.stubEnv('GLH_DESKTOP_MANDATORY_UPDATE_CONFIG', JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }))
+    vi.stubEnv('GLH_DESKTOP_TARGET_PLATFORM', 'win32')
+    vi.stubEnv('GLH_DESKTOP_UNSIGNED', '1')
   })
   afterAll(() => vi.unstubAllEnvs())
 
@@ -79,15 +79,15 @@ describe('Windows update publisher', () => {
     const { createElectronBuilderConfig } = await import('../electron-builder.config.mjs')
     await withCertificate({ CN: 'Publisher', O: 'Company', C: 'CN' }, async (file, signTool) => {
       const config = createElectronBuilderConfig({
-        DSH_DESKTOP_APP_ID: 'com.example.publisher-test',
-        DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
-        DSH_DESKTOP_MANDATORY_UPDATE_PROD_ORIGIN: 'https://policy.example.com',
-        ...(explicitTarget ? { DSH_DESKTOP_TARGET_PLATFORM: 'win32' } : {}),
-        DSH_DESKTOP_WINDOWS_CER_FILE: file,
-        DSH_DESKTOP_WINDOWS_SIGNTOOL: signTool,
-        DSH_DESKTOP_WINDOWS_KEY_CONTAINER: 'test-container',
-        DSH_DESKTOP_WINDOWS_TOKEN_PIN: 'test-pin',
-        DSH_DESKTOP_AUTO_UPDATE_ENV: 'production',
+        GLH_DESKTOP_APP_ID: 'com.example.publisher-test',
+        GLH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
+        GLH_DESKTOP_MANDATORY_UPDATE_PROD_ORIGIN: 'https://policy.example.com',
+        ...(explicitTarget ? { GLH_DESKTOP_TARGET_PLATFORM: 'win32' } : {}),
+        GLH_DESKTOP_WINDOWS_CER_FILE: file,
+        GLH_DESKTOP_WINDOWS_SIGNTOOL: signTool,
+        GLH_DESKTOP_WINDOWS_KEY_CONTAINER: 'test-container',
+        GLH_DESKTOP_WINDOWS_TOKEN_PIN: 'test-pin',
+        GLH_DESKTOP_AUTO_UPDATE_ENV: 'production',
       }, 'win32', 'x64')
       expect(config.win.forceCodeSigning).toBe(true)
       expect(config.artifactName).toBe('deepseek-harness-${version}-${os}-${arch}.${ext}')

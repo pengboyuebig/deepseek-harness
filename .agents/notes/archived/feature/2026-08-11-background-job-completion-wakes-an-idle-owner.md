@@ -33,7 +33,7 @@ Injection is correct there. A cancelled turn is a user pressing stop, and reopen
 
 Waking is unbounded unless `maxConsecutiveWakes` is set. With it set, the value caps the turns one owner may open this way; beyond it a notice degrades to injection and waits for the next turn. Claiming any user-authored message restores the budget — claiming, not arrival, because that is the point human input actually enters a step. Notices this plugin queued never refill it.
 
-The cap exists because this chain is self-exciting in a way subagent settlement is not. Settlement is bounded by how many children the model spawned; a woken turn can start the background job whose completion wakes it again, with nobody watching. It has no default because a notice past the cap stalls the session invisibly; the [unbounded-by-default decision](2026-09-22-unbounded-completion-wakes-by-default.md) records that trade-off. `dsh run` needs no separate policy either way: headless exits once the task turn goes idle, so a completion after that point has no owner to wake.
+The cap exists because this chain is self-exciting in a way subagent settlement is not. Settlement is bounded by how many children the model spawned; a woken turn can start the background job whose completion wakes it again, with nobody watching. It has no default because a notice past the cap stalls the session invisibly; the [unbounded-by-default decision](2026-09-22-unbounded-completion-wakes-by-default.md) records that trade-off. `glh run` needs no separate policy either way: headless exits once the task turn goes idle, so a completion after that point has no owner to wake.
 
 `completionDelivery: quiet` restores the old lane for idle owners. It exists for deterministic transcripts; job completion independently retains `quiet | wakeup` because its bounded owner-turn policy differs from next-step subagent reports.
 
@@ -55,7 +55,7 @@ The cap exists because this chain is self-exciting in a way subagent settlement 
 
 **Refusing to reopen a turn that already produced a visible answer,** Codex's `MailboxDeliveryPhase` latch. That latch is the default this decision deliberately inverts: waking after the model has spoken is the entire point, and the optional wake budget is the bound instead.
 
-**A wall-clock window** on top of the counter. For an interactive agent the slow case is the wanted one — an hour-long build finishing and the agent resuming is the feature — and `dsh run` exits once its task turn goes idle regardless. Worth revisiting only if an unattended long-lived deployment appears.
+**A wall-clock window** on top of the counter. For an interactive agent the slow case is the wanted one — an hour-long build finishing and the agent resuming is the feature — and `glh run` exits once its task turn goes idle regardless. Worth revisiting only if an unattended long-lived deployment appears.
 
 **Suppressing `onJobDone` entirely during owner drain,** symmetric with the service-wide `listenersClosed`. It reads cleaner and removes a signal that is not only for notices: the force-fail record and the runtime invariant both observe teardown settlements. The `reported` bit denies exactly the reporters and nothing else.
 

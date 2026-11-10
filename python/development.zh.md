@@ -29,9 +29,9 @@ uv run --project python/sdk pytest
 
 匹配的 engine 包已发布时，LibreOffice Kit CI 负责在 macOS、Windows 和 Linux 上通过已安装的 Node API 与 CLI 检查可见的 Office 内容。Harness 则通过已安装 wheel 包的冒烟测试验证搬移后的 Office sidecar；Python 测试会拒绝全白、全透明、左右颠倒和缺少文字的输出。
 
-将 `DSH_OFFICE_TEST_ARTIFACTS` 设为一个新目录，即可保留已安装 wheel 包冒烟测试的 Office 输入、PNG、清单与失败诊断信息。CI 在成功与失败时都会上传这些文件，不包含临时运行时文件。
+将 `GLH_OFFICE_TEST_ARTIFACTS` 设为一个新目录，即可保留已安装 wheel 包冒烟测试的 Office 输入、PNG、清单与失败诊断信息。CI 在成功与失败时都会上传这些文件，不包含临时运行时文件。
 
-该套件面向的是伪造的运行时对端。`scripts/smoke-python-runtime.py` 面向打包运行时。`python-runtime` CI 任务在拉取请求上构建 Linux x64 与 Windows x64，在 master 推送上构建 Linux arm64 与两种 macOS 架构。每个选定目标把匹配的 SDK wheel 包与运行时 wheel 包安装进新的 Python 3.10 虚拟环境，在 checkout 外清除 `PYTHONPATH` 与 `DSH_RUNTIME_MODE` 后运行，证明两个模块及可执行文件都来自这些 distribution，然后运行全部 keyless 场景。聚焦的本地源码 SDK 运行可以选择一个已构建可执行文件与场景：
+该套件面向的是伪造的运行时对端。`scripts/smoke-python-runtime.py` 面向打包运行时。`python-runtime` CI 任务在拉取请求上构建 Linux x64 与 Windows x64，在 master 推送上构建 Linux arm64 与两种 macOS 架构。每个选定目标把匹配的 SDK wheel 包与运行时 wheel 包安装进新的 Python 3.10 虚拟环境，在 checkout 外清除 `PYTHONPATH` 与 `GLH_RUNTIME_MODE` 后运行，证明两个模块及可执行文件都来自这些 distribution，然后运行全部 keyless 场景。聚焦的本地源码 SDK 运行可以选择一个已构建可执行文件与场景：
 
 ```sh
 uv run --project python/sdk python scripts/smoke-python-runtime.py \
@@ -44,9 +44,9 @@ SDK 场景会比对 `scripts/snapshots/python-sdk-single-exe/` 下已提交的�
 
 `advanced` 与 `restart` 的比较按每份输入自身的 Session 代际匹配原生 delivery 限定值，包括 SDK 事件与通知。捕获的代际及其他 delivery 代际保留数值。每一侧的 Session 角色必须使用同一个代际，新日志必须标识当前写入器。比较绝不重写已提交的记录。
 
-可信拉取请求与 master 推送还会在各自选定的原生目标上运行 `--scenario sdk-live --installed-wheel`。该场景面向 `https://api.deepseek.com` 执行两个使用工具的轮次：立即检查已创建文件，将其内容替换为仅宿主知道的随机挑战值，并要求第二轮将变更后的内容复制到全新的回执文件，且不修改源文件。两个轮次都必须完成、返回精确的哨兵答案并由模型请求调用工具；文件通过外部逐字节比较验证。仓库密钥缺失时失败，而不是自行 skip。Fork 与 Dependabot 拉取请求会运行完整的 keyless 安装后 wheel 路径，但不会获得密钥。
+可信拉取请求与 master 推送还会在各自选定的原生目标上运行 `--scenario sdk-live --installed-wheel`。该场景面向 `https://api.glkj.example.com` 执行两个使用工具的轮次：立即检查已创建文件，将其内容替换为仅宿主知道的随机挑战值，并要求第二轮将变更后的内容复制到全新的回执文件，且不修改源文件。两个轮次都必须完成、返回精确的哨兵答案并由模型请求调用工具；文件通过外部逐字节比较验证。仓库密钥缺失时失败，而不是自行 skip。Fork 与 Dependabot 拉取请求会运行完整的 keyless 安装后 wheel 路径，但不会获得密钥。
 
-交互式冒烟测试需要环境变量或仓库根目录 `.env` 中存在 `DEEPSEEK_API_KEY`：
+交互式冒烟测试需要环境变量或仓库根目录 `.env` 中存在 `GLKJ_API_KEY`：
 
 ```python
 from deepseek_harness import DeepSeekHarness
@@ -55,18 +55,18 @@ with DeepSeekHarness(dsh_home="/absolute/path/to/test-dsh-home") as harness:
     print(harness.run("say hi").final_response)
 ```
 
-也可以导出非空 `DSH_HOME`。SDK 会拒绝可能静默使用 `~/.dsh` 的启动。
+也可以导出非空 `GLH_HOME`。SDK 会拒绝可能静默使用 `~/.glh` 的启动。
 
 ## 针对 Node 源码运行
 
-仓库贡献者可以选择以下任一开发路径；两者都执行普通的 `dsh --profile sdk` 启动器：
+仓库贡献者可以选择以下任一开发路径；两者都执行普通的 `glh --profile sdk` 启动器：
 
-- 设置 `DSH_RUNTIME_MODE=node`，在系统 Node `>=24.9` 上使用已构建的 Node 载体。构建脚本会刷新该载体，但分发物绝不会包含或自动选择它。
+- 设置 `GLH_RUNTIME_MODE=node`，在系统 Node `>=24.9` 上使用已构建的 Node 载体。构建脚本会刷新该载体，但分发物绝不会包含或自动选择它。
 - 将 `dsh_bin` 设置为已构建 `apps/cli/lib/bin.js` 的绝对路径，直接验证当前 checkout 的 CLI。请显式提供 `dsh_home`，并按需提供 `profile` 与有序 `patches`。
 
 `python/sdk/tests/manual_sdk_agent_smoke.py` 使用内部 `_launch_args` 测试适配器，通过 tsx 验证未构建的 TypeScript CLI。公开 SDK 刻意不提供任意 argv 替换。
 
-手动[关闭示例](sdk/tests/manual_sdk_shutdown_smoke.py)只使用普通 SDK 调用：运行一轮真实模型短对话，以默认 1 秒预算立即关闭，再启动另一个运行时恢复同一会话。安装 SDK／运行时并设置 `DEEPSEEK_API_KEY` 后运行：
+手动[关闭示例](sdk/tests/manual_sdk_shutdown_smoke.py)只使用普通 SDK 调用：运行一轮真实模型短对话，以默认 1 秒预算立即关闭，再启动另一个运行时恢复同一会话。安装 SDK／运行时并设置 `GLKJ_API_KEY` 后运行：
 
 ```sh
 python python/sdk/tests/manual_sdk_shutdown_smoke.py

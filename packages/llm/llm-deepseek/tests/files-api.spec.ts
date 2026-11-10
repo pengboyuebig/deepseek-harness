@@ -103,7 +103,7 @@ describe('DeepSeekFilesClient', () => {
       expect(url.pathname).toBe('/anthropic/v1/files/file-api-one')
       return new Response(JSON.stringify(init?.method === 'DELETE' ? { id: 'file-api-one', type: 'file_deleted' } : file()))
     }) as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com/anthropic', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com/anthropic', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
     await expect(client.list({ after: DeepSeekFileId('file-before'), limit: 1_000 })).resolves.toMatchObject({ data: [{ bytes: 3 }], hasMore: false })
     await expect(client.retrieve(DeepSeekFileId('file-api-one'))).resolves.toMatchObject({ id: 'file-api-one', bytes: 3 })
     await expect(client.delete(DeepSeekFileId('file-api-one'))).resolves.toBeUndefined()
@@ -172,7 +172,7 @@ describe('DeepSeekFilesClient', () => {
 
   it('uploads multipart bytes with attribution and explicit expiry', async () => {
     const fetchImpl = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-      expect(requestUrl(url)).toBe('https://api.deepseek.com/v1/files')
+      expect(requestUrl(url)).toBe('https://api.glkj.example.com/v1/files')
       expect(init?.method).toBe('POST')
       expect(init?.redirect).toBe('error')
       const headers = new Headers(init?.headers)
@@ -189,7 +189,7 @@ describe('DeepSeekFilesClient', () => {
       expect((blob as Blob).size).toBe(3)
       return new Response(JSON.stringify(file()), { status: 200 })
     }) as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com/', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com/', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
 
     await expect(client.upload({
       data: Uint8Array.of(1, 2, 3),
@@ -218,7 +218,7 @@ describe('DeepSeekFilesClient', () => {
       }
       return new Response(JSON.stringify(file()), { status: 200 })
     }) as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
 
     await expect(client.list({ after: DeepSeekFileId('file-api-before'), limit: 20 })).resolves.toMatchObject({
       data: [{ id: 'file-api-one' }], firstId: 'file-api-one', lastId: 'file-api-one', hasMore: false,
@@ -231,7 +231,7 @@ describe('DeepSeekFilesClient', () => {
     const fetchImpl = vi.fn(() => Promise.resolve(new Response(JSON.stringify({
       error: { message: 'user storage quota exceeded', type: 'invalid_request_error', code: 'file_quota' },
     }), { status: 400 }))) as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
 
     const error = await client.upload({
       data: Uint8Array.of(1), mediaType: 'image/png', filename: 'image.png', expiresAfterSeconds: 3_600,
@@ -248,7 +248,7 @@ describe('DeepSeekFilesClient', () => {
     [400, 'FILES_API'],
   ] as const)('classifies HTTP %i Files failures as %s', async (status, code) => {
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.resolve(new Response('not-json', { status }))),
     })
@@ -268,7 +268,7 @@ describe('DeepSeekFilesClient', () => {
     { error: { message: 1, type: 2, code: 3 } },
   ])('falls back to the HTTP status for an unstructured provider error %#', async (body) => {
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status: 400 }))),
     })
@@ -280,7 +280,7 @@ describe('DeepSeekFilesClient', () => {
   it('wraps transport failures but preserves an aborted request reason', async () => {
     const transport = new Error('socket closed')
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.reject(transport)),
     })
@@ -309,7 +309,7 @@ describe('DeepSeekFilesClient', () => {
     file({ filename: '' }),
   ])('rejects an invalid file object %#', async (body) => {
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }))),
     })
@@ -322,7 +322,7 @@ describe('DeepSeekFilesClient', () => {
     3_600.5,
   ])('refuses invalid file expiry %s before transport', async (expiresAfterSeconds) => {
     const fetchImpl = vi.fn() as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
     await expect(client.upload({
       data: Uint8Array.of(1), mediaType: 'image/png', filename: 'image.png', expiresAfterSeconds,
     })).rejects.toMatchObject({ code: 'INVALID_REQUEST' })
@@ -331,7 +331,7 @@ describe('DeepSeekFilesClient', () => {
 
   it('refuses a file larger than the upload limit before transport', async () => {
     const fetchImpl = vi.fn() as typeof fetch
-    const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
+    const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com', headers: { 'x-api-key': 'key' }, fetch: fetchImpl })
     const data = { byteLength: MAX_FILE_UPLOAD_BYTES + 1 } as Uint8Array
     await expect(client.upload({
       data, mediaType: 'image/png', filename: 'image.png', expiresAfterSeconds: 3_600,
@@ -349,7 +349,7 @@ describe('DeepSeekFilesClient', () => {
     { data: [], has_more: false, last_id: 1 },
   ])('rejects an invalid list response %#', async (body) => {
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }))),
     })
@@ -362,7 +362,7 @@ describe('DeepSeekFilesClient', () => {
     }), { status: 200 })))
     vi.stubGlobal('fetch', fetchImpl)
     try {
-      const client = new DeepSeekFilesClient({ baseURL: 'https://api.deepseek.com///', headers: { 'x-api-key': 'key' } })
+      const client = new DeepSeekFilesClient({ baseURL: 'https://api.glkj.example.com///', headers: { 'x-api-key': 'key' } })
       await expect(client.list()).resolves.toEqual({ data: [], hasMore: false })
     } finally {
       vi.unstubAllGlobals()
@@ -377,7 +377,7 @@ describe('DeepSeekFilesClient', () => {
     { id: 'file-api-one', type: 'wrong' },
   ])('rejects an invalid delete response %#', async (body) => {
     const client = new DeepSeekFilesClient({
-      baseURL: 'https://api.deepseek.com',
+      baseURL: 'https://api.glkj.example.com',
       headers: { 'x-api-key': 'key' },
       fetch: vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }))),
     })
@@ -387,7 +387,7 @@ describe('DeepSeekFilesClient', () => {
 
 it('authenticates Files with the raw DSH token', async () => {
   const client = new DeepSeekFilesClient({
-    baseURL: 'https://api.deepseek.com', headers: { 'x-dsh-auth-token': 'account-token' },
+    baseURL: 'https://api.glkj.example.com', headers: { 'x-dsh-auth-token': 'account-token' },
     fetch: (_url, init) => {
       const headers = new Headers(init?.headers)
       expect(headers.get('x-dsh-auth-token')).toBe('account-token')

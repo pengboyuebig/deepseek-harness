@@ -7,13 +7,13 @@ Archived: 2026-09-30
 
 ## 问题
 
-Desktop 已包含 dsh 及其生产依赖。用户需要在终端中管理插件并使用其他 CLI（命令行界面）功能，无需维护另一份安装。
+Desktop 已包含 glh 及其生产依赖。用户需要在终端中管理插件并使用其他 CLI（命令行界面）功能，无需维护另一份安装。
 
 ## 决策
 
 macOS 的 shell 脚本与 Windows 的命令脚本使用已安装 Electron 的 Node 模式运行私有 Desktop CLI 入口。该入口委托给普通 CLI 分派器，通过包操作选项提供内置 pnpm。Desktop Host 启动与 ASAR 打包保留现有行为。
 
-Desktop 内置命令可在应用退出时管理已初始化的 `desktop` profile。它与现有插件操作使用相同的 profile 写锁、包兼容性检查和协调逻辑。Desktop 拥有 profile 初始化流程；CLI 拒绝将缺失的 Desktop profile 初始化为普通 CLI profile。npm 安装的 dsh 不能管理此保留 profile，两种 CLI 都不会启动它。
+Desktop 内置命令可在应用退出时管理已初始化的 `desktop` profile。它与现有插件操作使用相同的 profile 写锁、包兼容性检查和协调逻辑。Desktop 拥有 profile 初始化流程；CLI 拒绝将缺失的 Desktop profile 初始化为普通 CLI profile。npm 安装的 glh 不能管理此保留 profile，两种 CLI 都不会启动它。
 
 Windows 通过 Koffi 注册控制台回调，将 SIGINT 和 SIGBREAK 送到 CLI 的 JavaScript 监听器以完成异步退出。Electron 原生默认行为会在这些监听器运行前退出。现有 Office 引擎解析器为 Web 附件转换提供物理路径；CLI profile 启动不注入 Office 创作 skill（技能）的配置。
 
@@ -25,7 +25,7 @@ Windows 通过 Koffi 注册控制台回调，将 SIGINT 和 SIGBREAK 送到 CLI 
 
 ## 命令注册
 
-固定的**管理 dsh 命令…**菜单显示状态，并提供安装、修复和移除操作。macOS 使用固定的 `/usr/local/bin/dsh` 链接，必要时请求管理员认证，不修改 shell 启动文件。Windows 将专门存放公开启动器的目录注册到当前用户的 PATH。注册与移除是应用安装后的可选菜单操作，安装程序和卸载程序不执行这些操作。私有安装辅助程序不在这个 PATH 目录中。
+固定的**管理 glh 命令…**菜单显示状态，并提供安装、修复和移除操作。macOS 使用固定的 `/usr/local/bin/dsh` 链接，必要时请求管理员认证，不修改 shell 启动文件。Windows 将专门存放公开启动器的目录注册到当前用户的 PATH。注册与移除是应用安装后的可选菜单操作，安装程序和卸载程序不执行这些操作。私有安装辅助程序不在这个 PATH 目录中。
 
 切换已有命令需要确认。执行器重新核对展示过的指纹，并在移走命令时一直使用该次观察到的条目；并发替换的命令会被保留。所有权记录保存之前的 macOS 启动器。若其他安装在重新安装前替换了 Desktop 链接，旧备份会保留并报告；移除操作只恢复当前所有权记录中的备份。Windows 插入一个自有 PATH 条目，并记录此前完全相同条目的数量，移除时保留它们。其他命令位置只展示，不修改。并发对话框共享一个操作，更新准备会等待该操作完成。
 

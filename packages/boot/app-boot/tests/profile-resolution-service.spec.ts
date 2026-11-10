@@ -70,7 +70,7 @@ describe('profile package metadata service', () => {
     const ctx = new Context()
     contexts.push(ctx)
     await ctx.plugin(PluginPackages, {
-      resolution: await createRuntimeResolution({ installAnchor, home: root, profile: loadProfileDirectory('dsh', profileDir, installAnchor) }),
+      resolution: await createRuntimeResolution({ installAnchor, home: root, profile: loadProfileDirectory('glh', profileDir, installAnchor) }),
     })
     expect(ctx.pluginPackages.packageOf('metadata-lib', parentURL)).toBeUndefined()
 
@@ -354,7 +354,7 @@ it.each(['installation', 'bundle'] as const)('exposes installed optional depende
   const optionalDir = join(dirname(anchor), 'node_modules', 'metadata-lib')
   pkg(optionalDir, '1.0.0')
   const active = await createRuntimeResolution({
-    installAnchor, home: root, profile: loadProfileDirectory('dsh', profileDir, installAnchor),
+    installAnchor, home: root, profile: loadProfileDirectory('glh', profileDir, installAnchor),
   })
   expect(active.entries).toContainEqual(expect.objectContaining({ name: 'metadata-lib', packageDir: optionalDir }))
   expect(active.entries.some(entry => entry.name === 'absent-platform')).toBe(false)

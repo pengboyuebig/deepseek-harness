@@ -65,7 +65,7 @@ export async function signMacOSRuntime(
     else if (MACH_O_MAGICS.has(magic(join(root, path)))) files.push(path)
   }
   for (const bundle of [...bundles].sort()) verifyMacOSNotarizedApplication(join(root, bundle), expected)
-  const policy = cacheDirectory === undefined ? undefined : macOSCachePolicy(process.env.DSH_DESKTOP_MACOS_SIGNING_PROBE ?? '')
+  const policy = cacheDirectory === undefined ? undefined : macOSCachePolicy(process.env.GLH_DESKTOP_MACOS_SIGNING_PROBE ?? '')
   let hits = 0
   let misses = 0
   let next = 0

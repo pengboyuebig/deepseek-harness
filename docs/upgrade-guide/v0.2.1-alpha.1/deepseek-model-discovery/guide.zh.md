@@ -13,5 +13,5 @@ description: "DeepSeek API Key 模型发现要求已配置凭据。"
 
 ## 迁移
 
-1. 要使用 API Key 路由，请在设置 → 模型中配置密钥，或通过启动环境提供 `apiKeyEnv` 指定的凭据引用（默认为 `DEEPSEEK_API_KEY`）。
+1. 要使用 API Key 路由，请在设置 → 模型中配置密钥，或通过启动环境提供 `apiKeyEnv` 指定的凭据引用（默认为 `GLKJ_API_KEY`）。
 2. 重新打开模型选择器，确认 DeepSeek 分组出现。自定义模型发现消费者必须处理配置凭据前的空目录；模型列出不代表远端 API 已接受密钥。

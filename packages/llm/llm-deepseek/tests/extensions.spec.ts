@@ -28,8 +28,8 @@ afterEach(async () => {
 async function boot() {
   const home = await mkdtemp(join(tmpdir(), 'dsh-messages-extensions-'))
   cleanup.push(() => rm(home, { recursive: true, force: true }))
-  vi.stubEnv('DSH_HOME', home)
-  vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+  vi.stubEnv('GLH_HOME', home)
+  vi.stubEnv('GLKJ_API_KEY', 'test-key')
   const ctx = new Context()
   cleanup.push(() => ctx.fiber.dispose())
   await ctx.plugin(LlmRuntime)

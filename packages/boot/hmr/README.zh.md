@@ -108,7 +108,7 @@ Loader entry 保留原始导入结果。HMR 为每个 entry 名称与配置树 b
 - 模块替换需要 Node loader 内部接口。框架依赖变化调用宿主提供的 `loader.exit()` 钩子；HMR 本身不重启进程。
 - 仅限于 `package.json` 的变化不会被检测到。`node_modules` 之下 manifest 的监听通知仍被忽略。浏览器 Client 模块图保留独立的浏览器侧加载机制。
 - 替换沿静态导入传播。对陈旧模块的动态 `import()` 在下次调用时求值新文件，而其导入方继续运行；已存在的 Worker 和 TSX loader 线程保留各自的模块缓存。
-- profile 的 `node_modules` 之下的每个符号链接都会扩大比较范围。链接进程入口（通过 bin 链接的真实路径定位）静态导入的包（例如来自 dsh checkout 的 `dsh-app-boot`、Cordis 或 Loader）会把宿主模块纳入范围；这些模块的变化保持待处理，Plugin Manager 对后续操作报告 `restart-required`，直到进程重启。Loader entry 导入的已链接 dsh 包与其他插件一样被替换。
+- profile 的 `node_modules` 之下的每个符号链接都会扩大比较范围。链接进程入口（通过 bin 链接的真实路径定位）静态导入的包（例如来自 glh checkout 的 `dsh-app-boot`、Cordis 或 Loader）会把宿主模块纳入范围；这些模块的变化保持待处理，Plugin Manager 对后续操作报告 `restart-required`，直到进程重启。Loader entry 导入的已链接 glh 包与其他插件一样被替换。
 - 比较记录属于单个 HMR 实例。重启 `hmr` 条目本身的重新组合会重新记录当前文件，因此此时待处理的变化不再被报告或重试。
 - 导入或启动失败的替换版本保持未激活，直到其文件或依赖被修正；旧版本不会被恢复。
 - 兼容性检查只在 DSH 组合行时运行：启动、profile 重新组合和 preset 挂载；Loader 导入模块时不做任何检查。被替换的 profile 行会通过重新组合的预检，但 profile 组合之外的行（例如 preset 行，或通过 `ctx.loader.create()` 添加的条目）以替换后的代码重启，不经检查。Plugin Manager 拒绝不兼容的版本，因此这只影响在它之外变化的包，例如在 profile 目录中手动执行 `pnpm add`，或重新构建的 `link:` 包。

@@ -35,9 +35,9 @@ Status: implemented
 
 所有数字取自同一台共享 Linux 主机（256 vCPU、4 TB 内存，运行期间 load average 23–111），Node v24.18.0、TypeScript 6.0.3、tsdown 0.22.2（rolldown 1.1.1）。
 
-- **Host tsdown：** `node node_modules/tsdown/dist/run.mjs --config-loader native --env.DSH_BUILD_FACE host`，每次运行前删除全部 `lib/typert.*`；各变体交替顺序运行，每组 3–4 个样本。第 2–4 项取自第一轮测量（起点为基线），第 5–7 项取自第二轮测量（起点为第 2–4 项合入后的代码）。产物比较覆盖 `packages/*/*/lib`、`apps/*/lib`、`vendor/*/lib` 顶层的 743 个文件（含 140 个 Typert 产物）的 SHA-256。相同代码的两组中位数相差 0–0.11 s，组内样本跨度最大 2.5 s。
+- **Host tsdown：** `node node_modules/tsdown/dist/run.mjs --config-loader native --env.GLH_BUILD_FACE host`，每次运行前删除全部 `lib/typert.*`；各变体交替顺序运行，每组 3–4 个样本。第 2–4 项取自第一轮测量（起点为基线），第 5–7 项取自第二轮测量（起点为第 2–4 项合入后的代码）。产物比较覆盖 `packages/*/*/lib`、`apps/*/lib`、`vendor/*/lib` 顶层的 743 个文件（含 140 个 Typert 产物）的 SHA-256。相同代码的两组中位数相差 0–0.11 s，组内样本跨度最大 2.5 s。
 - **Client 测试聚合：** references 预先构建后运行 `tsc -p tsconfig.client.json --extendedDiagnostics`，使用全新的 tsBuildInfo 文件；相同代码 6 个样本的 Check 跨度为 3.8 s（约 6%）。
-- **Client tsdown：** 已构建的树上运行 `node node_modules/tsdown/dist/run.mjs --config-loader native --env.DSH_BUILD_FACE client`。第 8 项的原型 3 轮轮换顺序，基线跨度 1.56 s；最终实现与原实现交替运行，各 3 个样本。产物比较覆盖 `{packages,apps,vendor,native}/**/lib/**`（排除 `*.tsbuildinfo`）的全部文件。
+- **Client tsdown：** 已构建的树上运行 `node node_modules/tsdown/dist/run.mjs --config-loader native --env.GLH_BUILD_FACE client`。第 8 项的原型 3 轮轮换顺序，基线跨度 1.56 s；最终实现与原实现交替运行，各 3 个样本。产物比较覆盖 `{packages,apps,vendor,native}/**/lib/**`（排除 `*.tsbuildinfo`）的全部文件。
 
 ### 1. React 类型包只由根 manifest 声明
 

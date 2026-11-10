@@ -2,14 +2,14 @@
 import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it, vi } from 'vitest'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import { createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
+import { createLaunchEnvironmentSnapshot, GLH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
 import { deepSeekApiKeyConfigured, rejectDeepSeekAccountToken, resolveDeepSeekAccountToken, resolveDeepSeekApiKey } from '../src/credential.ts'
 
-const ref = credentialRef('TEST_DEEPSEEK_KEY')
+const ref = credentialRef('TEST_GLKJ_KEY')
 
 function context(value?: string): Context {
   const ctx = new Context()
-  ctx.provide(DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([
+  ctx.provide(GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([
     { source: 'process', values: value === undefined ? {} : { [ref]: value } },
   ]))
   return ctx

@@ -29,9 +29,9 @@ uv run --project python/sdk pytest
 
 LibreOffice Kit CI owns visible Office content checks through its installed Node API and CLI on macOS, Windows, and Linux when matching engine packages are published. Harness verifies the relocated Office sidecar through the installed-wheel smoke; the Python tests reject white, transparent, reversed, and text-free output.
 
-Set `DSH_OFFICE_TEST_ARTIFACTS` to a new directory to retain the installed-wheel smoke's Office inputs, PNGs, manifests, and failure diagnostics. CI uploads these files on success and failure; temporary runtime files are excluded.
+Set `GLH_OFFICE_TEST_ARTIFACTS` to a new directory to retain the installed-wheel smoke's Office inputs, PNGs, manifests, and failure diagnostics. CI uploads these files on success and failure; temporary runtime files are excluded.
 
-That suite drives fake runtime peers. `scripts/smoke-python-runtime.py` drives the packaged runtime instead. The `python-runtime` CI jobs build Linux x64 and Windows x64 on pull requests, and Linux arm64 plus both macOS architectures on master pushes. Each selected target installs the matching SDK and runtime wheels into a new Python 3.10 virtual environment, runs outside the checkout with `PYTHONPATH` and `DSH_RUNTIME_MODE` unset, proves that both modules and the executable came from those distributions, and then runs every keyless scenario. A focused local source-SDK run can select one built executable and scenario:
+That suite drives fake runtime peers. `scripts/smoke-python-runtime.py` drives the packaged runtime instead. The `python-runtime` CI jobs build Linux x64 and Windows x64 on pull requests, and Linux arm64 plus both macOS architectures on master pushes. Each selected target installs the matching SDK and runtime wheels into a new Python 3.10 virtual environment, runs outside the checkout with `PYTHONPATH` and `GLH_RUNTIME_MODE` unset, proves that both modules and the executable came from those distributions, and then runs every keyless scenario. A focused local source-SDK run can select one built executable and scenario:
 
 ```sh
 uv run --project python/sdk python scripts/smoke-python-runtime.py \
@@ -44,9 +44,9 @@ SDK scenarios compare committed expected output under `scripts/snapshots/python-
 
 The `advanced` and `restart` comparisons match native delivery qualifiers against each input's own Session generation, including SDK events and notifications. Captured and other delivery generations retain their numeric values. Each side must use one generation across its Session roles, and fresh logs must identify the current writer. Comparison never rewrites committed recordings.
 
-Trusted pull requests and master pushes also run `--scenario sdk-live --installed-wheel` on each selected native target. That scenario performs two tool-using turns against `https://api.deepseek.com`: it checks the created file immediately, replaces its content with a host-only random challenge, and requires the second turn to copy the changed content into a fresh receipt without modifying the source. Both turns must complete with the exact sentinel answer and a model-requested tool call; external byte comparisons check the files. Missing repository secrets fail instead of self-skipping. Fork and Dependabot pull requests run the complete keyless installed-wheel path but receive no key.
+Trusted pull requests and master pushes also run `--scenario sdk-live --installed-wheel` on each selected native target. That scenario performs two tool-using turns against `https://api.glkj.example.com`: it checks the created file immediately, replaces its content with a host-only random challenge, and requires the second turn to copy the changed content into a fresh receipt without modifying the source. Both turns must complete with the exact sentinel answer and a model-requested tool call; external byte comparisons check the files. Missing repository secrets fail instead of self-skipping. Fork and Dependabot pull requests run the complete keyless installed-wheel path but receive no key.
 
-An interactive smoke test needs `DEEPSEEK_API_KEY` in the environment or repository-root `.env`:
+An interactive smoke test needs `GLKJ_API_KEY` in the environment or repository-root `.env`:
 
 ```python
 from deepseek_harness import DeepSeekHarness
@@ -55,18 +55,18 @@ with DeepSeekHarness(dsh_home="/absolute/path/to/test-dsh-home") as harness:
     print(harness.run("say hi").final_response)
 ```
 
-Alternatively export a non-empty `DSH_HOME`. The SDK rejects a launch that would silently use `~/.dsh`.
+Alternatively export a non-empty `GLH_HOME`. The SDK rejects a launch that would silently use `~/.glh`.
 
 ## Run against Node source
 
-Repository contributors can select either development route; both execute the normal `dsh --profile sdk` launcher:
+Repository contributors can select either development route; both execute the normal `glh --profile sdk` launcher:
 
-- Set `DSH_RUNTIME_MODE=node` to use the built Node carrier on system Node `>=24.9`. The build script refreshes this carrier, but distributions never include or auto-select it.
+- Set `GLH_RUNTIME_MODE=node` to use the built Node carrier on system Node `>=24.9`. The build script refreshes this carrier, but distributions never include or auto-select it.
 - Set `dsh_bin` to the absolute built `apps/cli/lib/bin.js` path to exercise the checkout's CLI directly. Supply an explicit `dsh_home`, plus `profile` and ordered `patches` as needed.
 
 `python/sdk/tests/manual_sdk_agent_smoke.py` uses the internal `_launch_args` test adapter to exercise the unbuilt TypeScript CLI under tsx. Arbitrary argv replacement is intentionally absent from the public SDK.
 
-The manual [shutdown example](sdk/tests/manual_sdk_shutdown_smoke.py) uses ordinary SDK calls: run one short real-model turn, close immediately with the default 1-second budget, then open another runtime and restore the same session. Install the SDK/runtime and set `DEEPSEEK_API_KEY` before running:
+The manual [shutdown example](sdk/tests/manual_sdk_shutdown_smoke.py) uses ordinary SDK calls: run one short real-model turn, close immediately with the default 1-second budget, then open another runtime and restore the same session. Install the SDK/runtime and set `GLKJ_API_KEY` before running:
 
 ```sh
 python python/sdk/tests/manual_sdk_shutdown_smoke.py

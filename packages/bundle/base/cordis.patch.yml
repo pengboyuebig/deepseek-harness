@@ -110,7 +110,7 @@
       name: '@deepseek-ai/dsh-settings'
       disabled: !!js "!ctx.get('profileContext')"
 
-    # Credential sources: managed `$DSH_HOME/.credentials.yaml`, then inherited
+    # Credential sources: managed `$GLH_HOME/.credentials.yaml`, then inherited
     # environment, project `.env`, and user `.env` fallbacks.
     # Adapters resolve references per request; the Models page writes only the
     # managed document, which is never materialized into the process environment.
@@ -204,10 +204,10 @@
 
     # OTel releases a Session-log prefix only after explicit user feedback,
     # regardless of model provider. Ordinary activity never triggers capture.
-    # DSH_TELEMETRY_OTLP_URL overrides the production endpoint. A non-empty
-    # DSH_TELEMETRY_DISABLED — any value, including '0'/'false' — opts the
+    # GLH_TELEMETRY_OTLP_URL overrides the production endpoint. A non-empty
+    # GLH_TELEMETRY_DISABLED — any value, including '0'/'false' — opts the
     # process out (the launchers patch the row disabled; config cannot disable
-    # a row). Exports carry the harness home's anonymous user id ($DSH_HOME/.anonymous-user-id,
+    # a row). Exports carry the harness home's anonymous user id ($GLH_HOME/.anonymous-user-id,
     # random UUID; delete the file to reset the identity) as the Resource's
     # user.id. Byte-bounded batching may turn an authorized prefix into
     # several HTTP requests. Requests run serially; each has its own 1s
@@ -218,11 +218,11 @@
     - id: session-telemetry-otel
       name: '@deepseek-ai/dsh-session-telemetry-otel'
       config:
-        mode: !!js process.env.DSH_TELEMETRY_MODE || 'FEEDBACK_ONLY'
+        mode: !!js process.env.GLH_TELEMETRY_MODE || 'FEEDBACK_ONLY'
         shutdownTimeoutMillis: 3000
         maxRequestBytes: 4000000
         exporter:
-          url: !!js process.env.DSH_TELEMETRY_OTLP_URL ?? 'https://dsh-otel-collector.deepseeksvc.com/v1/logs'
+          url: !!js process.env.GLH_TELEMETRY_OTLP_URL ?? 'https://dsh-otel-collector.deepseeksvc.com/v1/logs'
           compression: gzip
           timeoutMillis: 1000
         processor:
@@ -243,7 +243,7 @@
     - id: sandbox-policy
       name: '@deepseek-ai/dsh-sandbox-policy'
       config:
-        mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+        mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
         workspaceRoot: !!js process.cwd()
 
     - id: bash-sandbox
@@ -259,7 +259,7 @@
     - id: approval
       name: '@deepseek-ai/dsh-user-approval'
       config:
-        policy: !!js "(process.env.DSH_PERMISSION_MODE ?? 'workspace-write') === 'danger-full-access' ? 'never' : 'ask'"
+        policy: !!js "(process.env.GLH_PERMISSION_MODE ?? 'workspace-write') === 'danger-full-access' ? 'never' : 'ask'"
 
     - id: permission
       name: '@deepseek-ai/dsh-permission-presets'
@@ -467,11 +467,11 @@
     # (deepseek-search-api, deepseek-fetch-api) follow the conversation: on the
     # deepseek-account route they send the account token to that route's
     # origin, and otherwise the API key of the DeepSeek API-key route to its
-    # origin, so a DEEPSEEK_API_KEY alone serves both without a sign-in.
+    # origin, so a GLKJ_API_KEY alone serves both without a sign-in.
     # searchBaseURL / searchApiKeyEnv (fetch* for Fetch) pin one capability to
     # its own endpoint and key instead.
     # Legacy Messages search (deepseek-official) is selectable separately and
-    # uses its own endpoint, with the account token or DEEPSEEK_API_KEY.
+    # uses its own endpoint, with the account token or GLKJ_API_KEY.
     # Anonymous fetch accepts only public
     # HTTP(S) destinations, resolves and validates every destination, and pins
     # every actual connection. This composition gives web_search 60s whichever
@@ -488,7 +488,7 @@
     - id: web-search-deepseek
       name: '@deepseek-ai/dsh-web-search-deepseek'
       config:
-        apiKeyEnv: DEEPSEEK_API_KEY
+        apiKeyEnv: GLKJ_API_KEY
 
     - id: web-deepseek-api
       name: '@deepseek-ai/dsh-web-deepseek-api'

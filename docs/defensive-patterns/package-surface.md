@@ -192,7 +192,7 @@ A new `resolve` hook is refused by default — a definite prohibition, not a pre
 
 - Judged condition: does the change add a `resolve` hook, including a wrapper around an existing hook that rewrites the same specifiers?
 - Boundary: this rule decides whether a hook may be added at all; the separation of resolution, hot reload, and plugin management responsibilities is governed separately and does not permit a new hook.
-- The one resolution path is the tsx ESM hook registered by the `dsh` source launch, whose rationale is in the [source-launch Agent Note](../../.agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.md).
+- The one resolution path is the tsx ESM hook registered by the `glh` source launch, whose rationale is in the [source-launch Agent Note](../../.agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.md).
 - Exception: only the two preconditions above, both recorded on the change.
 
 The compliant path when new resolution behavior is genuinely needed, in order.

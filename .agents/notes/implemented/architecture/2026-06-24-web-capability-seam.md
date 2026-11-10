@@ -150,7 +150,7 @@ The "single provider auto-selects" rule is for tests, demos, and simple deployme
   name: '@deepseek-ai/dsh-tool-web'
 ```
 
-Operational overrides feed the same explicit selection path: `DSH_WEB_SEARCH_PROVIDER=deepseek-search-api` is equivalent to config `searchProvider: deepseek-search-api`, not a hidden priority chain inside `dsh-tool-web`.
+Operational overrides feed the same explicit selection path: `GLH_WEB_SEARCH_PROVIDER=deepseek-search-api` is equivalent to config `searchProvider: deepseek-search-api`, not a hidden priority chain inside `dsh-tool-web`.
 
 Each search or fetch reads the configured id when it runs, so a saved settings change selects another provider for the next operation without remounting `dsh-web`. The Search and Fetch menus on the Web search and fetch settings page rely on this to switch each capability's provider independently, including the [DeepSeek Search and Fetch APIs](../feature/2026-10-15-deepseek-search-fetch-api.md); the [web provider selection decision](2026-10-29-web-provider-selection.md) owns the shipped defaults.
 

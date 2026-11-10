@@ -31,7 +31,7 @@ describe('Web development entry', () => {
     const result = await execa('pnpm', ['run', 'dev'], { cwd: WEB_ROOT, reject: false })
     expect(result.exitCode).not.toBe(0)
     expect(result.stderr).toContain('apps/web is not a standalone application')
-    expect(result.stderr).toContain('dsh web')
+    expect(result.stderr).toContain('glh web')
   })
 
   it('rejects the standalone Vite server with the full-host correction', async () => {
@@ -46,14 +46,14 @@ describe('Web development entry', () => {
         timeout: 10_000,
         env: {
           ...process.env,
-          DSH_LISTEN_PROBE_MARKER: marker,
+          GLH_LISTEN_PROBE_MARKER: marker,
           NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --import ${pathToFileURL(probeModule).href}`.trim(),
         },
       })
       expect(result.timedOut).toBe(false)
       expect(result.exitCode).not.toBe(0)
       expect(result.stderr).toContain('apps/web is not a standalone application')
-      expect(result.stderr).toContain('dsh web')
+      expect(result.stderr).toContain('glh web')
       expect(result.stderr).toContain('window.__DSH_BOOT__')
       expect(existsSync(marker), 'Vite called Server.listen before rejecting standalone serve mode').toBe(false)
     } finally {

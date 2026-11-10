@@ -82,7 +82,7 @@ export interface WebRuntimeConfig {
 export class WebRuntime extends TypertRemoteService {
   /**
    * Provider selection config. Operational env overrides feed the SAME fields:
-   * `$DSH_WEB_SEARCH_PROVIDER` / `$DSH_WEB_FETCH_PROVIDER` are equivalent to
+   * `$GLH_WEB_SEARCH_PROVIDER` / `$GLH_WEB_FETCH_PROVIDER` are equivalent to
    * `searchProvider` / `fetchProvider` and are NOT a hidden priority chain.
    */
   static Config = z.object({
@@ -97,8 +97,8 @@ export class WebRuntime extends TypertRemoteService {
 
   constructor(ctx: Context, private readonly config: WebRuntimeConfig) {
     super(ctx, 'web')
-    this.searchProviderEnv = process.env.DSH_WEB_SEARCH_PROVIDER
-    this.fetchProviderEnv = process.env.DSH_WEB_FETCH_PROVIDER
+    this.searchProviderEnv = process.env.GLH_WEB_SEARCH_PROVIDER
+    this.fetchProviderEnv = process.env.GLH_WEB_FETCH_PROVIDER
   }
 
   /**

@@ -34,7 +34,7 @@ Mount the plugin alongside `dsh-web` and select its providers. Shipped profiles 
 - name: '@deepseek-ai/dsh-web-deepseek-api'
   config:
     searchBaseURL: https://search.example.test/api/v1/tools
-    searchApiKeyEnv: DEEPSEEK_SEARCH_API_KEY
+    searchApiKeyEnv: GLKJ_SEARCH_API_KEY
 ```
 
 | Field | Default | Meaning |
@@ -42,23 +42,23 @@ Mount the plugin alongside `dsh-web` and select its providers. Shipped profiles 
 | `count` | `10` | Search API results per search, an integer from 1 to 50; a smaller `maxResults` on the request wins |
 | `searchRequestsPerSecond` | `5` | Most Search requests this plugin instance sends in any one-second window, matching the service's account-wide 5 QPS limit; later searches wait, and the wait counts against the caller's timeout |
 | `sendOriginalQuestion` | `true` | Send the triggering human prompt, cut to 128 characters, as the Search API's `ori_question` |
-| `searchBaseURL` | omitted | Search API base including its path prefix; `/search` is appended. Set alone, `searchApiKeyEnv` defaults to `DEEPSEEK_API_KEY` ([authentication](#authentication)) |
-| `searchApiKeyEnv` | omitted | Search credential reference. Set alone, `searchBaseURL` defaults to `https://api.deepseek.com/v1/tools` |
+| `searchBaseURL` | omitted | Search API base including its path prefix; `/search` is appended. Set alone, `searchApiKeyEnv` defaults to `GLKJ_API_KEY` ([authentication](#authentication)) |
+| `searchApiKeyEnv` | omitted | Search credential reference. Set alone, `searchBaseURL` defaults to `https://api.glkj.example.com/v1/tools` |
 | `fetchBaseURL` | omitted | Fetch API base including its path prefix; `/fetch` is appended, with the same defaults |
 | `fetchApiKeyEnv` | omitted | Fetch credential reference, with the same defaults |
 
-A capability with neither field follows the conversation and reaches `/v1/tools/search` and `/v1/tools/fetch` under the origin of the selected DeepSeek model route's resolved Messages base URL, so the official `https://api.deepseek.com/anthropic`, or a `DEEPSEEK_BASE_URL` override, becomes `https://api.deepseek.com/v1/tools`, or the override's origin with `/v1/tools`. Fill an own base URL with the complete API base, including its path prefix and excluding the operation name; a deployment with another prefix, such as `/api/v1/tools`, needs its complete base. An empty field counts as unset. The own fields are YAML-only; the settings page selects providers and shows no credential controls for these providers. Stored `baseURL`, `apiKeyEnv`, and `apiKey` fields of earlier settings load without error and have no effect.
+A capability with neither field follows the conversation and reaches `/v1/tools/search` and `/v1/tools/fetch` under the origin of the selected DeepSeek model route's resolved Messages base URL, so the official `https://api.glkj.example.com/anthropic`, or a `GLKJ_BASE_URL` override, becomes `https://api.glkj.example.com/v1/tools`, or the override's origin with `/v1/tools`. Fill an own base URL with the complete API base, including its path prefix and excluding the operation name; a deployment with another prefix, such as `/api/v1/tools`, needs its complete base. An empty field counts as unset. The own fields are YAML-only; the settings page selects providers and shows no credential controls for these providers. Stored `baseURL`, `apiKeyEnv`, and `apiKey` fields of earlier settings load without error and have no effect.
 
-Run the real API tests with `DEEPSEEK_API_KEY` and `DEEPSEEK_SEARCH_API_TEST_BASE_URL`; both are required, and the latter includes the API path prefix.
+Run the real API tests with `GLKJ_API_KEY` and `GLKJ_SEARCH_API_TEST_BASE_URL`; both are required, and the latter includes the API path prefix.
 
 <a id="authentication"></a>
 ### Authentication
 
 Search and Fetch each resolve their endpoint and credential from one settings snapshot per operation, so a saved setting, a model-provider change, a sign-in, or a stored key applies to the next operation. The conversation's route is the `provider` of the initiating Session's latest request context; `ready()` uses the route of the model request being prepared.
 
-- **Own settings.** A capability with a non-empty `*BaseURL` or `*ApiKeyEnv` sends only the key under its `*ApiKeyEnv` (`DEEPSEEK_API_KEY` when unset) as `Authorization: Bearer` to its `*BaseURL` (`https://api.deepseek.com/v1/tools` when unset) on every route, and never the account token. Without the key, the operation fails with a diagnostic that names the reference and the `*ApiKeyEnv` field.
+- **Own settings.** A capability with a non-empty `*BaseURL` or `*ApiKeyEnv` sends only the key under its `*ApiKeyEnv` (`GLKJ_API_KEY` when unset) as `Authorization: Bearer` to its `*BaseURL` (`https://api.glkj.example.com/v1/tools` when unset) on every route, and never the account token. Without the key, the operation fails with a diagnostic that names the reference and the `*ApiKeyEnv` field.
 - **Account conversation.** On the `deepseek-account` route, with an active, valid Loader entry of `@deepseek-ai/dsh-llm-deepseek-account` at the entry root that the model provider directory lists for `deepseek-account`, the operation sends only the token that `ctx.deepseekAccount` releases for the dispatch endpoint under that route's origin, as `x-dsh-auth-token`; the public Search and Fetch routes accepted it on 2026-10-16. Without a sign-in, the account service, or a non-empty token, or without that entry, it sends the API key below instead, to the API-key endpoint. A failed account-token read fails the operation without trying the key. An active entry whose settings the route's own resolver rejects fails the operation before any credential is read.
-- **Any other conversation**, including one on `deepseek-official`, on another provider, or outside a Session, sends the key under the `apiKeyEnv` of the active `@deepseek-ai/dsh-llm-deepseek-api-key` entry the directory lists for `deepseek-official` (`DEEPSEEK_API_KEY` by default) as `Authorization: Bearer` to that route's origin, resolving its options as the route does. Without that entry, or with an inactive one, it sends `DEEPSEEK_API_KEY` to `https://api.deepseek.com/v1/tools`. An active entry whose settings the route's own resolver rejects fails each operation that would send the key, before the key is read; the operation never substitutes the official endpoint or `DEEPSEEK_API_KEY`. Without the key, the operation fails with a diagnostic that names the Models page, the reference, and the account sign-in.
+- **Any other conversation**, including one on `deepseek-official`, on another provider, or outside a Session, sends the key under the `apiKeyEnv` of the active `@deepseek-ai/dsh-llm-deepseek-api-key` entry the directory lists for `deepseek-official` (`GLKJ_API_KEY` by default) as `Authorization: Bearer` to that route's origin, resolving its options as the route does. Without that entry, or with an inactive one, it sends `GLKJ_API_KEY` to `https://api.glkj.example.com/v1/tools`. An active entry whose settings the route's own resolver rejects fails each operation that would send the key, before the key is read; the operation never substitutes the official endpoint or `GLKJ_API_KEY`. Without the key, the operation fails with a diagnostic that names the Models page, the reference, and the account sign-in.
 
 References use the [shared DeepSeek credential helpers](../../llm/llm-deepseek/README.md#account-credentials): `ctx.credentials` is authoritative, with launch-environment lookup only when that service is absent. Route and own keys receive the same whitespace normalization and format validation as model requests; malformed keys fail before dispatch.
 
@@ -126,7 +126,7 @@ A returning or removed web tool changes the declared tools as [`dsh-tool-web`](.
 - API query and URL constraints are enforced by the remote service. An unresolvable Fetch target returned HTTP 500 rather than the documented 404 on 2026-10-16, and its failure carries the same endpoint guidance as an endpoint failure. Fetch exposes neither the target status nor the final redirect URL, so results report HTTP 200 and the requested URL; the provider discards the API's page title.
 - `available()` cannot query asynchronous credential stores; `ready()` does, so model steps withhold the tools when the store lacks the key. A direct `ctx.web.search()` or `ctx.web.fetch()` call can still fail with a missing-credential error.
 - Search pacing limits send times within one plugin instance. Other processes and clients on the same account share the account-wide 5 QPS limit without coordination, and network jitter can still bunch arrivals; an HTTP 429 fails that search, and `dsh-tool-web` then fails the whole multi-query call. Fetch is not paced, so parallel `web_fetch` calls can exceed the Fetch limit.
-- Route endpoints and keys follow only the Loader entries of `@deepseek-ai/dsh-llm-deepseek-api-key` and `@deepseek-ai/dsh-llm-deepseek-account` at the entry root; another package registering the same provider id, such as a test replay adapter, counts as no route, so its conversations use `DEEPSEEK_API_KEY` and the official base.
+- Route endpoints and keys follow only the Loader entries of `@deepseek-ai/dsh-llm-deepseek-api-key` and `@deepseek-ai/dsh-llm-deepseek-account` at the entry root; another package registering the same provider id, such as a test replay adapter, counts as no route, so its conversations use `GLKJ_API_KEY` and the official base.
 
 <a id="dev-note"></a>
 ### Dev Note

@@ -30,7 +30,7 @@ describe('TestRemote', () => {
     const remote = new TestRemote(ctx)
     // No subscriber for this name: the emit must be inert rather than throwing,
     // because the wire carries whatever the Host allowlist selected.
-    expect(() => { remote.emit('credentials/reference-updated', ['DEEPSEEK_API_KEY']) }).not.toThrow()
+    expect(() => { remote.emit('credentials/reference-updated', ['GLKJ_API_KEY']) }).not.toThrow()
     await ctx.fiber.dispose()
   })
 

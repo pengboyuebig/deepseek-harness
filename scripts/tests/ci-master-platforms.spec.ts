@@ -106,7 +106,7 @@ describe('master-only platform scheduling', () => {
       if: masterPush,
       uses: runtimeBuilder,
       with: { ci: true, targets: 'node24-linux-arm64,node24-macos-arm64,node24-macos-x64' },
-      secrets: { DEEPSEEK_API_KEY_EXTERNAL: '${{ secrets.DEEPSEEK_API_KEY_EXTERNAL }}' },
+      secrets: { GLKJ_API_KEY_EXTERNAL: '${{ secrets.GLKJ_API_KEY_EXTERNAL }}' },
     })
     expect(runtime.needs).toBeUndefined()
     expect(runtime['continue-on-error']).toBeUndefined()

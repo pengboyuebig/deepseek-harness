@@ -1,6 +1,6 @@
 ---
 name: cordis-styling-nitpicking
-description: Use during code review of DeepSeek Harness Cordis plugins and helpers reachable from their entrypoints, including pull requests, and during focused lifecycle audits. Checks singleton state, unreversed side effects, and cleanup dependencies released before consumers finish; reports substantiated P0 findings with ownership evidence and deterministic verification.
+description: Use during code review of GLKJ Harness Cordis plugins and helpers reachable from their entrypoints, including pull requests, and during focused lifecycle audits. Checks singleton state, unreversed side effects, and cleanup dependencies released before consumers finish; reports substantiated P0 findings with ownership evidence and deterministic verification.
 ---
 
 # Cordis Ownership and Lifecycle Audit

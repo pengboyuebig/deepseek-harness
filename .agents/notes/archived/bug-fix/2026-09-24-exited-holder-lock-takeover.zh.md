@@ -9,7 +9,7 @@ Archived: 2026-09-30
 
 [dsh-atomic-write](../../../../packages/util/atomic-write/README.zh.md) 的 `withFileLock` 以独占创建方式创建 `<file>.lock`，并在 `finally` 中移除它。进程若未执行该 `finally` 就结束，锁会留在原地，该文件后续的每个写入方都会超时，直到有人手动删除它。[原始决策](../../archived/architecture/2026-07-30-settings-write-path-integrity.md)接受了这一点，因为文件存续时间无法区分已崩溃的持有者与暂停的持有者。
 
-profile 包锁（`<profile>/package.json.lock`）让这个代价显现出来。`dsh plugin` 不安装信号处理器，因此在 pnpm 运行期间按 Ctrl-C、发送 SIGTERM 或关闭其终端都会结束进程，锁随之留下。`dsh` 与 `dsh web` 在应用销毁完成后立即退出，而此时被取消的安装仍在恢复文件，尚未释放锁。崩溃、SIGKILL 或内存不足被杀也有同样效果。发生上述任一情况后，该 profile 上的每个插件操作都会在 `lockWaitMs`（默认两分钟）后失败，且不说明持有者已不存在。
+profile 包锁（`<profile>/package.json.lock`）让这个代价显现出来。`glh plugin` 不安装信号处理器，因此在 pnpm 运行期间按 Ctrl-C、发送 SIGTERM 或关闭其终端都会结束进程，锁随之留下。`glh` 与 `glh web` 在应用销毁完成后立即退出，而此时被取消的安装仍在恢复文件，尚未释放锁。崩溃、SIGKILL 或内存不足被杀也有同样效果。发生上述任一情况后，该 profile 上的每个插件操作都会在 `lockWaitMs`（默认两分钟）后失败，且不说明持有者已不存在。
 
 ## 决策
 
@@ -18,7 +18,7 @@ profile 包锁（`<profile>/package.json.lock`）让这个代价显现出来。`
 - 读到同一条记录的竞争者通过一个以 `wx` 创建的认领文件 `<file>.lock.takeover-<记录 SHA-256 的前 16 位十六进制>` 串行化。认领者重新读取锁并再次探测其 PID，仅当锁仍是该记录且该 PID 仍不存在时才移除它，随后移除认领文件并立即重试获取。PID 不存在时记录的持有者无法再释放它，另一次接管需要同一个认领文件，复用了该 PID 的新持有者无法通过第二次探测，因此认领者绝不会移除另一个竞争者在已退出持有者之后获得的锁。
 - 记录为空、不完整、不是十进制 PID，或指向 PID 0 或超出探测所接受的 int32 范围的 PID 时，竞争者继续等待。这些情况都无法证明持有者已经停止。
 - 接管只能证明记录中的进程已退出，不能证明它启动的进程已停止写入。[Plugin Manager](../../../../packages/boot/plugin-manager/README.zh.md) 在每次 pnpm 运行期间把它记录在 `.plugin-manager/run.json` 中；发现该记录的操作最多等待五秒让记录中的运行停止，否则拒绝运行，并指明该进程与记录文件。
-- 探测在竞争者所在主机上进行。不支持多台主机通过网络文件系统共享同一个 `DSH_HOME` 写入；保护 Session 文件的 `flock` 同样无法可靠地排除它们。
+- 探测在竞争者所在主机上进行。不支持多台主机通过网络文件系统共享同一个 `GLH_HOME` 写入；保护 Session 文件的 `flock` 同样无法可靠地排除它们。
 
 ## 考虑过的替代方案
 
@@ -32,7 +32,7 @@ profile 包锁（`<profile>/package.json.lock`）让这个代价显现出来。`
 
 **终止记录中的 pnpm 运行而不是拒绝。** 其 PID 可能已被无关进程复用，发送信号会杀死该进程。拒绝则把这种情况交给操作者，诊断会指明该进程与记录文件。
 
-**只在 `dsh plugin` 中安装信号处理器。** 这只覆盖留下锁的其中一条路径，崩溃、强制退出和其他锁文件仍会遗留。
+**只在 `glh plugin` 中安装信号处理器。** 这只覆盖留下锁的其中一条路径，崩溃、强制退出和其他锁文件仍会遗留。
 
 ## 验证
 

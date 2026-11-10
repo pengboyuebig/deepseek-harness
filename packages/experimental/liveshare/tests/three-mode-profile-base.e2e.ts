@@ -32,10 +32,10 @@ async function run(cwd: string, home: string, args: readonly string[]) {
     // Source diagnostics use the hook the launch contract names; artifact acceptance uses built lib.
     sourceImport: 'tsx/esm',
     env: {
-      DSH_HOME: home,
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
-      DSH_TELEMETRY_DISABLED: '1',
-      DEEPSEEK_API_KEY: '',
+      GLH_HOME: home,
+      GLH_AGENTS_HOME: join(cwd, '.agents'),
+      GLH_TELEMETRY_DISABLED: '1',
+      GLKJ_API_KEY: '',
       NODE_OPTIONS: [
         process.env.NODE_OPTIONS,
         '--disable-warning=ExperimentalWarning',
@@ -84,7 +84,7 @@ describe('three-mode acceptance: real-profile base', () => {
   it('completes one real turn, writes through the real tool, and reclaims the workspace', async () => {
     const cwd = await mkdtemp(join(tmpdir(), 'liveshare-profile-'))
     try {
-      const home = join(cwd, '.dsh')
+      const home = join(cwd, '.glh')
       const sessions = join(home, 'sessions')
       const profileDir = join(home, 'profiles', 'headless')
       await mkdir(profileDir, { recursive: true })

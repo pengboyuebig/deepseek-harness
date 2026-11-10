@@ -9,7 +9,7 @@ description: "组合包列表和 profile 模板从 @deepseek-ai/dsh-app-boot 移
 
 ## 变更
 
-`@deepseek-ai/dsh-app-boot` 不再导出 `PROFILE_TEMPLATES`、`ProfileTemplate`、`DEFAULT_PROFILE_BUNDLES`、`OPTIONAL_BUNDLES`、`ON_DEMAND_BUNDLES`、`OFFICIAL_ON_DEMAND_CATALOG` 和 `OfficialBundleCatalogEntry`。新发布的包 `@deepseek-ai/dsh-official-bundles` 导出它们，值和类型不变。从 `@deepseek-ai/dsh-app-boot` 导入这些名称的代码将无法编译或加载。`dsh` 启动器、profile 和组合包选择的行为不变。
+`@deepseek-ai/dsh-app-boot` 不再导出 `PROFILE_TEMPLATES`、`ProfileTemplate`、`DEFAULT_PROFILE_BUNDLES`、`OPTIONAL_BUNDLES`、`ON_DEMAND_BUNDLES`、`OFFICIAL_ON_DEMAND_CATALOG` 和 `OfficialBundleCatalogEntry`。新发布的包 `@deepseek-ai/dsh-official-bundles` 导出它们，值和类型不变。从 `@deepseek-ai/dsh-app-boot` 导入这些名称的代码将无法编译或加载。`glh` 启动器、profile 和组合包选择的行为不变。
 
 ## 迁移
 

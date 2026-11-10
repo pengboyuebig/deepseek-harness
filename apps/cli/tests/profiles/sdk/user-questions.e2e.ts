@@ -48,13 +48,13 @@ it.each([
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
   const address = server.address()
   if (address === null || typeof address === 'string') throw new Error('model fixture has no port')
-  const env = { ...process.env, DSH_PERMISSION_MODE: 'danger-full-access', DSH_TELEMETRY_DISABLED: '1',
-    DEEPSEEK_API_KEY: 'keyless-question-fixture', DEEPSEEK_BASE_URL: `http://127.0.0.1:${String(address.port)}` }
+  const env = { ...process.env, GLH_PERMISSION_MODE: 'danger-full-access', GLH_TELEMETRY_DISABLED: '1',
+    GLKJ_API_KEY: 'keyless-question-fixture', GLKJ_BASE_URL: `http://127.0.0.1:${String(address.port)}` }
   clearAmbientProxyEnv(env)
   const seen: SdkUserQuestionRequest[] = []
   const entered = Promise.withResolvers<AbortSignal>()
   const harness = state.harness = new DeepSeekHarness({
-    cwd: root, dshHome: join(root, '.dsh'), env, model: 'deepseek-v4-pro', maxTokens: 1234, initializeTimeoutMs: 30_000,
+    cwd: root, dshHome: join(root, '.glh'), env, model: 'deepseek-v4-pro', maxTokens: 1234, initializeTimeoutMs: 30_000,
     patches: mode === 'ptc' ? [fileURLToPath(new URL('../../../config/examples/ptc.yml', import.meta.url))] : [],
     onUserQuestion: async (request, { signal }) => {
       expect(signal.aborted).toBe(false)

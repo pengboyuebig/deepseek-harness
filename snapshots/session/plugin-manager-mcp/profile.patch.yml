@@ -5,5 +5,5 @@
       config:
         serverName: demo
         transport: streamable-http
-        url: !!js process.env.DSH_MCP_DEMO_URL
+        url: !!js process.env.GLH_MCP_DEMO_URL
         failOnStartupError: true

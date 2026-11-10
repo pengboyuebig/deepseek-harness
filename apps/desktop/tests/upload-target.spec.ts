@@ -33,7 +33,7 @@ describe('desktop upload command', () => {
     { environment: 'test', latest: false, tagged: false },
   ] as const)('uploads $environment latest=$latest with tagged=$tagged', async ({ environment, latest, tagged }) => {
     vi.spyOn(process.stdout, 'write').mockReturnValue(true)
-    const credentials = { ...productionEnvironment, DSH_DESKTOP_AUTO_UPDATE_ENV: environment, DOWNLOAD_TEST_COS_SECRET_ID: 'fixture-id', DOWNLOAD_TEST_COS_SECRET_KEY: 'fixture-key' }
+    const credentials = { ...productionEnvironment, GLH_DESKTOP_AUTO_UPDATE_ENV: environment, DOWNLOAD_TEST_COS_SECRET_ID: 'fixture-id', DOWNLOAD_TEST_COS_SECRET_KEY: 'fixture-key' }
     const plan: DesktopUploadPlan = {
       environment, target: 'win-x64', version: '1.2.3-alpha.4',
       publicUrl: 'https://desktop-updates.example.com/desktop/dsh-latest-windows-x64.exe',
@@ -71,7 +71,7 @@ describe('desktop upload command', () => {
 })
 
 const productionEnvironment = {
-  DSH_DESKTOP_AUTO_UPDATE_ENV: 'production', DOWNLOAD_PROD_COS_BUCKET: 'fixture-bucket',
+  GLH_DESKTOP_AUTO_UPDATE_ENV: 'production', DOWNLOAD_PROD_COS_BUCKET: 'fixture-bucket',
   DOWNLOAD_PROD_COS_SECRET_ID: 'fixture-id', DOWNLOAD_PROD_COS_SECRET_KEY: 'fixture-key', DOWNLOAD_PROD_EO_ZONE_ID: 'zone-fixture',
 }
 
@@ -114,7 +114,7 @@ describe('cache-only submission command', () => {
     const previousExitCode = process.exitCode
     const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true)
     const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true)
-    vi.stubEnv('DSH_DESKTOP_AUTO_UPDATE_ENV', 'production')
+    vi.stubEnv('GLH_DESKTOP_AUTO_UPDATE_ENV', 'production')
     vi.stubEnv('DOWNLOAD_PROD_COS_BUCKET', 'fixture-bucket')
     vi.stubEnv('DOWNLOAD_PROD_COS_SECRET_ID', 'injected-id')
     vi.stubEnv('DOWNLOAD_PROD_COS_SECRET_KEY', 'injected-key')

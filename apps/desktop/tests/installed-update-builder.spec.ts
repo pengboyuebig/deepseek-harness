@@ -18,9 +18,9 @@ vi.mock('../scripts/windows-sign.mjs', () => ({
 }))
 
 const versions = ['0.1.6-nightly.20260914.1', '0.1.6-nightly.20260914.2'] as const
-const environment = { DSH_DESKTOP_AUTO_UPDATE_ENV: 'test', DOWNLOAD_TEST_ORIGIN: 'https://download-test.deepseek.com', DOWNLOAD_TEST_RELEASE_ID: '0123456789abcdef0123456789abcdef',
-  DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
-  DSH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
+const environment = { GLH_DESKTOP_AUTO_UPDATE_ENV: 'test', DOWNLOAD_TEST_ORIGIN: 'https://download-test.deepseek.com', DOWNLOAD_TEST_RELEASE_ID: '0123456789abcdef0123456789abcdef',
+  GLH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN: 'https://policy.example.com',
+  GLH_DESKTOP_MANDATORY_UPDATE_CONFIG: JSON.stringify({ allowedAuthOrigins: ['https://login.example.com'] }),
   DOWNLOAD_TEST_COS_BUCKET: 'bj-toc-download-test-1320056602' }
 const require = createRequire(import.meta.url)
 const { validateConfiguration } = require('app-builder-lib/out/util/config/config.js') as {
@@ -119,8 +119,8 @@ describe('installed-update application inputs and builder configuration', () => 
   })
 
   it.each([
-    { DSH_DESKTOP_AUTO_UPDATE_ENV: 'production' },
-    { DSH_DESKTOP_UNSIGNED: '1' },
+    { GLH_DESKTOP_AUTO_UPDATE_ENV: 'production' },
+    { GLH_DESKTOP_UNSIGNED: '1' },
     { DOWNLOAD_TEST_ORIGIN: 'https://download.deepseek.com' },
   ])('rejects incompatible qualification settings %j', async (override) => {
     await fixture(async (manifest) => {

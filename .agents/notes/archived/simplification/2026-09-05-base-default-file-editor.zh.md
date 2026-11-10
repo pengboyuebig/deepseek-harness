@@ -15,7 +15,7 @@ Archived: 2026-09-30
 
 Web minimal 与独立 `sdk-minimal` bundle 各自负责工具选择，不依赖 base。[仅持久 shell 决策](2026-09-03-minimal-profiles-persistent-shell-only.zh.md)负责它们的单工具默认值。
 
-本决策细化了[统一 dsh 启动器](../architecture/2026-08-22-single-dsh-application-launcher.zh.md)中的共享工具默认值。该文档对启动所有权、共享服务和 patch 优先级仍然有效；没有被完全取代的活跃 Agent Note。
+本决策细化了[统一 glh 启动器](../architecture/2026-08-22-single-dsh-application-launcher.zh.md)中的共享工具默认值。该文档对启动所有权、共享服务和 patch 优先级仍然有效；没有被完全取代的活跃 Agent Note。
 
 ## Alternatives considered
 

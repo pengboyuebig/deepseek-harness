@@ -1,16 +1,16 @@
-Usage: dsh [--profile] <name> [options] [app-args...]
-       dsh plugin --profile <name> <pnpm-args...>
+Usage: glh [--profile] <name> [options] [app-args...]
+       glh plugin --profile <name> <pnpm-args...>
 
-dsh: boot a DeepSeek Harness profile — an ordered stack of plugin-bundle patch
+glh: boot a GLKJ Harness profile — an ordered stack of plugin-bundle patch
 layers under your own overrides.
 
 Arguments:
   args                           arguments for the booted profile's app (see:
-                                 dsh --profile <name> --help)
+                                 glh --profile <name> --help)
 
 Options:
   -V, --version                  output the version number
-  --profile <name>               the profile under $DSH_HOME/profiles to boot
+  --profile <name>               the profile under $GLH_HOME/profiles to boot
   --from-default-profile <name>  replace a custom profile with a fresh copy of a
                                  shipped profile template
   --patch <path>                 extra patch-list overlay applied after the
@@ -22,11 +22,11 @@ Options:
                                  or --patch overlays and exit
 
 Examples:
-  dsh web                                   boot the web profile (same as: dsh --profile web)
-  dsh rescue --from-default-profile web
+  glh web                                   boot the web profile (same as: glh --profile web)
+  glh rescue --from-default-profile web
                                             recreate rescue from the shipped web template, then boot it
-  dsh headless "run the tests"              answer one task, print the result, and exit
-  dsh tui --patch ./extra.yml               boot a custom profile with one extra overlay
-  dsh tui --resume <session>                arguments after the launcher flags reach the app
-  dsh web --help                            the web app's own flags and help
-  dsh plugin --profile tui add <package>    install a plugin into the tui profile
+  glh headless "run the tests"              answer one task, print the result, and exit
+  glh tui --patch ./extra.yml               boot a custom profile with one extra overlay
+  glh tui --resume <session>                arguments after the launcher flags reach the app
+  glh web --help                            the web app's own flags and help
+  glh plugin --profile tui add <package>    install a plugin into the tui profile

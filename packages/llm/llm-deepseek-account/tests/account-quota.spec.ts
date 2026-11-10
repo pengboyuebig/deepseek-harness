@@ -46,7 +46,7 @@ it.each([
   { provider: 'deepseek-account', apiKey: 'fixture-api-key', code: 'ACCOUNT_QUOTA' },
   { provider: 'deepseek-official', apiKey: 'fixture-api-key', code: 'QUOTA' },
 ] as const)('reports a 402 balance rejection on $provider with apiKey "$apiKey" as $code', async ({ provider, apiKey, code }) => {
-  vi.stubEnv('DEEPSEEK_API_KEY', apiKey)
+  vi.stubEnv('GLKJ_API_KEY', apiKey)
   const ctx = await routeFor('account-token', provider)
   vi.spyOn(globalThis, 'fetch').mockImplementation(messagesOnly(() => new Response(JSON.stringify({
     error: { code: 'insufficient_balance', message: 'Insufficient balance' },
@@ -55,7 +55,7 @@ it.each([
 })
 
 it('reports an in-band account balance stream error as ACCOUNT_QUOTA', async () => {
-  vi.stubEnv('DEEPSEEK_API_KEY', 'fixture-api-key')
+  vi.stubEnv('GLKJ_API_KEY', 'fixture-api-key')
   const ctx = await routeFor('account-token', 'deepseek-account')
   vi.spyOn(globalThis, 'fetch').mockImplementation(messagesOnly(() => new Response(
     'event: error\ndata: {"type":"error","error":{"type":"invalid_request_error","code":"insufficient_balance","message":"Insufficient balance"}}\n\n',

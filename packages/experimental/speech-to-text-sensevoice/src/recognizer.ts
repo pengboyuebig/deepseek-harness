@@ -262,7 +262,7 @@ export class SenseVoiceWorker {
     const handle = this.ctx.subprocess.spawn({
       argv: [process.execPath, ...runtime.worker.endsWith('.ts') ? ['--import', import.meta.resolve('tsx/esm')] : [], runtime.worker, JSON.stringify(Object.assign({}, this.config, runtime))],
       cwd: this.config.dataRoot, graceMs: this.config.graceMs,
-      env: { DSH_SPEECH_TOKEN: token, ELECTRON_RUN_AS_NODE: '1' },
+      env: { GLH_SPEECH_TOKEN: token, ELECTRON_RUN_AS_NODE: '1' },
       stdio: { stdin: 'ignore', stdout: 'pipe', stderr: { maxBytes: this.config.maxLogBytes } },
     })
     try {

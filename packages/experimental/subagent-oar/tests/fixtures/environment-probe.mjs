@@ -6,7 +6,7 @@ import { createInterface } from 'node:readline'
 const args = process.argv.slice(2)
 const probe = args.includes('--version') || args.includes('--help')
 const names = [
-  'OAR_FIXTURE_API_TOKEN', 'DSH_OAR_FIXTURE_ID', 'OAR_FIXTURE_KEEP',
+  'OAR_FIXTURE_API_TOKEN', 'GLH_OAR_FIXTURE_ID', 'OAR_FIXTURE_KEEP',
   'OAR_FIXTURE_EXPLICIT_TOKEN', 'OAR_FIXTURE_DELETE',
   'CLAUDECODE', 'CLAUDE_CODE_SESSION_ID', 'CLAUDE_CODE_CHILD_SESSION',
   'CLAUDE_CODE_HOST_WORKTREE_FENCE', 'TRACEPARENT',

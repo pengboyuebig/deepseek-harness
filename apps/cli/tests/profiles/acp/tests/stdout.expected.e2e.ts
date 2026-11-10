@@ -50,8 +50,8 @@ it('keeps account model-listing diagnostics on stderr during API-key session cre
     const address = server.address()
     if (address === null || typeof address === 'string') throw new Error('account catalog server has no port')
     const origin = `http://127.0.0.1:${address.port}`
-    await mkdir(join(cwd, '.dsh'))
-    await writeFile(join(cwd, '.dsh', '.credentials.yaml'), JSON.stringify({
+    await mkdir(join(cwd, '.glh'))
+    await writeFile(join(cwd, '.glh', '.credentials.yaml'), JSON.stringify({
       version: 1,
       records: {
         'deepseek-account-platform/default': { kind: 'grant', payload: { version: 1, token, issuer: origin } },
@@ -78,7 +78,7 @@ it('keeps account model-listing diagnostics on stderr during API-key session cre
     launched = launchAcpTestAgent({
       agent,
       cwd,
-      env: { DEEPSEEK_API_KEY: 'acp-fixture-api-key', DEEPSEEK_BASE_URL: `${origin}/anthropic`, DSH_TELEMETRY_DISABLED: '1' },
+      env: { GLKJ_API_KEY: 'acp-fixture-api-key', GLKJ_BASE_URL: `${origin}/anthropic`, GLH_TELEMETRY_DISABLED: '1' },
     })
     await launched.client.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} })
     const created = await launched.client.newSession({ cwd, mcpServers: [] })
@@ -131,7 +131,7 @@ it('keeps MCP resource-listing diagnostics off stdout for a tools-only client se
     launched = launchAcpTestAgent({
       agent: { binScript, configPath, profile: 'acp', tsconfigPath },
       cwd,
-      env: { DEEPSEEK_API_KEY: 'acp-fixture-api-key', DEEPSEEK_BASE_URL: llm.baseURL, DSH_TELEMETRY_DISABLED: '1' },
+      env: { GLKJ_API_KEY: 'acp-fixture-api-key', GLKJ_BASE_URL: llm.baseURL, GLH_TELEMETRY_DISABLED: '1' },
     })
     await launched.client.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} })
     // The fixture server advertises only the tools capability.

@@ -577,7 +577,7 @@ function writeNodeComparison(output: string, selected: readonly MatrixRow[]): vo
 }
 
 afterAll(() => {
-  const parent = process.env.DSH_RESOLUTION_MATRIX_REPORT_DIR
+  const parent = process.env.GLH_RESOLUTION_MATRIX_REPORT_DIR
   if (parent === undefined) return
   mkdirSync(parent, { recursive: true })
   const output = mkdtempSync(join(resolve(parent), 'run-'))

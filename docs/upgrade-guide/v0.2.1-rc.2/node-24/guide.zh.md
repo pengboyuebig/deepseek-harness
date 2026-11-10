@@ -8,7 +8,7 @@ description: "DSH 要求 Node.js 24.9 或更高版本，不再支持 Node.js 22�
 
 ## 变更
 
-DSH 要求 Node.js 24.9 或更高版本。上一版本还支持 Node.js 22.19 及 22.x 系列中的后续版本。此变更影响 npm 安装、源码检出，以及 Python SDK 显式指定 `DSH_RUNTIME_MODE=node` 的开发载体。打包的桌面应用和 Python SDK 的内置可执行文件自带运行时。
+DSH 要求 Node.js 24.9 或更高版本。上一版本还支持 Node.js 22.19 及 22.x 系列中的后续版本。此变更影响 npm 安装、源码检出，以及 Python SDK 显式指定 `GLH_RUNTIME_MODE=node` 的开发载体。打包的桌面应用和 Python SDK 的内置可执行文件自带运行时。
 
 ## 迁移
 

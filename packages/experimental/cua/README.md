@@ -43,7 +43,7 @@ Actions return `dispatched:true, verified:false`; read fresh state to verify the
 
 ### Permission controls
 
-The application approval card includes a **Risks** tag. Hover over it, focus it with the keyboard, or tap it to read a formatted card about background access to approved apps, each app’s automation rules and possible account restrictions, and stopping through DeepSeek Harness. Moving the pointer onto the card keeps it readable and selectable.
+The application approval card includes a **Risks** tag. Hover over it, focus it with the keyboard, or tap it to read a formatted card about background access to approved apps, each app’s automation rules and possible account restrictions, and stopping through GLKJ Harness. Moving the pointer onto the card keeps it readable and selectable.
 
 On the Computer Use detail page, permission cards, component rows, and source facts use l3 borders, with 32px gaps between sections. Application badges retain their l1 borders.
 
@@ -67,7 +67,7 @@ The Host marker has no configurable fields; platform providers own native config
 <details>
 <summary>Shared execution and platform ownership</summary>
 
-The [permission store](src/permission-store.ts) uses `storageDomain` with the configured backend. The default JSON backend writes `$DSH_HOME/storages/cua_permissions_<sha256>.json`, where the digest identifies the canonical profile directory. Each authorization check opens fresh state under the profile's file lock and closes its domain afterward; native dispatch uses a separate application lock. Revocation waits for operations already admitted by another process; after it completes, every process rejects old handles. Files on different machines or PID namespaces must not share this lock.
+The [permission store](src/permission-store.ts) uses `storageDomain` with the configured backend. The default JSON backend writes `$GLH_HOME/storages/cua_permissions_<sha256>.json`, where the digest identifies the canonical profile directory. Each authorization check opens fresh state under the profile's file lock and closes its domain afterward; native dispatch uses a separate application lock. Revocation waits for operations already admitted by another process; after it completes, every process rejects old handles. Files on different machines or PID namespaces must not share this lock.
 
 Legacy `allowedApps` are imported on first store access and never reapplied after migration. The old configuration can be removed after checking the permission page. Grants, denials and the option to ask again are durable; the page still omits conversation-only grants. Standalone compositions without a profile retain only process-local decisions; a profile without domain storage refuses authorization operations.
 

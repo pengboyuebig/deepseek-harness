@@ -9,7 +9,7 @@ description: "禁用命令行提供方的 Headless 组合必须直接提供沙�
 
 ## 变更
 
-headless 组合包在激活沙箱策略前，通过 `headlessStartup` 读取 `--add-dir`。禁用 `headless-startup` 的 overlay 也必须从 `sandbox-policy` 移除该依赖，否则策略及其依赖工具会保持 pending 状态。普通 `dsh headless` 调用无需修改配置。
+headless 组合包在激活沙箱策略前，通过 `headlessStartup` 读取 `--add-dir`。禁用 `headless-startup` 的 overlay 也必须从 `sandbox-policy` 移除该依赖，否则策略及其依赖工具会保持 pending 状态。普通 `glh headless` 调用无需修改配置。
 
 ## 迁移
 
@@ -19,7 +19,7 @@ headless 组合包在激活沙箱策略前，通过 `headlessStartup` 读取 `--
    - id: sandbox-policy
      inject: []
      config:
-       mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+       mode: !!js process.env.GLH_PERMISSION_MODE ?? 'workspace-write'
        workspaceRoot: !!js process.cwd()
    ```
 

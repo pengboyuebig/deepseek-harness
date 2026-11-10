@@ -62,7 +62,7 @@ describe('SettingsValueField', () => {
       <SettingsValueField
         {...frame}
         numeric
-        placeholder="https://api.deepseek.com"
+        placeholder="https://api.glkj.example.com"
         text=""
         onEdit={vi.fn()}
         onReset={vi.fn()}
@@ -71,7 +71,7 @@ describe('SettingsValueField', () => {
     const input = screen.getByLabelText('Command timeout')
 
     expect(input.getAttribute('inputmode')).toBe('numeric')
-    expect(input).toHaveProperty('placeholder', 'https://api.deepseek.com')
+    expect(input).toHaveProperty('placeholder', 'https://api.glkj.example.com')
   })
 
   it('disables the control and its reset while the document is read-only', () => {

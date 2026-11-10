@@ -199,10 +199,10 @@ describe('Python file sandbox', () => {
 
   it.skipIf(!sandboxUsable)('boots under confinement with stdin EOF, fd-3 bindings, resource limits and a scrubbed environment', async () => {
     const { runtime } = await setup('read-only', { cpuSeconds: 7 })
-    vi.stubEnv('DSH_PYTHON_TEST_SECRET', 'must-not-inherit')
+    vi.stubEnv('GLH_PYTHON_TEST_SECRET', 'must-not-inherit')
     onTestFinished(() => { vi.unstubAllEnvs() })
     const result = await runtime.run(runtime.resolve({
-      program: 'import sys, os, resource\nreturn [sys.stdin.read(), await tools.echo(42), resource.getrlimit(resource.RLIMIT_CPU)[0], os.environ.get("DSH_PYTHON_TEST_SECRET")]',
+      program: 'import sys, os, resource\nreturn [sys.stdin.read(), await tools.echo(42), resource.getrlimit(resource.RLIMIT_CPU)[0], os.environ.get("GLH_PYTHON_TEST_SECRET")]',
       bindings: [{ global: 'tools', functions: { echo: async args => args as number } }],
     }))
     expect(result.error).toBeUndefined()

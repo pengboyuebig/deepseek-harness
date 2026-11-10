@@ -85,7 +85,7 @@ describe('plugin compatibility', () => {
   it('ignores unrelated names and dependency fields', () => {
     expect(check({
       '@deepseek-ai/cordis': 'broken', '@deepseek-ai/cordis-plugin-loader': '^99',
-      '@other/dsh': '^99', '@deepseek-ai/dshx': '^99', dsh: '^99',
+      '@other/dsh': '^99', '@deepseek-ai/dshx': '^99', glh: '^99',
       constructor: '^99', hasOwnProperty: '^99', ['__proto__']: '^99',
     })).toBeUndefined()
     expect(evaluatePluginCompatibility({ dependencies: { '@deepseek-ai/dsh': '^99' } }, {}, runtime)).toBeUndefined()
@@ -158,7 +158,7 @@ describe('engines.dsh', () => {
   })
 
   it('falls back to peers when engines has no own dsh member', () => {
-    const inherited = Object.create({ dsh: '*' }) as object
+    const inherited = Object.create({ glh: '*' }) as object
     for (const value of [{}, { node: '>=99' }, inherited]) {
       expect(evaluatePluginCompatibility({ ...identity, engines: value, peerDependencies: failingPeers }, {}, runtime)?.requirements)
         .toEqual(failingPeers)

@@ -14,8 +14,8 @@ class NestedAdapter extends LlmAdapter {
       .filter(block => block.type === 'text').map(block => block.text)).join('\n')
     let answer: string
     if (messages.includes('nested-child-task')) {
-      writeFileSync(process.env.DSH_TEST_CHILD_READY!, 'ready\n')
-      while (!existsSync(process.env.DSH_TEST_CHILD_RELEASE!)) {
+      writeFileSync(process.env.GLH_TEST_CHILD_READY!, 'ready\n')
+      while (!existsSync(process.env.GLH_TEST_CHILD_RELEASE!)) {
         await setTimeout(10, undefined, { signal: options.signal })
       }
       answer = 'nested child result'
@@ -33,7 +33,7 @@ class NestedAdapter extends LlmAdapter {
     yield { type: 'block-start', index: 0, blockType: 'text' }
     yield { type: 'text-delta', index: 0, text: answer }
     yield { type: 'block-end', index: 0, block: { type: 'text', text: answer } }
-    yield answer === 'parent summary after child' && process.env.DSH_TEST_SUMMARY_ERROR === '1'
+    yield answer === 'parent summary after child' && process.env.GLH_TEST_SUMMARY_ERROR === '1'
       ? { type: 'finish', reason: { kind: 'error', failure: { code: 'SUMMARY_ERROR', message: 'summary failed' } } }
       : { type: 'finish', reason: { kind: 'stop' } }
   }
@@ -47,7 +47,7 @@ export function apply(ctx: Context): void {
   ctx.llm.registerAdapter(['mock'], new NestedAdapter())
   ctx.on('agent/status', ({ agent, status }) => {
     if (status === 'idle' && agent.session.header.parentSession === undefined) {
-      writeFileSync(process.env.DSH_TEST_ROOT_IDLE!, 'idle\n')
+      writeFileSync(process.env.GLH_TEST_ROOT_IDLE!, 'idle\n')
     }
   })
 }

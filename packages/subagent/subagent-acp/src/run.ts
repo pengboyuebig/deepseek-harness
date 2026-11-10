@@ -41,11 +41,11 @@ export interface AcpRunSpec {
   permission: PermissionPolicy
   /**
    * Extra environment variables to ADD for the child (e.g. the child harness's
-   * `DEEPSEEK_API_KEY`). Merged on top of the subprocess seam's scrubbed
+   * `GLKJ_API_KEY`). Merged on top of the subprocess seam's scrubbed
    * parent env. A value here is forwarded even if its name matches the
    * credential-scrub pattern (an explicit opt-in for the child's own creds).
-   * Explicit `DSH_*` entries are deployment-owned facts for the child harness
-   * (e.g. `DSH_PERMISSION_MODE`); they simply merge after the scrub that
+   * Explicit `GLH_*` entries are deployment-owned facts for the child harness
+   * (e.g. `GLH_PERMISSION_MODE`); they simply merge after the scrub that
    * dropped their stale ambient namesakes.
    */
   env: Record<string, string>
@@ -341,7 +341,7 @@ export async function startAcpRun(request: SubagentStartRequest, spec: AcpRunSpe
   const id = brandString<SessionId>(randomUUID())
 
   // Keep diagnostics on parent stderr ('inherit'); only ACP output contributes
-  // to the result. The seam's scrub drops ambient credentials and DSH_* names
+  // to the result. The seam's scrub drops ambient credentials and GLH_* names
   // while spec.env (the child's own key, its deployment facts) merges after it.
   let child: SubprocessHandle
   try {

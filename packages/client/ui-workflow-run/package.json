@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-client-ui-workflow-run",
-  "description": "Durable workflow-run Conversation Node and nested member disclosure for dsh web",
+  "description": "Durable workflow-run Conversation Node and nested member disclosure for glh web",
   "version": "0.2.2-rc.1",
   "publishConfig": {
     "access": "public"

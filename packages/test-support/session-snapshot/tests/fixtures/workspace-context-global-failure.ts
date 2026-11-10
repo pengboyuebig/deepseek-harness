@@ -43,7 +43,7 @@ export function apply(ctx: Context): void {
       || !('file_path' in exec.arguments)) return downstream
     const cwd = exec.agent.session.header.cwd
     if (cwd === undefined) throw new Error('Global instruction snapshot requires a session cwd')
-    const homeFile = join(cwd, '.dsh', 'AGENTS.md')
+    const homeFile = join(cwd, '.glh', 'AGENTS.md')
     const sharedFile = join(cwd, '.agents', 'AGENTS.md')
     switch (exec.arguments.file_path) {
       case 'first.txt':

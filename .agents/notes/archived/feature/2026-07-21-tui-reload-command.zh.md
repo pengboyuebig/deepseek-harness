@@ -11,7 +11,7 @@ HMR 的文件监听器只对其配置根目录（示例中即配置叶子所在�
 
 ## Decision
 
-`dsh-tui` 增加一个**实验性、仅供开发**的 `/reload` 斜杠命令：遍历 `ctx.loader.entries()`，对每个文件后端的子树（`Include`）调用 `refresh()`——即 HMR 监听器配置变更分支所走的同一条代码路径，改为手动触发、不依赖监听器。未变化的文件是无操作（`Include.read` 做内容比较）；无效文件记录警告并保留运行中的树（热重载韧性契约）；include 的 `patches`——包括 dsh CLI 的个人 overlay——在每次重读时重新应用。
+`dsh-tui` 增加一个**实验性、仅供开发**的 `/reload` 斜杠命令：遍历 `ctx.loader.entries()`，对每个文件后端的子树（`Include`）调用 `refresh()`——即 HMR 监听器配置变更分支所走的同一条代码路径，改为手动触发、不依赖监听器。未变化的文件是无操作（`Include.read` 做内容比较）；无效文件记录警告并保留运行中的树（热重载韧性契约）；include 的 `patches`——包括 glh CLI 的个人 overlay——在每次重读时重新应用。
 
 TUI 以**结构方式**访问 Loader（通过局部类型访问 `ctx.loader`，而非 `inject`）：测试和嵌入方在没有 Loader 的情况下运行 TUI，此时 `/reload` 退化为一条警告通知而不是挂载失败。模块源码热重载仍由监听器负责；`/reload` 只刷新配置。
 

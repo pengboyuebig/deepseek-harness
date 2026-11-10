@@ -2,7 +2,7 @@
  * Register a DeepSeek-backed provider in `ctx.web`. It calls the Anthropic-compatible Messages API
  * with native `web_search_20250305`. A search initiated by a Session on the DeepSeek account route
  * authenticates with the account token when the account service allows the search endpoint;
- * every other search reuses `DEEPSEEK_API_KEY`. The provider does not reuse `DEEPSEEK_BASE_URL`;
+ * every other search reuses `GLKJ_API_KEY`. The provider does not reuse `GLKJ_BASE_URL`;
  * auxiliary search has its own endpoint configuration. The provider reports itself not ready for a
  * model request whose search would have no credential.
  * @module @deepseek-ai/dsh-web-search-deepseek
@@ -23,22 +23,22 @@ import type {} from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-web'
 import {
   DeepSeekSearchProvider,
-  DEEPSEEK_DEFAULT_API_VERSION,
-  DEEPSEEK_DEFAULT_BASE_URL,
-  DEEPSEEK_DEFAULT_MAX_TOKENS,
-  DEEPSEEK_DEFAULT_MAX_USES,
-  DEEPSEEK_DEFAULT_MODEL,
+  GLKJ_DEFAULT_API_VERSION,
+  GLKJ_DEFAULT_BASE_URL,
+  GLKJ_DEFAULT_MAX_TOKENS,
+  GLKJ_DEFAULT_MAX_USES,
+  GLKJ_DEFAULT_MODEL,
 } from './provider.ts'
 import type { DeepSeekSearchProviderOptions } from './provider.ts'
 
 export {
   DeepSeekSearchProvider,
-  DEEPSEEK_DEFAULT_API_VERSION,
-  DEEPSEEK_DEFAULT_BASE_URL,
-  DEEPSEEK_DEFAULT_MAX_TOKENS,
-  DEEPSEEK_DEFAULT_MAX_USES,
-  DEEPSEEK_DEFAULT_MODEL,
-  DEEPSEEK_PROVIDER_ID,
+  GLKJ_DEFAULT_API_VERSION,
+  GLKJ_DEFAULT_BASE_URL,
+  GLKJ_DEFAULT_MAX_TOKENS,
+  GLKJ_DEFAULT_MAX_USES,
+  GLKJ_DEFAULT_MODEL,
+  GLKJ_PROVIDER_ID,
 } from './provider.ts'
 export type { DeepSeekSearchLlmRequest, DeepSeekSearchProviderOptions } from './provider.ts'
 
@@ -48,13 +48,13 @@ export const name = 'web-search-deepseek'
 /** The web seam this provider registers into. */
 export const inject = ['web']
 
-const DEFAULT_API_KEY_ENV = 'DEEPSEEK_API_KEY'
+const DEFAULT_API_KEY_ENV = 'GLKJ_API_KEY'
 
 /** Plugin config (all optional — `apply` fills env-var and constant defaults). */
 export interface Config {
   /** Literal DeepSeek API key; prefer {@link apiKeyEnv} so no secret enters configuration files. */
   apiKey: Volatile<string | undefined>
-  /** Credential reference resolved for each search; defaults to `DEEPSEEK_API_KEY`. */
+  /** Credential reference resolved for each search; defaults to `GLKJ_API_KEY`. */
   apiKeyEnv: Volatile<string>
   /** Anthropic-compatible endpoint base; `/messages` is appended. */
   baseURL: Volatile<string | undefined>
@@ -75,23 +75,23 @@ export const Config = z.object({
   // renders the resolved section, so a default the schema does not carry reads
   // there as no value at all.
   baseURL: z.string().volatile(),
-  model: z.string().default(DEEPSEEK_DEFAULT_MODEL).volatile(),
-  apiVersion: z.string().default(DEEPSEEK_DEFAULT_API_VERSION).volatile(),
-  maxTokens: z.number().step(1).min(1).default(DEEPSEEK_DEFAULT_MAX_TOKENS).volatile(),
-  maxUses: z.number().step(1).min(1).default(DEEPSEEK_DEFAULT_MAX_USES).volatile(),
+  model: z.string().default(GLKJ_DEFAULT_MODEL).volatile(),
+  apiVersion: z.string().default(GLKJ_DEFAULT_API_VERSION).volatile(),
+  maxTokens: z.number().step(1).min(1).default(GLKJ_DEFAULT_MAX_TOKENS).volatile(),
+  maxUses: z.number().step(1).min(1).default(GLKJ_DEFAULT_MAX_USES).volatile(),
 })
 
 /**
  * Auxiliary-search endpoint, independent of the conversation adapter's
- * `$DEEPSEEK_BASE_URL` and selected protocol.
+ * `$GLKJ_BASE_URL` and selected protocol.
  */
-const SEARCH_BASE_URL_ENV = 'DEEPSEEK_SEARCH_BASE_URL'
+const SEARCH_BASE_URL_ENV = 'GLKJ_SEARCH_BASE_URL'
 
 /** Provider route id `dsh-llm-deepseek-account` registers; `request/context` events record it per Session. */
 const ACCOUNT_PROVIDER = 'deepseek-account'
 
 /** Settings namespace carrying this provider's endpoint, model, and key reference. */
-export const WEB_SEARCH_DEEPSEEK_SETTINGS_NAMESPACE = 'web-search-deepseek'
+export const WEB_SEARCH_GLKJ_SETTINGS_NAMESPACE = 'web-search-deepseek'
 
 /** Options for one search, with the key reference the readiness check reads. */
 type SearchOptions = DeepSeekSearchProviderOptions & { readonly apiKeyEnv: CredentialRef }
@@ -125,7 +125,7 @@ function resolveOptions(
     apiKeyEnv,
     baseURL: config.baseURL
       ?? launchEnvironmentOf(ctx).get(SEARCH_BASE_URL_ENV)?.value
-      ?? DEEPSEEK_DEFAULT_BASE_URL,
+      ?? GLKJ_DEFAULT_BASE_URL,
     model: config.model,
     apiVersion: config.apiVersion,
     maxTokens: config.maxTokens,

@@ -39,7 +39,7 @@ If an existing record is damaged or its keychain/certificate is missing, setup s
 
 ## Configure the source build
 
-Resolve the DSH home used by the developer (`DSH_HOME`, otherwise `~/.dsh`). Merge the two printed values into its `cordis.patch.yml`, targeting the entry that loads `@deepseek-ai/dsh-experimental-cua-macos`. The shipped entry ID is `cua`:
+Resolve the DSH home used by the developer (`GLH_HOME`, otherwise `~/.glh`). Merge the two printed values into its `cordis.patch.yml`, targeting the entry that loads `@deepseek-ai/dsh-experimental-cua-macos`. The shipped entry ID is `cua`:
 
 ```yaml
 - id: cua
@@ -51,7 +51,7 @@ Resolve the DSH home used by the developer (`DSH_HOME`, otherwise `~/.dsh`). Mer
 
 Use the printed absolute path, not a literal `~`. Preserve unrelated patches and every existing field in this entry's effective config: a Cordis patch replaces the complete `config` object rather than deep-merging it. If the provider has `helperPath`, source signing is bypassed; remove that override only when the developer intends to test the source-built helper. Ensure the profile actually loads the provider before adding a patch for its ID.
 
-Launch through the developer's existing `dsh` profile. The home-level patch shares the selection across profiles and worktrees that use that home. Other DSH homes can explicitly select the same certificate. Record the paths changed and the selected public fingerprint, never the password.
+Launch through the developer's existing `glh` profile. The home-level patch shares the selection across profiles and worktrees that use that home. Other DSH homes can explicitly select the same certificate. Record the paths changed and the selected public fingerprint, never the password.
 
 ## Unlock and verify
 

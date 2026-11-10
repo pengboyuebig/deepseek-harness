@@ -11,7 +11,7 @@ if (!['win32', 'darwin'].includes(process.platform)) throw new Error('Qualificat
 if (process.argv.slice(2).some(arg => arg !== '--record')) throw new Error('Usage: test-update-channels.mjs [--record]')
 
 const root = await mkdtemp(join(tmpdir(), 'desktop-channel-'))
-const environment = { ...process.env, DSH_CHANNEL_TEST_ROOT: root }
+const environment = { ...process.env, GLH_CHANNEL_TEST_ROOT: root }
 delete environment.ELECTRON_RUN_AS_NODE
 const child = spawn(electron, [fileURLToPath(new URL('../tests/updates/electron-updater/qualification.mjs', import.meta.url))], {
   env: environment, stdio: 'inherit', windowsHide: true,

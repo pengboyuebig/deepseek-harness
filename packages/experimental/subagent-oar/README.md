@@ -59,7 +59,7 @@ Declare this provider and `@deepseek-ai/dsh-experimental-tool-subagent-oar` as d
           claude: oar-claude
 ```
 
-Launch the completed composition through a `dsh` profile. The example assigns each provider a distinct name and fixes its native permission arguments before the model can delegate work.
+Launch the completed composition through a `glh` profile. The example assigns each provider a distinct name and fixes its native permission arguments before the model can delegate work.
 
 ### What you get
 

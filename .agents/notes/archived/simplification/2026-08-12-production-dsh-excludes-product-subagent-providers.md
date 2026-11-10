@@ -1,4 +1,4 @@
-# Agent Note: Production dsh excludes product subagent providers
+# Agent Note: Production glh excludes product subagent providers
 
 Status: implemented
 Archived: 2026-09-04

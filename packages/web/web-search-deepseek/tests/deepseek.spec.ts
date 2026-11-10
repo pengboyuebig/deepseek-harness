@@ -9,13 +9,13 @@ import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
 import LocalCredentialProvider from '@deepseek-ai/dsh-credentials-local'
-import { createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
+import { createLaunchEnvironmentSnapshot, GLH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
 import type { DeepSeekAccount } from '@deepseek-ai/dsh-deepseek-account'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import WebRuntime, { WebError, type WebSearchResult } from '@deepseek-ai/dsh-web'
 import {
   DeepSeekSearchProvider,
-  DEEPSEEK_PROVIDER_ID,
+  GLKJ_PROVIDER_ID,
 } from '@deepseek-ai/dsh-web-search-deepseek'
 import * as deepseekPlugin from '@deepseek-ai/dsh-web-search-deepseek'
 import { citationSnippets, mapAnthropicResponse } from '../src/provider.ts'
@@ -193,8 +193,8 @@ describe('DeepSeekSearchProvider request mapping', () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
     try {
-      ctx.provide(DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([{ source: 'process', values: { DEEPSEEK_API_KEY: value } }]))
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      ctx.provide(GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot([{ source: 'process', values: { GLKJ_API_KEY: value } }]))
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       await ctx.plugin(deepseekPlugin)
       await expect(ctx.web.search({ query: 'q' })).rejects.toMatchObject({ code: 'WEB_PROVIDER_ERROR' })
       expect(fetchMock).not.toHaveBeenCalled()
@@ -501,7 +501,7 @@ describe('DeepSeekSearchProvider error handling', () => {
 
   it('uses the default credential reference when no resolver is configured', async () => {
     await expect(searchProvider({ ...options, apiKey: '' }).search({ query: 'q' }))
-      .rejects.toThrow('DeepSeek search has no API key for "DEEPSEEK_API_KEY"')
+      .rejects.toThrow('DeepSeek search has no API key for "GLKJ_API_KEY"')
   })
 
   it('observes cancellation triggered synchronously by credential resolution', async () => {
@@ -616,7 +616,7 @@ describe('web-search-deepseek plugin registration', () => {
   it('registers the provider into ctx.web (HMR-safe)', async () => {
     vi.stubGlobal('fetch', vi.fn(async (_input: RequestInfo | URL, _init: RequestInit = {}) => jsonResponse(searchResponse())))
     const ctx = new Context()
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     const fiber = await ctx.plugin(deepseekPlugin, { apiKey: 'ds-key' })
     await expect(ctx.web.search({ query: 'q' })).resolves.toMatchObject({ truncated: false })
     await fiber.dispose()
@@ -626,21 +626,21 @@ describe('web-search-deepseek plugin registration', () => {
 
   it('rejects maxTokens: 0 at plugin construction', async () => {
     const ctx = new Context()
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     await expect(ctx.plugin(deepseekPlugin, { apiKey: 'ds-key', maxTokens: 0 }))
       .rejects.toThrow(/maxTokens expected number >= 1/)
   })
 
   it('rejects maxUses: 0 at plugin construction', async () => {
     const ctx = new Context()
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     await expect(ctx.plugin(deepseekPlugin, { apiKey: 'ds-key', maxUses: 0 }))
       .rejects.toThrow(/maxUses expected number >= 1/)
   })
 
   it('rejects a fractional maxUses at plugin construction', async () => {
     const ctx = new Context()
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     await expect(ctx.plugin(deepseekPlugin, { apiKey: 'ds-key', maxUses: 1.5 }))
       .rejects.toThrow(/maxUses expected number multiple of 1/)
   })
@@ -663,7 +663,7 @@ describe('web-search-deepseek plugin registration', () => {
   it('boots over ctx.web through the unwrapped module without an inject error', async () => {
     vi.stubGlobal('fetch', vi.fn(async (_input: RequestInfo | URL, _init: RequestInit = {}) => jsonResponse(searchResponse())))
     const ctx = new Context()
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     const loader = Object.create(Loader.prototype) as Loader
     const unwrapped = loader.unwrapExports(deepseekPlugin) as Parameters<Context['plugin']>[0]
     // A collapsed export shape (dropped inject) would throw "without inject" here.
@@ -673,42 +673,42 @@ describe('web-search-deepseek plugin registration', () => {
   })
 
   it('falls back to the env key and defaults when config omits them', async () => {
-    const prev = process.env.DEEPSEEK_API_KEY
-    process.env.DEEPSEEK_API_KEY = 'env-key'
+    const prev = process.env.GLKJ_API_KEY
+    process.env.GLKJ_API_KEY = 'env-key'
     try {
       const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init: RequestInit = {}) => jsonResponse(searchResponse()))
       vi.stubGlobal('fetch', fetchMock)
       const ctx = new Context()
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       deepseekPlugin.apply(ctx, deepseekPlugin.Config({}))
       await ctx.web.search({ query: 'q' })
       const [url, init = {}] = fetchMock.mock.calls[0]!
-      expect(url).toBe('https://api.deepseek.com/anthropic/v1/messages')
+      expect(url).toBe('https://api.glkj.example.com/anthropic/v1/messages')
       expect((init.headers as Record<string, string>)['x-api-key']).toBe('env-key')
       expect(JSON.parse(init.body as string)).toMatchObject({ model: 'deepseek-v4-flash' })
       await ctx.fiber.dispose()
     } finally {
-      if (prev === undefined) delete process.env.DEEPSEEK_API_KEY
-      else process.env.DEEPSEEK_API_KEY = prev
+      if (prev === undefined) delete process.env.GLKJ_API_KEY
+      else process.env.GLKJ_API_KEY = prev
     }
   })
 
   it('resolves the credential for each search so a stored or rotated key needs no restart', async () => {
-    const previous = process.env.DEEPSEEK_API_KEY
-    delete process.env.DEEPSEEK_API_KEY
+    const previous = process.env.GLKJ_API_KEY
+    delete process.env.GLKJ_API_KEY
     const dir = await mkdtemp(join(tmpdir(), 'dsh-web-search-credentials-'))
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse(searchResponse()))
     vi.stubGlobal('fetch', fetchMock)
     const ctx = new Context()
     try {
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       await ctx.plugin(LocalCredentialProvider, { path: join(dir, '.credentials.yaml'), watch: false })
       await ctx.plugin(deepseekPlugin, { baseURL: 'https://api.deepseek.test/anthropic/v1' })
 
       await expect(ctx.web.search({ query: 'missing' }))
         .rejects.toThrow(expect.objectContaining({ code: 'WEB_PROVIDER_CREDENTIAL_MISSING' }))
 
-      const ref = credentialRef('DEEPSEEK_API_KEY')
+      const ref = credentialRef('GLKJ_API_KEY')
       await ctx.credentials.set(ref, 'stored-key')
       await ctx.web.search({ query: 'stored' })
       await ctx.credentials.set(ref, 'rotated-key')
@@ -719,17 +719,17 @@ describe('web-search-deepseek plugin registration', () => {
     } finally {
       await ctx.fiber.dispose()
       await rm(dir, { recursive: true, force: true })
-      if (previous === undefined) delete process.env.DEEPSEEK_API_KEY
-      else process.env.DEEPSEEK_API_KEY = previous
+      if (previous === undefined) delete process.env.GLKJ_API_KEY
+      else process.env.GLKJ_API_KEY = previous
     }
   })
 
   it('reports an actionable credential error when neither config nor env supplies a key', async () => {
-    const prev = process.env.DEEPSEEK_API_KEY
-    delete process.env.DEEPSEEK_API_KEY
+    const prev = process.env.GLKJ_API_KEY
+    delete process.env.GLKJ_API_KEY
     try {
       const ctx = new Context()
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       await ctx.plugin(deepseekPlugin, {})
       let caught: unknown
       try {
@@ -741,7 +741,7 @@ describe('web-search-deepseek plugin registration', () => {
       if (!(caught instanceof Error)) throw new Error('search did not throw an Error')
       expect(caught.message).toMatch(/store it through the credentials service.*Models page/s)
     } finally {
-      if (prev !== undefined) process.env.DEEPSEEK_API_KEY = prev
+      if (prev !== undefined) process.env.GLKJ_API_KEY = prev
     }
   })
 })
@@ -763,7 +763,7 @@ describe('web-search-deepseek account route selection', () => {
       await ctx.plugin(SessionStore)
       await ctx.plugin(SessionProjectionRegistry)
       await ctx.plugin(AgentRegistry)
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       ctx.provide('deepseekAccount', {
         resolveToken: async (url: string) => { asked.push(url); return 'account-token' },
       } as DeepSeekAccount)
@@ -783,7 +783,7 @@ describe('web-search-deepseek account route selection', () => {
 
   it('authenticates with the account token when the initiating Session uses the account route', async () => {
     const { headers, asked } = await searchAs('deepseek-account')
-    expect(asked).toEqual(['https://api.deepseek.com/anthropic/v1/messages'])
+    expect(asked).toEqual(['https://api.glkj.example.com/anthropic/v1/messages'])
     expect(headers['x-dsh-auth-token']).toBe('account-token')
     expect(headers).not.toHaveProperty('x-api-key')
   })
@@ -800,7 +800,7 @@ describe('web-search-deepseek account route selection', () => {
       await ctx.plugin(SessionStore)
       await ctx.plugin(SessionProjectionRegistry)
       await ctx.plugin(AgentRegistry)
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       const account: Pick<DeepSeekAccount, 'resolveToken' | 'rejectToken'> = { resolveToken: async () => current, rejectToken }
       ctx.provide('deepseekAccount', account as DeepSeekAccount)
       await ctx.plugin(deepseekPlugin, { apiKey: 'ds-key' })
@@ -829,14 +829,14 @@ describe('web-search-deepseek search readiness', () => {
   let savedKey: string | undefined
 
   beforeEach(() => {
-    savedKey = process.env.DEEPSEEK_API_KEY
-    delete process.env.DEEPSEEK_API_KEY
+    savedKey = process.env.GLKJ_API_KEY
+    delete process.env.GLKJ_API_KEY
   })
 
   afterEach(async () => {
     await Promise.all(mounted.splice(0).map(ctx => ctx.fiber.dispose()))
-    if (savedKey === undefined) delete process.env.DEEPSEEK_API_KEY
-    else process.env.DEEPSEEK_API_KEY = savedKey
+    if (savedKey === undefined) delete process.env.GLKJ_API_KEY
+    else process.env.GLKJ_API_KEY = savedKey
   })
 
   interface Setup {
@@ -855,7 +855,7 @@ describe('web-search-deepseek search readiness', () => {
     return {
       resolveToken: (url: string) => {
         asked.push(url)
-        return Promise.resolve(new URL(url).origin === 'https://api.deepseek.com' ? 'account-token' : undefined)
+        return Promise.resolve(new URL(url).origin === 'https://api.glkj.example.com' ? 'account-token' : undefined)
       },
     }
   }
@@ -868,7 +868,7 @@ describe('web-search-deepseek search readiness', () => {
   async function compose(setup: Setup = {}): Promise<Context> {
     const ctx = new Context()
     mounted.push(ctx)
-    await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+    await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
     if (setup.credentialsDir !== undefined) {
       await ctx.plugin(LocalCredentialProvider, { path: join(setup.credentialsDir, '.credentials.yaml'), watch: false })
     }
@@ -887,7 +887,7 @@ describe('web-search-deepseek search readiness', () => {
     try {
       const ctx = await compose({ credentialsDir: dir })
       expect(await ctx.web.searchReady('deepseek-official')).toBe(false)
-      await ctx.credentials.set(credentialRef('DEEPSEEK_API_KEY'), 'stored-key')
+      await ctx.credentials.set(credentialRef('GLKJ_API_KEY'), 'stored-key')
       expect(await ctx.web.searchReady('deepseek-official')).toBe(true)
     } finally {
       await rm(dir, { recursive: true, force: true })
@@ -900,7 +900,7 @@ describe('web-search-deepseek search readiness', () => {
   })
 
   it('is ready when the launch environment supplies the key', async () => {
-    process.env.DEEPSEEK_API_KEY = 'env-key'
+    process.env.GLKJ_API_KEY = 'env-key'
     const ctx = await compose()
     expect(await ctx.web.searchReady('deepseek-official')).toBe(true)
   })
@@ -909,7 +909,7 @@ describe('web-search-deepseek search readiness', () => {
     const asked: string[] = []
     const ctx = await compose({ account: officialOriginAccount(asked) })
     expect(await ctx.web.searchReady('deepseek-account')).toBe(true)
-    expect(asked).toEqual(['https://api.deepseek.com/anthropic/v1/messages'])
+    expect(asked).toEqual(['https://api.glkj.example.com/anthropic/v1/messages'])
   })
 
   it('asks the account only for the account route', async () => {
@@ -932,7 +932,7 @@ describe('web-search-deepseek search readiness', () => {
   })
 
   it.each<[string, Record<string, unknown>, Record<string, string>, boolean]>([
-    ['the DeepSeek key', {}, { DEEPSEEK_API_KEY: 'env-key' }, true],
+    ['the DeepSeek key', {}, { GLKJ_API_KEY: 'env-key' }, true],
     ['a literal key', { apiKey: 'ds-key' }, {}, true],
     ['no key', {}, {}, false],
   ])('answers for a model request on another provider route with %s, as on any route', async (_label, config, env, expected) => {
@@ -950,7 +950,7 @@ describe('web-search-deepseek search readiness', () => {
   })
 
   it('is ready without a model route when a search key exists', async () => {
-    process.env.DEEPSEEK_API_KEY = 'env-key'
+    process.env.GLKJ_API_KEY = 'env-key'
     const ctx = await compose()
     expect(await ctx.web.searchReady(undefined)).toBe(true)
   })
@@ -959,7 +959,7 @@ describe('web-search-deepseek search readiness', () => {
     const dir = await mkdtemp(join(tmpdir(), 'dsh-web-search-store-'))
     try {
       const ctx = await compose({ credentialsDir: dir })
-      await ctx.credentials.set(credentialRef('DEEPSEEK_API_KEY'), 'stored-key')
+      await ctx.credentials.set(credentialRef('GLKJ_API_KEY'), 'stored-key')
       vi.spyOn(ctx.credentials, 'describe').mockRejectedValue(new Error('credential store unreadable'))
       expect(await ctx.web.searchReady('deepseek-official')).toBe(false)
     } finally {
@@ -971,7 +971,7 @@ describe('web-search-deepseek search readiness', () => {
     ['a literal key', { config: { apiKey: 'ds-key' } }, undefined],
     ['a launch environment key', {}, 'env-key'],
   ])('is not ready on the account route when the account grant cannot be read, even with %s', async (_label, setup, envKey) => {
-    if (envKey !== undefined) process.env.DEEPSEEK_API_KEY = envKey
+    if (envKey !== undefined) process.env.GLKJ_API_KEY = envKey
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init: RequestInit = {}) => jsonResponse(searchResponse()))
     vi.stubGlobal('fetch', fetchMock)
     const ctx = await compose({ ...setup, account: { resolveToken: () => Promise.reject(new Error('account storage unreadable')) } })
@@ -994,20 +994,20 @@ describe('web-search-deepseek on any model route', () => {
   /**
    * Run one search for a Session whose latest model request used `route`.
    * @param route - provider route the Session's request context records.
-   * @param config - provider config; without it the search uses `DEEPSEEK_API_KEY`, here set to `env-key`.
+   * @param config - provider config; without it the search uses `GLKJ_API_KEY`, here set to `env-key`.
    * @returns the fetch mock with the search result or its rejection.
    */
   async function searchOn(route: string, config: Record<string, unknown> = {}) {
     const fetchMock = vi.fn(async (_input: string, _init?: RequestInit) => jsonResponse(searchResponse()))
     vi.stubGlobal('fetch', fetchMock)
-    const savedKey = process.env.DEEPSEEK_API_KEY
-    process.env.DEEPSEEK_API_KEY = 'env-key'
+    const savedKey = process.env.GLKJ_API_KEY
+    process.env.GLKJ_API_KEY = 'env-key'
     const ctx = new Context()
     try {
       await ctx.plugin(SessionStore)
       await ctx.plugin(SessionProjectionRegistry)
       await ctx.plugin(AgentRegistry)
-      await ctx.plugin(WebRuntime, { searchProvider: DEEPSEEK_PROVIDER_ID })
+      await ctx.plugin(WebRuntime, { searchProvider: GLKJ_PROVIDER_ID })
       await ctx.plugin(deepseekPlugin, config)
       const session = ctx.sessions.create(SessionId(`web-search-route-${route}`))
       session.append('turn/start', { turn: 1 })
@@ -1018,8 +1018,8 @@ describe('web-search-deepseek on any model route', () => {
       return { fetchMock, ...outcome }
     } finally {
       await ctx.fiber.dispose()
-      if (savedKey === undefined) Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
-      else process.env.DEEPSEEK_API_KEY = savedKey
+      if (savedKey === undefined) Reflect.deleteProperty(process.env, 'GLKJ_API_KEY')
+      else process.env.GLKJ_API_KEY = savedKey
     }
   }
 

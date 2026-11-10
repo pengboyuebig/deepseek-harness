@@ -672,7 +672,7 @@ export class ClientModuleRegistry extends Service {
     super(ctx, 'clientModules')
     const { version } = createRequire(import.meta.url)('../package.json') as { version: string }
     // The client build fixes this read into the built Host artifact.
-    const commit = process.env.DSH_CLIENT_COMMIT_HASH
+    const commit = process.env.GLH_CLIENT_COMMIT_HASH
     this.release = commit === undefined ? { version } : { version, commit }
     // Subscribe before seeding so a fiber arriving mid-activation lands in the
     // same dirty set (Set idempotence makes the overlap harmless). An entry-less

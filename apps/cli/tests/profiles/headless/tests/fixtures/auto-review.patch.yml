@@ -5,4 +5,4 @@
     - id: headless-auto-review-fixture
       name: '../../../../../../../packages/experimental/auto-review/tests/fixtures/headless-reviewer.ts'
       config:
-        mode: !!js process.env.DSH_AUTO_REVIEW_TEST_MODE
+        mode: !!js process.env.GLH_AUTO_REVIEW_TEST_MODE

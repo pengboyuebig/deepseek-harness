@@ -7,7 +7,7 @@ Archived: 2026-09-30
 
 ## 问题
 
-[`scripts/oxlint-contract.spec.ts`](../../../../scripts/oxlint-contract.spec.ts) 的 14 个用例中有 12 个会启动真实子进程：`runOxlint` 启动 oxlint CLI，`runRepositoryOxlint` 在 tsx 下引导 [`scripts/run-oxlint.ts`](../../../../scripts/run-oxlint.ts)，后者运行 oxlint，并在 `--fix` 之后再运行一次。根 `vitest.config.ts` 没有设置 `testTimeout`，因此没有自带预算的用例继承 Vitest 的 5000 ms 默认值；coverage 通道通过 `DSH_COVERAGE_TEST_TIMEOUT_MS=90000` 抬高它，Windows 原生通道传入 `--testTimeout 90000`，而 `sandbox.yml` 中的 `unit tests (darwin parity, macos-latest)` job 与开发者本机的 `pnpm run test` 都直接运行。7 个用例（5 个 `it` 声明，其中一个是三路 `it.each`）携带 #3115 把有争抢的 Windows spawn 预算对齐到的显式 `90_000`；另外 7 个跑在默认值上，其中 5 个会 spawn。两类 runner 暴露了这一点：自托管 Windows 池，其进程创建会出现数秒尖峰（#2581）；以及 Sandbox run 36332053320 的托管 macos-latest runner，它跑整个文件比通过的 run 36320394290 慢 2.2 倍，并让 `prints only the final diagnostics when a fix retry still fails` 在 6309 ms 时超时，而该用例在通过的 run 中耗时 1122 ms。`Test timed out in 5000ms` 既不指出契约违规，也不指出超时的那次 spawn。
+[`scripts/oxlint-contract.spec.ts`](../../../../scripts/oxlint-contract.spec.ts) 的 14 个用例中有 12 个会启动真实子进程：`runOxlint` 启动 oxlint CLI，`runRepositoryOxlint` 在 tsx 下引导 [`scripts/run-oxlint.ts`](../../../../scripts/run-oxlint.ts)，后者运行 oxlint，并在 `--fix` 之后再运行一次。根 `vitest.config.ts` 没有设置 `testTimeout`，因此没有自带预算的用例继承 Vitest 的 5000 ms 默认值；coverage 通道通过 `GLH_COVERAGE_TEST_TIMEOUT_MS=90000` 抬高它，Windows 原生通道传入 `--testTimeout 90000`，而 `sandbox.yml` 中的 `unit tests (darwin parity, macos-latest)` job 与开发者本机的 `pnpm run test` 都直接运行。7 个用例（5 个 `it` 声明，其中一个是三路 `it.each`）携带 #3115 把有争抢的 Windows spawn 预算对齐到的显式 `90_000`；另外 7 个跑在默认值上，其中 5 个会 spawn。两类 runner 暴露了这一点：自托管 Windows 池，其进程创建会出现数秒尖峰（#2581）；以及 Sandbox run 36332053320 的托管 macos-latest runner，它跑整个文件比通过的 run 36320394290 慢 2.2 倍，并让 `prints only the final diagnostics when a fix retry still fails` 在 6309 ms 时超时，而该用例在通过的 run 中耗时 1122 ms。`Test timed out in 5000ms` 既不指出契约违规，也不指出超时的那次 spawn。
 
 ## 决策
 
@@ -25,4 +25,4 @@ Archived: 2026-09-30
 
 ## 后果
 
-契约违规仍通过其自身断言在上限之内早早失败；本次加边界的 5 个用例在空载宿主机上 0.5–1.7 s 内结算，文件中任何会 spawn 的用例在那里都不超过 3.8 s，因此只有真正的挂起才会等满 90 s。Windows 自托管通道、Linux coverage 通道、darwin parity job 与本机 `pnpm run test` 对本文件读到同一个上限，与 `DSH_COVERAGE_TEST_TIMEOUT_MS` 无关。之后新增而未自带 `90_000` 的 spawn 用例会跑在默认值上，直到有人核对本文件的清单。在 12 核宿主机上以 72 个忙循环进程加载时，原本无边界的 fix-retry 用例在改动前于 7084 ms 复现 `Test timed out in 5000ms`，改动后在上限内通过。
+契约违规仍通过其自身断言在上限之内早早失败；本次加边界的 5 个用例在空载宿主机上 0.5–1.7 s 内结算，文件中任何会 spawn 的用例在那里都不超过 3.8 s，因此只有真正的挂起才会等满 90 s。Windows 自托管通道、Linux coverage 通道、darwin parity job 与本机 `pnpm run test` 对本文件读到同一个上限，与 `GLH_COVERAGE_TEST_TIMEOUT_MS` 无关。之后新增而未自带 `90_000` 的 spawn 用例会跑在默认值上，直到有人核对本文件的清单。在 12 核宿主机上以 72 个忙循环进程加载时，原本无边界的 fix-retry 用例在改动前于 7084 ms 复现 `Test timed out in 5000ms`，改动后在上限内通过。

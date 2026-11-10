@@ -56,7 +56,7 @@ This is a minimal index with one npm plugin and one plugin from a Git monorepo:
       "homepage": "https://github.com/jane/dsh-plugin-foo#readme",
       "repository": { "url": "https://github.com/jane/dsh-plugin-foo" },
       "versions": [
-        { "version": "1.1.0", "publishTimestamp": 1790476800, "source": { "type": "npm" }, "engines": { "dsh": ">=0.2.0-rc.2" } },
+        { "version": "1.1.0", "publishTimestamp": 1790476800, "source": { "type": "npm" }, "engines": { "glh": ">=0.2.0-rc.2" } },
         { "version": "1.0.0", "publishTimestamp": 1788000000, "source": { "type": "npm" } }
       ]
     },

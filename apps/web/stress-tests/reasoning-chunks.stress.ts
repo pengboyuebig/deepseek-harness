@@ -138,7 +138,7 @@ it('keeps the browser responsive while rendering 100,000 reasoning chunks', asyn
       'reasoning stress adapter',
     )
     await scaffold.ctx.agentDefaultModel.saveSelection({ provider: PROVIDER, model: MODEL })
-    browser = await chromium.launch({ headless: process.env.DSH_WEB_STRESS_HEADFUL !== '1' })
+    browser = await chromium.launch({ headless: process.env.GLH_WEB_STRESS_HEADFUL !== '1' })
     page = await newEnglishPage(browser)
     const activePage = page
     const tripwire = watchConsole(activePage)

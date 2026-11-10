@@ -6,7 +6,7 @@ import type {
 } from 'node:http'
 import { completeResponsesEvents } from './responses-fixture.ts'
 
-const OFFICIAL_DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
+const OFFICIAL_GLKJ_BASE_URL = 'https://api.glkj.example.com'
 const MAX_REQUEST_BYTES = 1_048_576
 
 /** One running test-only Responses-to-DeepSeek bridge. */
@@ -57,7 +57,7 @@ async function completeWithDeepSeek(
   authorization: string,
   task: string,
 ): Promise<string> {
-  const response = await fetch(`${OFFICIAL_DEEPSEEK_BASE_URL}/chat/completions`, {
+  const response = await fetch(`${OFFICIAL_GLKJ_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
       authorization,

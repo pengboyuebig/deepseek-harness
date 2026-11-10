@@ -23,7 +23,7 @@ const KEY_SEGMENT_PATTERN = /^[a-z][a-z0-9-]*$/
 
 /**
  * Brand a raw string as a {@link CredentialRef}.
- * @param value - candidate reference; a POSIX shell identifier such as `DEEPSEEK_API_KEY`.
+ * @param value - candidate reference; a POSIX shell identifier such as `GLKJ_API_KEY`.
  * @returns the branded reference.
  */
 export function credentialRef(value: string): CredentialRef {

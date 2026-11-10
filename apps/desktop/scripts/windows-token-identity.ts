@@ -17,7 +17,7 @@ async function queryPublicKeys({ container, environment }: PublicKeyQuery): Prom
   const { NODE_OPTIONS: _options, NODE_PATH: _path, ...safeEnvironment } = scrubWindowsSigningEnvironment(environment)
   const { stdout, stderr } = await promisify(execFile)('pwsh', ['-NoProfile', '-NonInteractive', '-File',
     fileURLToPath(new URL('./windows-token-public-key.ps1', import.meta.url))], {
-    env: { ...safeEnvironment, DSH_TOKEN_PUBLIC_CONTAINER: container },
+    env: { ...safeEnvironment, GLH_TOKEN_PUBLIC_CONTAINER: container },
     encoding: 'utf8', windowsHide: true, timeout: 15_000, maxBuffer: 64 * 1024,
   })
   if (stderr) throw new Error('Public-key query returned diagnostics')

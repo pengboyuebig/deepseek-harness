@@ -76,7 +76,7 @@ export async function runLoggedNotarytool(args, directory, invoke = execute) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const args = process.argv.slice(2)
-  const directory = process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
+  const directory = process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
   try { process.stdout.write(await runLoggedNotarytool(args, directory)) }
   catch (error) {
     const credentials = args.filter((_, index) => AUTH_FLAGS.has(args[index - 1]))

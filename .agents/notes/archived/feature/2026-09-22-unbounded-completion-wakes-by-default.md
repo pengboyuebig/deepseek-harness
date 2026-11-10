@@ -17,7 +17,7 @@ A session that chained more than three of them without a user message hit the ca
 
 The self-exciting chain the cap was built for — a woken turn starting the job whose completion wakes it again — is still real, and deployments that want the bound set the field. The trade-off is that the chain spends model requests the user can watch and stop, while a notice parked past a cap is invisible: nothing in the client shows it, nothing re-arms the budget, and the model's promise becomes false. An observable cost beats an unobservable stall.
 
-`dsh run` is unaffected: headless exits once the task turn goes idle, so there is no idle owner left to wake.
+`glh run` is unaffected: headless exits once the task turn goes idle, so there is no idle owner left to wake.
 
 ## Alternatives considered
 

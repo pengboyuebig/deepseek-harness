@@ -25,13 +25,13 @@ For retained self-hosted builds, use the [CI publication workflow](ci/README.md)
 
 ## Publication prerequisites
 
-Publication requires completed release artifacts and explicit operator authorization. Building an installer or downloading an Actions artifact does not publish it. Read the [release version rules](../packaging/README.md#release-versions) and retain the packaging evidence. Machine presets are for packaging, not upload/COS commands: unset `DSH_PACKAGING_PRESET` and provide the existing target dotenv upload configuration. The configuration and actual COS/CDN acceptance must be verified by the release operator.
+Publication requires completed release artifacts and explicit operator authorization. Building an installer or downloading an Actions artifact does not publish it. Read the [release version rules](../packaging/README.md#release-versions) and retain the packaging evidence. Machine presets are for packaging, not upload/COS commands: unset `GLH_PACKAGING_PRESET` and provide the existing target dotenv upload configuration. The configuration and actual COS/CDN acceptance must be verified by the release operator.
 
 <a id="upload-updates"></a>
 
 ## Deployment and test release identity
 
-`DSH_DESKTOP_AUTO_UPDATE_ENV` selects `test` or `production` for both the URL embedded during packaging and the later COS upload; an absent value selects `test`. Test packaging requires its HTTPS origin in `DOWNLOAD_TEST_ORIGIN`; production uses `https://download.deepseek.com`. Upload requires the selected bucket in `DOWNLOAD_TEST_COS_BUCKET` or `DOWNLOAD_PROD_COS_BUCKET`. Production feeds use `dsh-desk/feeds/<target>/` and binaries use `dsh-desk/bin/<target>/`. Test releases require `DOWNLOAD_TEST_RELEASE_ID`: 32 lowercase hexadecimal characters inserted as `dsh-desk/<release-id>/feeds/<target>/` and `dsh-desk/<release-id>/bin/<target>/`. YAML references, stable-channel aliases, and blockmaps stay inside that release directory. Targets are `mac-arm64`, `mac-x64`, and `win-x64`.
+`GLH_DESKTOP_AUTO_UPDATE_ENV` selects `test` or `production` for both the URL embedded during packaging and the later COS upload; an absent value selects `test`. Test packaging requires its HTTPS origin in `DOWNLOAD_TEST_ORIGIN`; production uses `https://download.deepseek.com`. Upload requires the selected bucket in `DOWNLOAD_TEST_COS_BUCKET` or `DOWNLOAD_PROD_COS_BUCKET`. Production feeds use `dsh-desk/feeds/<target>/` and binaries use `dsh-desk/bin/<target>/`. Test releases require `DOWNLOAD_TEST_RELEASE_ID`: 32 lowercase hexadecimal characters inserted as `dsh-desk/<release-id>/feeds/<target>/` and `dsh-desk/<release-id>/bin/<target>/`. YAML references, stable-channel aliases, and blockmaps stay inside that release directory. Targets are `mac-arm64`, `mac-x64`, and `win-x64`.
 
 The update destination and upload credentials follow the selected deployment; production fixed downloads also require the [EdgeOne settings](#fixed-downloads):
 
@@ -59,7 +59,7 @@ pnpm run package:desktop:mac:arm64
 pnpm run upload:mac:arm64
 ```
 
-The target dotenv file for internal-test packaging explicitly sets `DSH_DESKTOP_AUTO_UPDATE_ENV=test` and `DOWNLOAD_TEST_ORIGIN=https://download-test.deepseek.com`; uploads use `DOWNLOAD_TEST_COS_BUCKET=bj-toc-download-test-1320056602` and separate test credentials. Deployment and update channel are independent; see [package channel selection](../packaging/README.md#release-versions).
+The target dotenv file for internal-test packaging explicitly sets `GLH_DESKTOP_AUTO_UPDATE_ENV=test` and `DOWNLOAD_TEST_ORIGIN=https://download-test.deepseek.com`; uploads use `DOWNLOAD_TEST_COS_BUCKET=bj-toc-download-test-1320056602` and separate test credentials. Deployment and update channel are independent; see [package channel selection](../packaging/README.md#release-versions).
 
 Early internal-test packages use the `test` deployment. Select `production` explicitly only for a production release; changing upload credentials does not retarget an existing package. Packaging requires no COS credentials, disables electron-builder publishing, strips COS credentials from child processes, and records completion only after signing and notarization succeed. Upload validates this record, deployment, target, shared version, filenames, sizes, and SHA-512 before reading credentials. Packages and blockmaps upload before YAML; historical objects are retained. Each package publishes only its selected channel: `nightly.yml` / `nightly-mac.yml` or `stable.yml` / `stable-mac.yml`. Published YAML uses absolute binary URLs. The uploader leaves Cache-Control unset, including the empty header the COS SDK would otherwise add: deployment infrastructure owns cache policy, with uncached feeds and separately configurable binary caching. Serialize publication per target and verify public artifacts and feed contents before release qualification.
 

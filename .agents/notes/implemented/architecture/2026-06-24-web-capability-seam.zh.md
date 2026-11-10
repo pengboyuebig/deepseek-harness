@@ -150,7 +150,7 @@ interface WebRuntime {
   name: '@deepseek-ai/dsh-tool-web'
 ```
 
-运维覆盖走同一条显式选择路径：`DSH_WEB_SEARCH_PROVIDER=deepseek-search-api` 等同于配置 `searchProvider: deepseek-search-api`，而非 `dsh-tool-web` 内部的隐式优先级链。
+运维覆盖走同一条显式选择路径：`GLH_WEB_SEARCH_PROVIDER=deepseek-search-api` 等同于配置 `searchProvider: deepseek-search-api`，而非 `dsh-tool-web` 内部的隐式优先级链。
 
 每次搜索或抓取在执行时读取配置的 id，因此保存的设置变更无需重新挂载 `dsh-web` 即可让下一次操作选用新提供方。「网页搜索与获取」设置页的 Search 和 Fetch 下拉框借此分别切换各能力的提供方（包括 [DeepSeek Search 与 Fetch API](../feature/2026-10-15-deepseek-search-fetch-api.zh.md)）；[Web 提供方选择决策](2026-10-29-web-provider-selection.zh.md)负责内置默认值。
 

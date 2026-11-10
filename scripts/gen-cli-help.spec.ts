@@ -41,15 +41,15 @@ describe('CLI help child budget', () => {
   })
 
   it.each(['0', '-1', '1.5', '2workers', '02', '9007199254740992'])('rejects %j before spawning help', async (raw) => {
-    vi.stubEnv('DSH_CLI_HELP_CONCURRENCY', raw)
-    await expect(main()).rejects.toThrow('DSH_CLI_HELP_CONCURRENCY must be a positive integer')
+    vi.stubEnv('GLH_CLI_HELP_CONCURRENCY', raw)
+    await expect(main()).rejects.toThrow('GLH_CLI_HELP_CONCURRENCY must be a positive integer')
     expect(execFile).not.toHaveBeenCalled()
   })
 })
 
 describe('CLI help discovery', () => {
   it('reads command rows while retaining wrapped descriptions and examples', () => {
-    const help = 'Usage: dsh\r\n\r\nCommands:\r\n  web [options]  Serve the browser\r\n                 with a wrapped description\r\n  plugin         Manage plugins\r\n\r\nExamples:\r\n  dsh web\r\n'
+    const help = 'Usage: dsh\r\n\r\nCommands:\r\n  web [options]  Serve the browser\r\n                 with a wrapped description\r\n  plugin         Manage plugins\r\n\r\nExamples:\r\n  glh web\r\n'
     const result = parseCliHelp(help)
     expect(result.commands).toEqual(['web', 'plugin'])
     expect(result.output).toBe(help.replaceAll('\r\n', '\n'))
@@ -59,16 +59,16 @@ describe('CLI help discovery', () => {
     const visited: string[] = []
     const pages = await collectCliHelp(async (args) => {
       visited.push(args.join(' '))
-      if (args.length === 0) return 'Usage: dsh [--profile] <name>\n'
-      if (args[0] === 'plugin') return 'Usage: dsh plugin --profile <name> <args...>\n'
+      if (args.length === 0) return 'Usage: glh [--profile] <name>\n'
+      if (args[0] === 'plugin') return 'Usage: glh plugin --profile <name> <args...>\n'
       const selected = args[0] === '--profile' ? args.slice(1) : args
       if (selected[1] === 'nested') return 'Usage: nested\n'
       return `Usage: ${selected[0]} [command]\n\nCommands:\n  nested  Run the nested command\n`
     }, ['web'])
     expect(visited).toEqual(['', 'plugin', 'web', 'web nested', '--profile web'])
     expect(pages.map(page => page.invocations)).toEqual([
-      ['dsh'], ['dsh plugin'], ['dsh web', 'dsh --profile web'],
-      ['dsh web nested', 'dsh --profile web nested'],
+      ['glh'], ['glh plugin'], ['glh web', 'glh --profile web'],
+      ['glh web nested', 'glh --profile web nested'],
     ])
   })
 
@@ -77,15 +77,15 @@ describe('CLI help discovery', () => {
     const parent = 'Usage: web [command]\n\nCommands:\n  serve|s [options]  Serve the UI\n  help [command]     display help for command\n'
     const pages = await collectCliHelp(async (args) => {
       visited.push(args.join(' '))
-      if (args.length === 0) return 'Usage: dsh\n'
-      if (args[0] === 'plugin') return 'Usage: dsh plugin\n'
+      if (args.length === 0) return 'Usage: glh\n'
+      if (args[0] === 'plugin') return 'Usage: glh plugin\n'
       const selected = args[0] === '--profile' ? args.slice(1) : args
       return selected[1] === 'serve' || selected[1] === 's' ? 'Usage: web serve\n' : parent
     }, ['web'])
     expect(visited).toEqual(['', 'plugin', 'web', 'web serve', 'web s', 'web help', '--profile web'])
     expect(pages.map(page => page.invocations)).toEqual([
-      ['dsh'], ['dsh plugin'], ['dsh web', 'dsh web help', 'dsh --profile web', 'dsh --profile web help'],
-      ['dsh web serve', 'dsh web s', 'dsh --profile web serve', 'dsh --profile web s'],
+      ['glh'], ['glh plugin'], ['glh web', 'glh web help', 'glh --profile web', 'glh --profile web help'],
+      ['glh web serve', 'glh web s', 'glh --profile web serve', 'glh --profile web s'],
     ])
   })
 

@@ -1,6 +1,6 @@
 # AGENTS.md — Web client stack
 
-Rules for `packages/client/*` (the browser side of the dsh web GUI) plus its build entry `apps/web`. They supplement the repo-wide [conventions](../../AGENTS.md#conventions) and the [package rules](../README.md). Read the current [Web Client architecture](../../docs/subsystems/web-client.md), [Slots reference](../../docs/subsystems/slots.md), and [Conversation reference](../../docs/subsystems/conversation.md) before changing the corresponding layer.
+Rules for `packages/client/*` (the browser side of the glh web GUI) plus its build entry `apps/web`. They supplement the repo-wide [conventions](../../AGENTS.md#conventions) and the [package rules](../README.md). Read the current [Web Client architecture](../../docs/subsystems/web-client.md), [Slots reference](../../docs/subsystems/slots.md), and [Conversation reference](../../docs/subsystems/conversation.md) before changing the corresponding layer.
 
 Packages here are named with the directory prefix: `@deepseek-ai/dsh-client-<name>`.
 
@@ -74,7 +74,7 @@ Npm sections describe installation and development relationships; each build fac
 
 ## Build-time browser environment
 
-Client business code may statically read `process.env.DSH_CLIENT_*`; every referenced value is public artifact content. The shared build-environment helper gives Vite and dynamic tsdown bundles the same build-process values, resolves unset names to `undefined`, and exposes no dynamic lookup or enumeration. The Node half of a client package receives the same fixed values while keeping its runtime `process.env`; Host source launches read them from the environment `pnpm run dev:web` prepares. A complete root build records the exact public values and a digest of all client artifacts; release and built-artifact consumers reject a missing or stale record. Use runtime configuration for choices that must change after build.
+Client business code may statically read `process.env.GLH_CLIENT_*`; every referenced value is public artifact content. The shared build-environment helper gives Vite and dynamic tsdown bundles the same build-process values, resolves unset names to `undefined`, and exposes no dynamic lookup or enumeration. The Node half of a client package receives the same fixed values while keeping its runtime `process.env`; Host source launches read them from the environment `pnpm run dev:web` prepares. A complete root build records the exact public values and a digest of all client artifacts; release and built-artifact consumers reject a missing or stale record. Use runtime configuration for choices that must change after build.
 
 ## Shared modules and the module graph
 
@@ -137,8 +137,8 @@ The GUI test structure (three tiers, lane map) is settled in the [GUI testing sy
 Run the narrowest rung that covers what you touched; escalate only when the change surface demands it.
 
 1. **Every GUI code change** — `pnpm run test:gui` (seconds; no browser, no server): the client suites plus the host-side GUI packages. This is the inner loop; run it as freely as a typecheck.
-2. **Any change that can alter the assembled browser or visible conversation/UI output** (client components or copy, `apps/web`, Vite, `dsh-host-webserver`, connection/handler/SSE) — additionally `DSH_SNAPSHOT=replay pnpm run test:web`: rebuilds the frontend dist, then runs the browser smoke pair (the real-host case self-skips without `DEEPSEEK_API_KEY`) plus the keyless replayed e2e scenarios. Linux PR CI uses the same read-only replay mode. Use `DSH_SNAPSHOT=refresh` only after confirming an intentional output change, or `DSH_SNAPSHOT=record` with a key to re-record fixtures.
-3. **Before a PR** — use [dsh-pre-push-checks](../../.agents/skills/dsh-pre-push-checks/SKILL.md) to select the narrow checks for the outgoing diff; there is no repo-wide pre-push aggregate.
+2. **Any change that can alter the assembled browser or visible conversation/UI output** (client components or copy, `apps/web`, Vite, `dsh-host-webserver`, connection/handler/SSE) — additionally `GLH_SNAPSHOT=replay pnpm run test:web`: rebuilds the frontend dist, then runs the browser smoke pair (the real-host case self-skips without `GLKJ_API_KEY`) plus the keyless replayed e2e scenarios. Linux PR CI uses the same read-only replay mode. Use `GLH_SNAPSHOT=refresh` only after confirming an intentional output change, or `GLH_SNAPSHOT=record` with a key to re-record fixtures.
+3. **Before a PR** — use [glh-pre-push-checks](../../.agents/skills/glh-pre-push-checks/SKILL.md) to select the narrow checks for the outgoing diff; there is no repo-wide pre-push aggregate.
 
 If `test:gui` is red on code you did not touch, neither silently fix nor ignore it: note it in your handoff so it lands in the next PR window's sweep.
 
@@ -150,7 +150,7 @@ Bringing up a new `packages/client/<name>` plugin package (ui-workspace is a com
 2. **Three registration surfaces, all required** (missing any one fails at a different, later point): the `tsconfig.client.json` aggregate `references` entry; a `dsh.client` row in `packages/bundle/web-app/cordis.patch.yml`; a `packages/bundle/web-app/package.json` dependency (profile boots resolve bare row names through the computed runtime resolution, which is installed as an interception on Node's resolvers — a row whose package no manifest declares fails to import). `pnpm-workspace.yaml` already globs `packages/*/*`.
 3. **dsh.client manifest semantics**: `platform: 'web'` always, and the declaration requires a `./client` export (the scan throws without one); `immediately: true` only for stage-one-prefetch infrastructure rows. `inject` lists package-name dependency edges — they are **informational only** (preflight display, HMR diffing); they do not sequence entry activation or apply order. Activation order is Cordis fiber inject waiting on *services*, nothing else. A non-baseline `external` request sequences its dynamic supplier ahead of the consumer — see [shared modules](#shared-modules-and-the-module-graph).
 4. **Registering into another package's slot**: apply order is unconstrained, and a business service is not a declaration barrier. Use `ctx.slots.inject(name, () => ctx.slots.register(...))`; it waits on the actual declaration, removes the contribution when that declaration collapses, reruns after redeclaration, and leaves with the caller's plugin fiber. Return a generator yielding each registration when several contributions must install and roll back atomically. A bare `slots.register` into an undeclared slot remains an error; keep service edges only for services the contribution actually reads.
-5. Rebuild the bundle (`pnpm --filter <pkg> bundle`) before probing a live `dsh web` server — the registry serves `lib/client.js`, not sources.
+5. Rebuild the bundle (`pnpm --filter <pkg> bundle`) before probing a live `glh web` server — the registry serves `lib/client.js`, not sources.
 6. **Declaration decisions**, each settled by [dependency declaration](#dependency-declaration) and [shared modules](#shared-modules-and-the-module-graph): does the package ship a `./client` export; which non-baseline value imports require `dsh.client.external`; which Host value imports are ordinary dependencies; which Browser and type inputs are dev-only; and whether `files` covers every relative runtime import and emitted asset.
 
 ## New component checklist
@@ -161,5 +161,5 @@ Bringing up a new `packages/client/<name>` plugin package (ui-workspace is a com
 3. Type ordinary props from the five shares (`PropsRuntime` & `PropsRenderSlots` & `PropsRenderFactories` & `PropsStore` & inject face), and use the derived `Factory*PropsOf` aliases for Factory Components. Shared or remount-surviving state goes in a declared store; component-private state stays local.
 4. Component tests feed props directly (`createXXXStore().create()` for the store data; plain stubs for framework hooks) and assert behavior without render machinery.
 5. Tokens only in CSS; product copy follows the localization rule above; English comments.
-6. `pnpm run test:gui` green; if the component changes visible assembled output, also run `DSH_SNAPSHOT=replay pnpm run test:web`.
+6. `pnpm run test:gui` green; if the component changes visible assembled output, also run `GLH_SNAPSHOT=replay pnpm run test:web`.
 7. Non-trivial change? It needs an Agent Note in the same PR (repo-wide rule) — the GUI notes above are the precedents to extend.

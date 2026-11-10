@@ -22,7 +22,7 @@ describe('PR preview workflow', () => {
     // hosted label stays as the fallback when the Blacksmith pool is not chosen.
     expect(preview['runs-on']).toContain('blacksmith-4vcpu-ubuntu-2404')
     expect(preview['runs-on']).toContain("'ubuntu-24.04'")
-    expect(preview['runs-on']).toContain('DSH_CI_FAILOVER_LINUX')
+    expect(preview['runs-on']).toContain('GLH_CI_FAILOVER_LINUX')
     expect(workflow.on).toEqual({ pull_request: { types: ['opened', 'synchronize', 'reopened'] } })
     expect(workflow.permissions).toEqual({ contents: 'read', 'pull-requests': 'write' })
     expect(preview.steps.find(step => step.uses === 'actions/checkout@v7.0.1')?.with).toEqual({ 'persist-credentials': false })
@@ -43,7 +43,7 @@ describe('PR preview workflow', () => {
 
   it('keeps the immutable complete artifact build and restore-only dependency cache', () => {
     expect(workflow.env.PRIMARY_NODE_VERSION).toBe('24')
-    expect(workflow.env.DSH_TELEMETRY_DISABLED).toBe('1')
+    expect(workflow.env.GLH_TELEMETRY_DISABLED).toBe('1')
     const commands = preview.steps.map(step => step.run)
     expect(commands).toContain('pnpm install --frozen-lockfile')
     expect(commands).toContain('pnpm run build')

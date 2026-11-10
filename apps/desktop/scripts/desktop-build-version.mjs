@@ -26,7 +26,7 @@
 import { parse } from 'semver'
 
 /** Environment variable that carries the build version through one packaging and upload run. */
-export const DESKTOP_BUILD_VERSION_ENV = 'DSH_DESKTOP_BUILD_VERSION'
+export const DESKTOP_BUILD_VERSION_ENV = 'GLH_DESKTOP_BUILD_VERSION'
 
 /** Prerelease field that opens a test build's suffix on a stable product version. */
 const STABLE_TEST_FIELD = 'test'

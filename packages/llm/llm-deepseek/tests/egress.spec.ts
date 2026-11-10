@@ -43,8 +43,8 @@ import * as LlmDeepSeek from '@deepseek-ai/dsh-llm-deepseek-api-key'
 let home: string
 beforeAll(() => {
   home = mkdtempSync(join(tmpdir(), 'dsh-deepseek-egress-'))
-  vi.stubEnv('DSH_HOME', home)
-  vi.stubEnv('DEEPSEEK_API_KEY', 'probe-key')
+  vi.stubEnv('GLH_HOME', home)
+  vi.stubEnv('GLKJ_API_KEY', 'probe-key')
 })
 afterAll(() => {
   vi.unstubAllEnvs()

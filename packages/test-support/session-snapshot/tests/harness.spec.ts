@@ -137,9 +137,9 @@ describe('runScenario', () => {
       cwd: dir,
       configPath: AGENT.configPath,
       env: {
-        DSH_SNAPSHOT: 'replay',
-        DSH_SNAPSHOT_FILE: fixtureFile,
-        DSH_SNAPSHOT_SESSIONS_ROOT: sessionsRoot,
+        GLH_SNAPSHOT: 'replay',
+        GLH_SNAPSHOT_FILE: fixtureFile,
+        GLH_SNAPSHOT_SESSIONS_ROOT: sessionsRoot,
       },
     })
     await launched.client.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} })
@@ -222,7 +222,7 @@ describe('runScenario', () => {
       agent: profileAgent,
       cwd: dir,
       configPath: selectedPatch,
-      env: { DSH_SNAPSHOT: 'record', DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT: 'record', GLH_SNAPSHOT_FILE: fixtureFile },
     })
     await live.spawned
     await live.close()
@@ -231,9 +231,9 @@ describe('runScenario', () => {
     expect(materialized).toContain(pathToFileURL(join(patchDir, 'plugin.mjs')).href)
     expect(materialized).toContain(pathToFileURL(join(dir, 'nested.mjs')).href)
     expect(materialized).toContain('example-package')
-    expect(await realpath(join(dir, '.dsh', 'profiles', 'acp', 'node_modules', 'example-package')))
+    expect(await realpath(join(dir, '.glh', 'profiles', 'acp', 'node_modules', 'example-package')))
       .toBe(await realpath(packageDir))
-    expect(await realpath(join(dir, '.dsh', 'profiles', 'acp', 'node_modules', '@fixture', 'example-package')))
+    expect(await realpath(join(dir, '.glh', 'profiles', 'acp', 'node_modules', '@fixture', 'example-package')))
       .toBe(await realpath(scopedPackageDir))
     expect(await readFile(await materializedPatch(materializedRoot, '1-selected.cordis.yml'), 'utf8')).toContain('[]')
 
@@ -241,7 +241,7 @@ describe('runScenario', () => {
       agent: profileAgent,
       cwd: dir,
       configPath: selectedPatch,
-      env: { DSH_SNAPSHOT: 'replay', DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT: 'replay', GLH_SNAPSHOT_FILE: fixtureFile },
     })
     await replay.spawned
     await replay.close()
@@ -253,7 +253,7 @@ describe('runScenario', () => {
     const conflictPatch = join(dir, 'conflict.cordis.yml')
     const conflictPackage = join(dir, 'node_modules', 'conflict-package')
     const otherPackage = join(dir, 'other-conflict-package')
-    const conflictLink = join(dir, '.dsh', 'profiles', 'acp', 'node_modules', 'conflict-package')
+    const conflictLink = join(dir, '.glh', 'profiles', 'acp', 'node_modules', 'conflict-package')
     await Promise.all([
       mkdir(conflictPackage, { recursive: true }),
       mkdir(otherPackage, { recursive: true }),
@@ -267,7 +267,7 @@ describe('runScenario', () => {
     expect(() => launchAcpTestAgent({
       agent: { ...profileAgent, configPath: conflictPatch },
       cwd: dir,
-      env: { DSH_SNAPSHOT: 'record', DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT: 'record', GLH_SNAPSHOT_FILE: fixtureFile },
     })).toThrow('snapshot profile package conflict-package resolves to two directories')
 
     const invalidPatch = join(dir, 'invalid.cordis.yml')
@@ -275,7 +275,7 @@ describe('runScenario', () => {
     expect(() => launchAcpTestAgent({
       agent: { ...profileAgent, configPath: invalidPatch },
       cwd: dir,
-      env: { DSH_SNAPSHOT: 'record', DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT: 'record', GLH_SNAPSHOT_FILE: fixtureFile },
     })).toThrow(`snapshot profile patch must be a top-level array: ${invalidPatch}`)
   })
 
@@ -284,7 +284,7 @@ describe('runScenario', () => {
     const launched = launchAcpTestAgent({
       agent: AGENT,
       cwd: dir,
-      env: { DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT_FILE: fixtureFile },
     })
     await launched.client.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} })
     await launched.client.newSession({ cwd: dir, mcpServers: [] })
@@ -463,7 +463,7 @@ describe('runScenario', () => {
     const launched = launchAcpTestAgent({
       agent: AGENT,
       cwd: dir,
-      env: { DSH_SNAPSHOT_FILE: fixtureFile },
+      env: { GLH_SNAPSHOT_FILE: fixtureFile },
       async requestPermission() {
         markPermissionStarted?.()
         await permissionReleased
@@ -498,7 +498,7 @@ describe('runScenario', () => {
 
   it('preserves launch-resolution errors when no child process exists', async () => {
     const { dir, fixtureFile } = await scenario({})
-    vi.stubEnv('DSH_EXAMPLE_MODE', 'lib')
+    vi.stubEnv('GLH_EXAMPLE_MODE', 'lib')
     try {
       await expect(runScenario(
         { steps: [] },

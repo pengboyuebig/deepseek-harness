@@ -1,4 +1,4 @@
-# Agent Note: 内置 dsh 徽章 skill
+# Agent Note: 内置 glh 徽章 skill
 
 Status: implemented
 Archived: 2026-08-22
@@ -7,7 +7,7 @@ Archived: 2026-08-22
 
 ## 问题
 
-[Cordis 教程](../../../../docs/cordis-tutorial/index.zh.md)的各个页面都使用官方「powered by dsh」徽章，但交付的 CLI（命令行界面）既没有用于在其他位置应用同样署名的可复用指令，也没有可显式选择加入的提供方。
+[Cordis 教程](../../../../docs/cordis-tutorial/index.zh.md)的各个页面都使用官方「powered by glh」徽章，但交付的 CLI（命令行界面）既没有用于在其他位置应用同样署名的可复用指令，也没有可显式选择加入的提供方。
 
 ## 决策
 

@@ -36,7 +36,7 @@ Choose it when a composition runs the agent loop and wants durable request recov
 ```yaml
 - name: '@deepseek-ai/dsh-llm-deepseek-api-key'
   config:
-    apiKeyEnv: DEEPSEEK_API_KEY
+    apiKeyEnv: GLKJ_API_KEY
     retryPolicy:
       mode: always
       backoff:

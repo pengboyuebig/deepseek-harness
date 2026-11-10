@@ -32,7 +32,7 @@ Resolve user-facing values through the snapshot instead of `process.env` wheneve
 import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
 
 declare const ctx: import('@deepseek-ai/cordis').Context
-const endpoint = launchEnvironmentOf(ctx).get('DEEPSEEK_BASE_URL')?.value
+const endpoint = launchEnvironmentOf(ctx).get('GLKJ_BASE_URL')?.value
 ```
 
 `get(name)` searches every layer, most trusted first. `getFrom(name, sources)` searches only the named layers without changing that trust order — a caller that must never accept a layer leaves it out of the list, so no future reordering can let it back in.
@@ -45,9 +45,9 @@ const endpoint = launchEnvironmentOf(ctx).get('DEEPSEEK_BASE_URL')?.value
 |---|---|
 | Inherited process environment | What the launching shell, CI job, or container passed in — this run's explicit intent |
 | `<invocation cwd>/.env` | The project the harness was launched in, which the product trusts to configure its own agent |
-| `$DSH_HOME/.env` | The user's own machine-level defaults |
+| `$GLH_HOME/.env` | The user's own machine-level defaults |
 
-Names match the way the platform matches them: exactly on POSIX, case-insensitively on Windows. A case-sensitive lookup on Windows would rank the wrong layer — a shell's `deepseek_api_key` and a project `.env`'s `DEEPSEEK_API_KEY` are one variable to the OS.
+Names match the way the platform matches them: exactly on POSIX, case-insensitively on Windows. A case-sensitive lookup on Windows would rank the wrong layer — a shell's `deepseek_api_key` and a project `.env`'s `GLKJ_API_KEY` are one variable to the OS.
 
 ### When no launcher booted the tree
 

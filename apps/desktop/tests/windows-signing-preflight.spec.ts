@@ -53,11 +53,11 @@ async function fixture() {
   await mkdir(dirname(compiler), { recursive: true })
   await writeFile(compiler, 'inert compiler')
   const environment = { SystemRoot: root,
-    DSH_DESKTOP_WINDOWS_CER_FILE: join(root, 'public.cer'),
-    DSH_DESKTOP_WINDOWS_SIGNTOOL: join(root, 'signtool.exe'),
-    DSH_DESKTOP_WINDOWS_KEY_CONTAINER: 'fixture-container', DSH_DESKTOP_WINDOWS_TOKEN_PIN: 'fixture-pin' }
-  await writeFile(environment.DSH_DESKTOP_WINDOWS_CER_FILE, 'inert certificate')
-  await writeFile(environment.DSH_DESKTOP_WINDOWS_SIGNTOOL, 'inert signer')
+    GLH_DESKTOP_WINDOWS_CER_FILE: join(root, 'public.cer'),
+    GLH_DESKTOP_WINDOWS_SIGNTOOL: join(root, 'signtool.exe'),
+    GLH_DESKTOP_WINDOWS_KEY_CONTAINER: 'fixture-container', GLH_DESKTOP_WINDOWS_TOKEN_PIN: 'fixture-pin' }
+  await writeFile(environment.GLH_DESKTOP_WINDOWS_CER_FILE, 'inert certificate')
+  await writeFile(environment.GLH_DESKTOP_WINDOWS_SIGNTOOL, 'inert signer')
   const sequence: string[] = []
   const compile = vi.fn(async (_compiler: string, _source: string, output: string) => {
     sequence.push('compile'); await writeFile(output, 'inert unsigned probe')
@@ -81,8 +81,8 @@ it.each(['provider-unavailable', 'container-unavailable', 'certificate-mismatch'
   expect(options.compile).not.toHaveBeenCalled()
   expect(options.sign).not.toHaveBeenCalled()
   expect(inspectIdentity).toHaveBeenCalledOnce()
-  expect(inspectIdentity.mock.calls[0]![0].environment).not.toHaveProperty('DSH_DESKTOP_WINDOWS_TOKEN_PIN')
-  expect(inspectIdentity.mock.calls[0]![0].environment).not.toHaveProperty('DSH_DESKTOP_WINDOWS_SIGNTOOL')
+  expect(inspectIdentity.mock.calls[0]![0].environment).not.toHaveProperty('GLH_DESKTOP_WINDOWS_TOKEN_PIN')
+  expect(inspectIdentity.mock.calls[0]![0].environment).not.toHaveProperty('GLH_DESKTOP_WINDOWS_SIGNTOOL')
   const events = await readFile(join(options.runDirectory, 'events.jsonl'), 'utf8')
   expect(events).toContain(`"result":"${result}"`)
   expect(events).not.toContain('fixture-pin')
@@ -108,9 +108,9 @@ it.each(['interlock', 'fatal', 'compiler', 'certificate', 'signTool', 'pin', 'au
     await writeFile(join(options.stateDirectory, 'attempt.json'), 'retained attempt')
   } else if (failure === 'fatal') await writeFile(join(options.runDirectory, 'fatal.json'), 'failed')
   else if (failure === 'compiler') await rm(options.compiler)
-  else if (failure === 'certificate') await rm(options.environment.DSH_DESKTOP_WINDOWS_CER_FILE)
-  else if (failure === 'signTool') await rm(options.environment.DSH_DESKTOP_WINDOWS_SIGNTOOL)
-  else if (failure === 'pin') options.environment.DSH_DESKTOP_WINDOWS_TOKEN_PIN = ''
+  else if (failure === 'certificate') await rm(options.environment.GLH_DESKTOP_WINDOWS_CER_FILE)
+  else if (failure === 'signTool') await rm(options.environment.GLH_DESKTOP_WINDOWS_SIGNTOOL)
+  else if (failure === 'pin') options.environment.GLH_DESKTOP_WINDOWS_TOKEN_PIN = ''
   else {
     await rm(join(options.runDirectory, 'events.jsonl'))
     await mkdir(join(options.runDirectory, 'events.jsonl'))

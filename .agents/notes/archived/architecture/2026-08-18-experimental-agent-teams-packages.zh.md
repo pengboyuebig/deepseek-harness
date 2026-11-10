@@ -13,9 +13,9 @@ Agent Teams 的服务与工具约定仍在变化，但它需要使用真实 Sess
 
 ## 决策
 
-`packages/experimental/agent-team`、`packages/experimental/tool-agent-team`、`packages/experimental/agent-team-profile` 与 `packages/experimental/client-ui-agent-team` 是公开 workspace 包。它们保留现有 `@deepseek-ai/dsh-experimental-*` 名称并加入 dsh 发布系列。[发布拒绝列表决策](../process/2026-09-12-experimental-publication-denylist.zh.md)负责默认公开与私有例外；[实验性包规则](../../../../packages/experimental/AGENTS.md)负责依赖隔离与后续 promotion。
+`packages/experimental/agent-team`、`packages/experimental/tool-agent-team`、`packages/experimental/agent-team-profile` 与 `packages/experimental/client-ui-agent-team` 是公开 workspace 包。它们保留现有 `@deepseek-ai/dsh-experimental-*` 名称并加入 glh 发布系列。[发布拒绝列表决策](../process/2026-09-12-experimental-publication-denylist.zh.md)负责默认公开与私有例外；[实验性包规则](../../../../packages/experimental/AGENTS.md)负责依赖隔离与后续 promotion。
 
-dsh 打包与发布集合以及本地基线发布器包含这四个 Agent Teams 目录和 [Cua Driver 提供方](2026-09-12-computer-use-provider-registration.zh.md)。workspace 约束要求它们省略 `private`、将 `publishConfig.access` 设为 `public`，并保留实验性 npm 前缀。实验组之外的发布包、应用和 Python 运行时不能在 `dependencies`、`optionalDependencies` 或 `peerDependencies` 中引用实验包；实验包可以依赖发布包和彼此。
+glh 打包与发布集合以及本地基线发布器包含这四个 Agent Teams 目录和 [Cua Driver 提供方](2026-09-12-computer-use-provider-registration.zh.md)。workspace 约束要求它们省略 `private`、将 `publishConfig.access` 设为 `public`，并保留实验性 npm 前缀。实验组之外的发布包、应用和 Python 运行时不能在 `dependencies`、`optionalDependencies` 或 `peerDependencies` 中引用实验包；实验包可以依赖发布包和彼此。
 
 通用的调用方预留 continuable child 身份和精确 direct-child drain 仍属于稳定 Subagent 服务。它们负责 Subagent 身份与 Activation 生命周期，不 import 或命名 Agent Teams；实验性 Team 服务沿允许的方向消费这些能力。
 
@@ -37,6 +37,6 @@ profile 启动会先解析所选 bundle，再计算[不可变 runtime resolution
 
 ## 后果
 
-Agent Teams 会作为 dsh 发布系列中的四个可安装 tarball 发布，同时保持包名不变，也不会在随附 profile 中启用 Team。公开可用不代表这些包稳定或默认受支持，稳定发布包也不能对其建立运行时依赖。
+Agent Teams 会作为 glh 发布系列中的四个可安装 tarball 发布，同时保持包名不变，也不会在随附 profile 中启用 Team。公开可用不代表这些包稳定或默认受支持，稳定发布包也不能对其建立运行时依赖。
 
 发布系列保留实验性 npm 名称。promotion 仍会按照实验性包规则产生路径和 npm 名改动。

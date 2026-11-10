@@ -15,7 +15,7 @@ env:
   PRIMARY_NODE_VERSION: '24'
   # CI runs must never report to the production telemetry endpoint baked
   # into apps/cli/cordis.yml (AppCLIEntry disables the row when set).
-  DSH_TELEMETRY_DISABLED: '1'
+  GLH_TELEMETRY_DISABLED: '1'
 
 # Cancel a superseded pull-request run on a new push, as in ci.yml.
 concurrency:
@@ -61,7 +61,7 @@ jobs:
       targets: node24-linux-x64,node24-win-x64
       ci: true
     secrets:
-      DEEPSEEK_API_KEY_EXTERNAL: ${{ secrets.DEEPSEEK_API_KEY_EXTERNAL }}
+      GLKJ_API_KEY_EXTERNAL: ${{ secrets.GLKJ_API_KEY_EXTERNAL }}
 
   # Stable required check for the Python lanes, with the same semantics as
   # ci.yml's "all checks passed": every blocking job in THIS workflow is
@@ -70,8 +70,8 @@ jobs:
   python-checks-passed:
     name: python checks passed
     runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'blacksmith' && 'blacksmith-4vcpu-ubuntu-2404'
-          || vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
+      ${{ vars.GLH_CI_FAILOVER_LINUX == 'blacksmith' && 'blacksmith-4vcpu-ubuntu-2404'
+          || vars.GLH_CI_FAILOVER_LINUX == 'selfhosted'
           && github.event.pull_request.user.login != 'dependabot[bot]'
           && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
           || 'ubuntu-latest' }}

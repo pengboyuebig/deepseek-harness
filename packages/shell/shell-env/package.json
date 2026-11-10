@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-shell-env",
-  "description": "Tool-independent managed DSH_* shell environment registry",
+  "description": "Tool-independent managed GLH_* shell environment registry",
   "version": "0.2.2-rc.1",
   "publishConfig": {
     "access": "public"

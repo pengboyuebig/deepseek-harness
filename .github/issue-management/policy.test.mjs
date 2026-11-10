@@ -420,7 +420,7 @@ test('deletes a stale audit comment after repairing its only violation', async (
         {
           id: 99,
           user: { type: 'Bot' },
-          body: '<!-- dsh-issue-policy -->\nold audit',
+          body: '<!-- glkj-issue-policy -->\nold audit',
         },
       ])
     }
@@ -1095,7 +1095,7 @@ test('keeps REST headers, null responses, and transport errors unchanged', async
       Accept: 'application/vnd.github+json',
       Authorization: 'Bearer preferred-token',
       'X-GitHub-Api-Version': '2026-03-10',
-      'User-Agent': 'dsh-issue-policy',
+      'User-Agent': 'glkj-issue-policy',
     } },
   })
   assert.equal(await api('/empty'), null)

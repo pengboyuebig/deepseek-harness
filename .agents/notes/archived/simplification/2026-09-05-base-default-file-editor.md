@@ -15,7 +15,7 @@ The [base patch](../../../../packages/bundle/base/cordis.patch.yml) selects `rea
 
 Web minimal and the standalone `sdk-minimal` bundle own their tool selection independently of base. The [persistent-shell-only decision](2026-09-03-minimal-profiles-persistent-shell-only.md) owns their single-tool defaults.
 
-This refines the shared tool defaults in [one dsh launcher](../architecture/2026-08-22-single-dsh-application-launcher.md). That note remains active for launch ownership, shared services, and patch precedence; no active note is fully superseded.
+This refines the shared tool defaults in [one glh launcher](../architecture/2026-08-22-single-dsh-application-launcher.md). That note remains active for launch ownership, shared services, and patch precedence; no active note is fully superseded.
 
 ## Alternatives considered
 

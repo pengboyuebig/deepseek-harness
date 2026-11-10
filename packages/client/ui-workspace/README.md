@@ -1,5 +1,5 @@
 ---
-description: "Shared Workspace browser and picker plugin for the dsh web client: grouped or flat session rows, management actions, the slot-composed Session row actions, and directory picking."
+description: "Shared Workspace browser and picker plugin for the glh web client: grouped or flat session rows, management actions, the slot-composed Session row actions, and directory picking."
 kind: "package-reference"
 ---
 

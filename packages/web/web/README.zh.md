@@ -33,7 +33,7 @@ kind: "package-reference"
 
 ### 最小配置
 
-加载服务并让唯一挂载的后端自动选择，或用 `searchProvider`／`fetchProvider` 固定提供方 id。环境变量 `$DSH_WEB_SEARCH_PROVIDER` 与 `$DSH_WEB_FETCH_PROVIDER` 提供相同字段，不是另一条优先级链。下面两个后端都注册了抓取提供方，因此示例固定 `fetchProvider: http`。
+加载服务并让唯一挂载的后端自动选择，或用 `searchProvider`／`fetchProvider` 固定提供方 id。环境变量 `$GLH_WEB_SEARCH_PROVIDER` 与 `$GLH_WEB_FETCH_PROVIDER` 提供相同字段，不是另一条优先级链。下面两个后端都注册了抓取提供方，因此示例固定 `fetchProvider: http`。
 
 ```yaml
 - name: '@deepseek-ai/dsh-web'
@@ -98,7 +98,7 @@ ctx.remote.$on('web/providers-changed', () => { /* re-read the lists */ })
 <a id="adding-a-provider"></a>
 #### 添加其他提供方
 
-内置组合之外的搜索或抓取后端是一个插件包，它以唯一的 `id` 和可选的 `title` 调用 `ctx.web.registerSearchProvider()` 或 `ctx.web.registerFetchProvider()`。要在某个 profile 中启用它，先用 `dsh plugin --profile <name> add <package>` 安装该包（[安装规则](../../../docs/user/develop/basic/publish.zh.md)），再把它的行加入该 profile 的用户 patch 层 `$DSH_HOME/profiles/<name>/cordis.patch.yml`，然后重启 DSH。该文件是由 patch 条目组成的顶层 YAML 数组；请追加下面的 `insert` 条目，或用它替换单独的 `[]`。示例挂载一个假想的 `@example/dsh-web-search-acme`；请换成提供方真实的包名，并添加其 README 说明的 `config`。
+内置组合之外的搜索或抓取后端是一个插件包，它以唯一的 `id` 和可选的 `title` 调用 `ctx.web.registerSearchProvider()` 或 `ctx.web.registerFetchProvider()`。要在某个 profile 中启用它，先用 `glh plugin --profile <name> add <package>` 安装该包（[安装规则](../../../docs/user/develop/basic/publish.zh.md)），再把它的行加入该 profile 的用户 patch 层 `$GLH_HOME/profiles/<name>/cordis.patch.yml`，然后重启 DSH。该文件是由 patch 条目组成的顶层 YAML 数组；请追加下面的 `insert` 条目，或用它替换单独的 `[]`。示例挂载一个假想的 `@example/dsh-web-search-acme`；请换成提供方真实的包名，并添加其 README 说明的 `config`。
 
 ```yaml
 - insert:
@@ -106,7 +106,7 @@ ctx.remote.$on('web/providers-changed', () => { /* re-read the lists */ })
       name: '@example/dsh-web-search-acme'
 ```
 
-`dsh --profile <name> --dump-config` 会在该 patch 文件的层下打印这一行。重启后，该提供方以其 `title`（没有 `title` 时以其 `id`）出现在[设置页](../../client/ui-settings-web-search/README.zh.md)的**网页搜索提供方**或**网页获取提供方**下拉框中，设置页无需任何修改。选中它会把 `searchProvider` 或 `fetchProvider` 固定为它的 `id`。如果之后在该提供方被选中时删除了这一行，下拉框会把已保存的 id 显示为 **（未加载）**，每次调用都会以 `WEB_PROVIDER_CONFIGURED_MISSING` 失败，直到选择其他提供方。
+`glh --profile <name> --dump-config` 会在该 patch 文件的层下打印这一行。重启后，该提供方以其 `title`（没有 `title` 时以其 `id`）出现在[设置页](../../client/ui-settings-web-search/README.zh.md)的**网页搜索提供方**或**网页获取提供方**下拉框中，设置页无需任何修改。选中它会把 `searchProvider` 或 `fetchProvider` 固定为它的 `id`。如果之后在该提供方被选中时删除了这一行，下拉框会把已保存的 id 显示为 **（未加载）**，每次调用都会以 `WEB_PROVIDER_CONFIGURED_MISSING` 失败，直到选择其他提供方。
 
 <a id="search-readiness"></a>
 ### 搜索与抓取就绪

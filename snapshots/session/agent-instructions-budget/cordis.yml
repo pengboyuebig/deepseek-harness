@@ -1,5 +1,5 @@
-# Workspace-context snapshot patch: the harness exports DSH_HOME=<cwd>/.dsh and
-# DSH_AGENTS_HOME=<cwd>/.agents, so project-root and both user-global root
+# Workspace-context snapshot patch: the harness exports GLH_HOME=<cwd>/.dsh and
+# GLH_AGENTS_HOME=<cwd>/.agents, so project-root and both user-global root
 # discoveries stay inside the scenario's temporary cwd.
 - id: agent-default-model
   name: '@deepseek-ai/dsh-agent-default-model'
@@ -11,7 +11,7 @@
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: !!js dshHomePath('sessions')
-    compression: !!js 'process.env.DSH_SNAPSHOT === undefined ? ''zstd'' : ''none'''
+    compression: !!js 'process.env.GLH_SNAPSHOT === undefined ? ''zstd'' : ''none'''
 
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'

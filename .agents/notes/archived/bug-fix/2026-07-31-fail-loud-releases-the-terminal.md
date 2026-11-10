@@ -7,10 +7,10 @@ English | [中文](2026-07-31-fail-loud-releases-the-terminal.zh.md)
 
 ## Problem
 
-A `dsh` launch whose config failed validation printed its diagnostic and returned the user to a broken shell. Typing was invisible, and the next command was mangled by stray text:
+A `glh` launch whose config failed validation printed its diagnostic and returned the user to a broken shell. Typing was invisible, and the next command was mangled by stray text:
 
 ```
-dsh: fatal load failure: ValidationError: invalid config:
+glh: fatal load failure: ValidationError: invalid config:
   - $.providers expected object but got [object Object] (at providers)
 $ 1;2;4cecho hello
 zsh: command not found: 4cecho
@@ -32,7 +32,7 @@ The `/exit` path was never affected, because it disposes the tree and reaches th
 - Omitting `release` keeps the previous behavior exactly, so the ACP, JSON-RPC, and demo bins are unchanged.
 - The same handler, latch, and release run for `uncaughtException` since the [fatal diagnostics and crash reports](../architecture/2026-09-22-fatal-diagnostics-and-crash-reports.md) decision, which also switched the diagnostic to `util.inspect`.
 
-`dsh`'s TUI launcher passes a release that disposes the root context, which runs the TUI's existing `shutdown()` and hands the terminal back.
+`glh`'s TUI launcher passes a release that disposes the root context, which runs the TUI's existing `shutdown()` and hands the terminal back.
 
 The launcher captures the root context in `boot()`'s `prepare` hook rather than from its return value. The rejection arrives while `boot()` is still in flight, so `app.current` assigned after the `await` would still be `undefined` at exactly the moment the hook needs it. `prepare` runs after the Loader installs and before any config-tree entry mounts, which covers the whole window in which an entry can reject.
 
@@ -48,7 +48,7 @@ The launcher captures the root context in `boot()`'s `prepare` hook rather than 
 
 ## Consequences
 
-A failed boot now costs one tree disposal (bounded at 2s) before exit, and the exit code stays 1. In exchange, a misconfigured `dsh` returns a usable shell instead of one needing `stty sane` or `reset`.
+A failed boot now costs one tree disposal (bounded at 2s) before exit, and the exit code stays 1. In exchange, a misconfigured `glh` returns a usable shell instead of one needing `stty sane` or `reset`.
 
 The guarantee belongs to whichever bin owns the terminal: a surface that grabs terminal state and does not pass `release` reintroduces this defect. `installFailLoud` cannot detect that on its own, since it has no view of what a mounted plugin did to the process.
 
@@ -56,6 +56,6 @@ The guarantee belongs to whichever bin owns the terminal: a surface that grabs t
 
 `packages/boot/app-boot/tests/app-boot.spec.ts` covers the release contract: the hook is awaited before the exit commits, a rejecting hook still exits 1, a never-settling hook exits after `FAIL_LOUD_RELEASE_TIMEOUT_MS`, and a burst of rejections reports only the first while the release still completes.
 
-Those fake-process tests cannot observe the two failure modes that matter most — process exit code with a real event loop, and terminal state after exit — so the regression lives in `apps/cli/tests/tui-keyless-smoke.e2e.ts`. It boots the shipped tree in a real PTY over `fixtures/tui-invalid-provider.cordis.yml` (a list-shaped `providers`, the mistake users actually make), expects exit 1, and asserts the captured bytes contain both the labelled boot rejection (`dsh: plugin tree failed to load:`) and `ESC[?2004l`. The same case pins the boot path end to end: it caught the [HMR initial-scan boot deadlock](../../archived/bug-fix/2026-08-03-hmr-initial-scan-boot-deadlock.md) that silently exited 13 with the terminal stranded.
+Those fake-process tests cannot observe the two failure modes that matter most — process exit code with a real event loop, and terminal state after exit — so the regression lives in `apps/cli/tests/tui-keyless-smoke.e2e.ts`. It boots the shipped tree in a real PTY over `fixtures/tui-invalid-provider.cordis.yml` (a list-shaped `providers`, the mistake users actually make), expects exit 1, and asserts the captured bytes contain both the labelled boot rejection (`glh: plugin tree failed to load:`) and `ESC[?2004l`. The same case pins the boot path end to end: it caught the [HMR initial-scan boot deadlock](../../archived/bug-fix/2026-08-03-hmr-initial-scan-boot-deadlock.md) that silently exited 13 with the terminal stranded.
 
 The `/exit` path keeps its existing assertion that the same reset appears on a clean exit.

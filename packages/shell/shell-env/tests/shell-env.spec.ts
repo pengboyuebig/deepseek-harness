@@ -45,13 +45,13 @@ describe('ShellEnvRegistry', () => {
     const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
 
     expect(registry.collect(execution())).toEqual({
-      DSH_HOME: resolve('./test-dsh-home'),
-      DSH_SHELL: '1',
+      GLH_HOME: resolve('./test-dsh-home'),
+      GLH_SHELL: '1',
     })
     expect(registry.collect(execution('session-a'))).toEqual({
-      DSH_HOME: resolve('./test-dsh-home'),
-      DSH_SESSION_ID: 'session-a',
-      DSH_SHELL: '1',
+      GLH_HOME: resolve('./test-dsh-home'),
+      GLH_SESSION_ID: 'session-a',
+      GLH_SHELL: '1',
     })
   })
 
@@ -62,22 +62,22 @@ describe('ShellEnvRegistry', () => {
       cwd: '/work', home: '/home', startedBundles: [], overlays: [], telemetryDisabledEnv: undefined,
     })
     const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
-    expect(registry.collect(execution())).toMatchObject({ DSH_PROFILE: 'web', DSH_PROFILE_DIR: '/profiles/web' })
+    expect(registry.collect(execution())).toMatchObject({ GLH_PROFILE: 'web', GLH_PROFILE_DIR: '/profiles/web' })
     expect(() => registry.register({
       name: 'profile-claimer',
-      variables: { DSH_PROFILE: { description: 'Reserved key.' } },
+      variables: { GLH_PROFILE: { description: 'Reserved key.' } },
       resolve: () => ({}),
-    })).toThrow(/reserved key "DSH_PROFILE"/)
+    })).toThrow(/reserved key "GLH_PROFILE"/)
   })
 
-  it('resolves DSH_HOME from the ambient override or the user-home default', () => {
-    vi.stubEnv('DSH_HOME', './ambient-dsh-home')
+  it('resolves GLH_HOME from the ambient override or the user-home default', () => {
+    vi.stubEnv('GLH_HOME', './ambient-dsh-home')
     const fromEnvironment = new ShellEnvRegistry(new Context())
-    expect(fromEnvironment.collect(execution()).DSH_HOME).toBe(resolve('./ambient-dsh-home'))
+    expect(fromEnvironment.collect(execution()).GLH_HOME).toBe(resolve('./ambient-dsh-home'))
 
-    vi.stubEnv('DSH_HOME', undefined)
+    vi.stubEnv('GLH_HOME', undefined)
     const fromDefault = new ShellEnvRegistry(new Context())
-    expect(fromDefault.collect(execution()).DSH_HOME).toBe(join(homedir(), '.dsh'))
+    expect(fromDefault.collect(execution()).GLH_HOME).toBe(join(homedir(), '.glh'))
   })
 
   it('collects declared contributor variables and omits unavailable values', () => {
@@ -86,31 +86,31 @@ describe('ShellEnvRegistry', () => {
     registry.register({
       name: 'optional-session-fact',
       variables: {
-        DSH_SESSION_OPTIONAL: { description: 'Optional session-scoped test fact.' },
+        GLH_SESSION_OPTIONAL: { description: 'Optional session-scoped test fact.' },
       },
-      resolve: exec => exec.agent === undefined ? {} : { DSH_SESSION_OPTIONAL: exec.agent.session.header.id },
+      resolve: exec => exec.agent === undefined ? {} : { GLH_SESSION_OPTIONAL: exec.agent.session.header.id },
     })
     registry.register({
       name: 'always-available-fact',
       variables: {
-        DSH_ALWAYS_AVAILABLE: { description: 'Always-available test fact.' },
+        GLH_ALWAYS_AVAILABLE: { description: 'Always-available test fact.' },
       },
-      resolve: () => ({ DSH_ALWAYS_AVAILABLE: 'yes' }),
+      resolve: () => ({ GLH_ALWAYS_AVAILABLE: 'yes' }),
     })
 
-    expect(registry.collect(execution())).not.toHaveProperty('DSH_SESSION_OPTIONAL')
-    expect(registry.collect(execution()).DSH_ALWAYS_AVAILABLE).toBe('yes')
-    expect(registry.collect(execution('session-b')).DSH_SESSION_OPTIONAL).toBe('session-b')
+    expect(registry.collect(execution())).not.toHaveProperty('GLH_SESSION_OPTIONAL')
+    expect(registry.collect(execution()).GLH_ALWAYS_AVAILABLE).toBe('yes')
+    expect(registry.collect(execution('session-b')).GLH_SESSION_OPTIONAL).toBe('session-b')
     expect(registry.list()).toEqual([
       {
         contributor: 'always-available-fact',
         description: 'Always-available test fact.',
-        key: 'DSH_ALWAYS_AVAILABLE',
+        key: 'GLH_ALWAYS_AVAILABLE',
       },
       {
         contributor: 'optional-session-fact',
         description: 'Optional session-scoped test fact.',
-        key: 'DSH_SESSION_OPTIONAL',
+        key: 'GLH_SESSION_OPTIONAL',
       },
     ])
   })
@@ -120,48 +120,48 @@ describe('ShellEnvRegistry', () => {
     const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
     registry.register({
       name: 'first',
-      variables: { DSH_SHARED: { description: 'First owner.' } },
-      resolve: () => ({ DSH_SHARED: 'first' }),
+      variables: { GLH_SHARED: { description: 'First owner.' } },
+      resolve: () => ({ GLH_SHARED: 'first' }),
     })
 
     expect(() => registry.register({
       name: 'second',
-      variables: { DSH_SHARED: { description: 'Second owner.' } },
-      resolve: () => ({ DSH_SHARED: 'second' }),
-    })).toThrow(/DSH_SHARED.*first.*second|DSH_SHARED.*second.*first/)
+      variables: { GLH_SHARED: { description: 'Second owner.' } },
+      resolve: () => ({ GLH_SHARED: 'second' }),
+    })).toThrow(/GLH_SHARED.*first.*second|GLH_SHARED.*second.*first/)
   })
 
   it('rejects duplicate contributor names and malformed declarations', () => {
     const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
     registry.register({
       name: 'declared',
-      variables: { DSH_DECLARED: { description: 'Declared fact.' } },
+      variables: { GLH_DECLARED: { description: 'Declared fact.' } },
       resolve: () => ({}),
     })
 
     expect(() => registry.register({
       name: 'declared',
-      variables: { DSH_ANOTHER: { description: 'Another fact.' } },
+      variables: { GLH_ANOTHER: { description: 'Another fact.' } },
       resolve: () => ({}),
     })).toThrow(/already registered/)
     expect(() => registry.register({
       name: ' ',
-      variables: { DSH_BLANK_NAME: { description: 'Blank owner.' } },
+      variables: { GLH_BLANK_NAME: { description: 'Blank owner.' } },
       resolve: () => ({}),
     })).toThrow(/name must be non-empty/)
     expect(() => registry.register({
       name: 'invalid-key',
-      variables: { dsh_invalid: { description: 'Invalid key.' } } as unknown as Record<'DSH_INVALID', { description: string }>,
+      variables: { dsh_invalid: { description: 'Invalid key.' } } as unknown as Record<'GLH_INVALID', { description: string }>,
       resolve: () => ({}),
     })).toThrow(/invalid key/)
     expect(() => registry.register({
       name: 'reserved-key',
-      variables: { DSH_HOME: { description: 'Reserved key.' } },
+      variables: { GLH_HOME: { description: 'Reserved key.' } },
       resolve: () => ({}),
     })).toThrow(/reserved key/)
     expect(() => registry.register({
       name: 'blank-description',
-      variables: { DSH_BLANK_DESCRIPTION: { description: ' ' } },
+      variables: { GLH_BLANK_DESCRIPTION: { description: ' ' } },
       resolve: () => ({}),
     })).toThrow(/must describe/)
   })
@@ -171,22 +171,22 @@ describe('ShellEnvRegistry', () => {
     const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
     registry.register({
       name: 'drifted-provider',
-      variables: { DSH_DECLARED: { description: 'Declared fact.' } },
-      resolve: () => ({ DSH_UNDECLARED: 'bad' }),
+      variables: { GLH_DECLARED: { description: 'Declared fact.' } },
+      resolve: () => ({ GLH_UNDECLARED: 'bad' }),
     })
 
-    expect(() => registry.collect(execution())).toThrow(/drifted-provider.*DSH_UNDECLARED/)
+    expect(() => registry.collect(execution())).toThrow(/drifted-provider.*GLH_UNDECLARED/)
   })
 
   it('rejects non-string values returned by a contributor', () => {
     const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
     registry.register({
       name: 'wrong-value-type',
-      variables: { DSH_STRING: { description: 'String fact.' } },
-      resolve: () => ({ DSH_STRING: 42 }) as unknown as Record<'DSH_STRING', string>,
+      variables: { GLH_STRING: { description: 'String fact.' } },
+      resolve: () => ({ GLH_STRING: 42 }) as unknown as Record<'GLH_STRING', string>,
     })
 
-    expect(() => registry.collect(execution())).toThrow(/wrong-value-type.*non-string.*DSH_STRING/)
+    expect(() => registry.collect(execution())).toThrow(/wrong-value-type.*non-string.*GLH_STRING/)
   })
 
   it('removes an effect-scoped contributor when its plugin is disposed', async () => {
@@ -197,28 +197,28 @@ describe('ShellEnvRegistry', () => {
       apply(inner: Context) {
         inner.shellEnv.register({
           name: 'temporary',
-          variables: { DSH_TEMPORARY: { description: 'Temporary fact.' } },
-          resolve: () => ({ DSH_TEMPORARY: 'present' }),
+          variables: { GLH_TEMPORARY: { description: 'Temporary fact.' } },
+          resolve: () => ({ GLH_TEMPORARY: 'present' }),
         })
       },
     })
 
-    expect(registry.collect(execution()).DSH_TEMPORARY).toBe('present')
+    expect(registry.collect(execution()).GLH_TEMPORARY).toBe('present')
     await fiber.dispose()
-    expect(registry.collect(execution())).not.toHaveProperty('DSH_TEMPORARY')
+    expect(registry.collect(execution())).not.toHaveProperty('GLH_TEMPORARY')
   })
 
   it('returns an explicit contributor disposer', () => {
     const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
     const dispose = registry.register({
       name: 'explicit-disposal',
-      variables: { DSH_EXPLICIT_DISPOSAL: { description: 'Explicitly disposed fact.' } },
-      resolve: () => ({ DSH_EXPLICIT_DISPOSAL: 'present' }),
+      variables: { GLH_EXPLICIT_DISPOSAL: { description: 'Explicitly disposed fact.' } },
+      resolve: () => ({ GLH_EXPLICIT_DISPOSAL: 'present' }),
     })
 
-    expect(registry.collect(execution()).DSH_EXPLICIT_DISPOSAL).toBe('present')
+    expect(registry.collect(execution()).GLH_EXPLICIT_DISPOSAL).toBe('present')
     dispose()
-    expect(registry.collect(execution())).not.toHaveProperty('DSH_EXPLICIT_DISPOSAL')
+    expect(registry.collect(execution())).not.toHaveProperty('GLH_EXPLICIT_DISPOSAL')
   })
 
   it('the plugin registers the service with no contributors on load', async () => {

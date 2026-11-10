@@ -10,7 +10,7 @@
 
 DSH 解析选中的 Cordis overlay，启动已配置的 stdio 命令或连接已配置的 Streamable HTTP URL，发现 MCP 工具，并以 `mcp__<serverName>__<tool>` 的形式公开这些工具。DSH **不负责** 下载服务器、初始化其数据库、选择模型或 embedding 提供方、创建云端账户、迁移提供方数据，也不监管独立的 HTTP 服务。对于 stdio，通用客户端会随 DSH 插件生命周期启动和停止子进程；对于 HTTP，上游服务必须已经运行。
 
-stdio 桥接器在启动子进程前会主动移除环境中名称通常表示凭据的变量和所有 `DSH_*` 变量；其余环境变量仍会继承。每份示例仅添加其基线所需的覆盖项。如果某个可选的上游功能还需要其他密钥，请将该变量添加到配置项的 `config.env`，不要把密钥直接写进 YAML。
+stdio 桥接器在启动子进程前会主动移除环境中名称通常表示凭据的变量和所有 `GLH_*` 变量；其余环境变量仍会继承。每份示例仅添加其基线所需的覆盖项。如果某个可选的上游功能还需要其他密钥，请将该变量添加到配置项的 `config.env`，不要把密钥直接写进 YAML。
 
 ## 选择一个
 
@@ -25,12 +25,12 @@ stdio 桥接器在启动子进程前会主动移除环境中名称通常表示�
 将一份 overlay 传给 DSH：
 
 ```sh
-dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/memorix.cordis.yml"
+glh web --patch "$PWD/apps/cli/config/examples/mcp-memory/memorix.cordis.yml"
 ```
 
 请将文件名替换为 `mcp-reference-memory.cordis.yml` 或 `engram.cordis.yml`。该路径可以指向磁盘任意位置的一份复制文件。交付组合不包含任何记忆服务器，因此不传 `--patch` 就会让这三项全部保持关闭。
 
-如果要跨次运行保留所选配置，请将对应文件中的单个 `insert` patch 合并到用户 patch 层：只对一个 profile 生效则写入 `$DSH_HOME/profiles/<name>/cordis.patch.yml`，对本机所有 profile 生效则写入 `$DSH_HOME/cordis.patch.yml`。不要覆盖已有文件，其中可能已经包含无关的用户 patch。
+如果要跨次运行保留所选配置，请将对应文件中的单个 `insert` patch 合并到用户 patch 层：只对一个 profile 生效则写入 `$GLH_HOME/profiles/<name>/cordis.patch.yml`，对本机所有 profile 生效则写入 `$GLH_HOME/cordis.patch.yml`。不要覆盖已有文件，其中可能已经包含无关的用户 patch。
 
 ## 提供方设置
 
@@ -38,7 +38,7 @@ dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/memorix.cordis.yml"
 
 ```sh
 npm install --global memorix@1.3.0
-dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/memorix.cordis.yml"
+glh web --patch "$PWD/apps/cli/config/examples/mcp-memory/memorix.cordis.yml"
 ```
 
 Memorix 无需 LLM（大语言模型）或 embedding 服务，即可在本地启发式模式下运行。请在 Memorix 自己的 `~/.memorix/config.toml` 或项目 `memorix.toml` 中配置可选提供方。该示例沿用 DSH 工作目录中的 Git 项目标识，并使用 Memorix 自身的默认目录 `~/.memorix/data`。若要覆盖该目录，请在启动 DSH 前设置 `MEMORIX_DATA_DIR`。
@@ -47,7 +47,7 @@ Memorix 无需 LLM（大语言模型）或 embedding 服务，即可在本地启
 
 ```sh
 npm install --global @modelcontextprotocol/server-memory@2026.7.4
-dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/mcp-reference-memory.cordis.yml"
+glh web --patch "$PWD/apps/cli/config/examples/mcp-memory/mcp-reference-memory.cordis.yml"
 ```
 
 该参考服务器存储本地知识图谱，并公开实体、关系、观察、读取、搜索和打开工具。它不需要模型或 embedding 服务。该示例将 JSONL 存储在 `$HOME/.dsh-mcp-reference-memory.jsonl`，而不是已安装的 npm 包目录中。若要覆盖该路径，请在启动 DSH 前设置 `MEMORY_FILE_PATH`。
@@ -58,7 +58,7 @@ dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/mcp-reference-memory.c
 
 ```sh
 go install github.com/Gentleman-Programming/engram/cmd/engram@v1.20.0
-dsh web --patch "$PWD/apps/cli/config/examples/mcp-memory/engram.cordis.yml"
+glh web --patch "$PWD/apps/cli/config/examples/mcp-memory/engram.cordis.yml"
 ```
 
 Engram 负责存储和项目选择：它默认使用 `~/.engram`，从 DSH 工作目录检测 Git 项目，并接受 `ENGRAM_DATA_DIR` 或 `ENGRAM_PROJECT` 作为环境覆盖项。

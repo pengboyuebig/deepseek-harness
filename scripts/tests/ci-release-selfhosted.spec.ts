@@ -62,7 +62,7 @@ function assertSharedPersistentStore(run: string | undefined): void {
 }
 
 const trustedPr = {
-  'vars.DSH_CI_FAILOVER_LINUX': 'selfhosted',
+  'vars.GLH_CI_FAILOVER_LINUX': 'selfhosted',
   'github.repository': repository,
   'github.actor': 'maintainer',
   'github.event_name': 'pull_request',
@@ -72,16 +72,16 @@ const trustedPr = {
   'github.event.pull_request.user.login': 'contributor',
 }
 const trustedPush = {
-  'vars.DSH_CI_FAILOVER_LINUX': 'selfhosted',
+  'vars.GLH_CI_FAILOVER_LINUX': 'selfhosted',
   'github.repository': repository,
   'github.actor': 'maintainer',
   'github.event_name': 'push',
   'github.ref': 'refs/heads/master',
 }
 const fallbackCases: Array<[string, Record<string, string | boolean>]> = [
-  ['unset switch', { ...trustedPr, 'vars.DSH_CI_FAILOVER_LINUX': '' }],
-  ['hosted switch', { ...trustedPr, 'vars.DSH_CI_FAILOVER_LINUX': 'hosted' }],
-  ['unknown switch', { ...trustedPr, 'vars.DSH_CI_FAILOVER_LINUX': 'true' }],
+  ['unset switch', { ...trustedPr, 'vars.GLH_CI_FAILOVER_LINUX': '' }],
+  ['hosted switch', { ...trustedPr, 'vars.GLH_CI_FAILOVER_LINUX': 'hosted' }],
+  ['unknown switch', { ...trustedPr, 'vars.GLH_CI_FAILOVER_LINUX': 'true' }],
   ['fork PR', { ...trustedPr, 'github.event.pull_request.head.repo.full_name': 'outsider/fork', 'github.event.pull_request.head.repo.fork': true }],
   ['different head repository', { ...trustedPr, 'github.event.pull_request.head.repo.full_name': 'outsider/repo' }],
   ['fork flag', { ...trustedPr, 'github.event.pull_request.head.repo.fork': true }],
@@ -113,7 +113,7 @@ for (const [file, jobIds] of [['release.yml', ['dependencies', 'pack']], ['relea
         it('routes trusted PRs and master pushes onto the existing Linux pool', () => {
           expect(evaluate(job['runs-on'], trustedPr)).toEqual(selfhosted)
           expect(evaluate(job['runs-on'], trustedPush)).toEqual(selfhosted)
-          expect(evaluate(job['runs-on'], { ...trustedPush, 'vars.DSH_CI_FAILOVER_LINUX': '' })).toBe(hosted)
+          expect(evaluate(job['runs-on'], { ...trustedPush, 'vars.GLH_CI_FAILOVER_LINUX': '' })).toBe(hosted)
         })
         it.each(fallbackCases)('keeps %s hosted', (_name, context) => {
           expect(evaluate(job['runs-on'], context)).toBe(hosted)
@@ -300,7 +300,7 @@ it.each([
   expect(source).toBeDefined()
   const result = spawnSync(process.execPath, ['-e', source!], {
     cwd: directory, encoding: 'utf8', timeout: 60_000,
-    env: { ...process.env, GITHUB_REF: ref, DSH_PACKAGING_PRESET: preset, PACKAGE_SOURCE_REF: 'refs/tags/dsh-v0.0.0' },
+    env: { ...process.env, GITHUB_REF: ref, GLH_PACKAGING_PRESET: preset, PACKAGE_SOURCE_REF: 'refs/tags/dsh-v0.0.0' },
   })
   expect(result.error).toBeUndefined()
   expect(result.signal).toBeNull()

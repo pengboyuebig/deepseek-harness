@@ -43,7 +43,7 @@ let testHome: string
 
 beforeEach(() => {
   testHome = mkdtempSync(join(tmpdir(), 'dsh-llm-deepseek-'))
-  vi.stubEnv('DSH_HOME', testHome)
+  vi.stubEnv('GLH_HOME', testHome)
 })
 
 afterEach(async () => {
@@ -56,7 +56,7 @@ afterEach(async () => {
 async function harness(baseURL: string, config: object = {}) {
   // Configuration carries only the reference; the key comes from the
   // environment, which is the whole credential plane without a mounted seam.
-  vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+  vi.stubEnv('GLKJ_API_KEY', 'test-key')
   const ctx = new Context()
   await ctx.plugin(LlmRuntime)
   await ctx.plugin(DeepSeekLlmApiExtensionRegistry)
@@ -1728,7 +1728,7 @@ describe('DeepSeekAdapter against a mock server', () => {
 
 describe('plugin registration and config', () => {
   it('resolves the Messages endpoint without rewriting overrides', () => {
-    expect(resolveAdapterOptions({}).baseURL).toBe('https://api.deepseek.com/anthropic')
+    expect(resolveAdapterOptions({}).baseURL).toBe('https://api.glkj.example.com/anthropic')
     for (const baseURL of ['https://example.com', 'https://example.com/custom']) {
       expect(resolveAdapterOptions({ baseURL }).baseURL).toBe(baseURL)
     }
@@ -1788,7 +1788,7 @@ describe('plugin registration and config', () => {
   })
 
   it('owns the deepseek provider and advertises the default models', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'catalog-fixture-key')
+    vi.stubEnv('GLKJ_API_KEY', 'catalog-fixture-key')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, { baseURL: 'http://127.0.0.1:1' })
@@ -1917,7 +1917,7 @@ describe('plugin registration and config', () => {
   })
 
   it('uses the default model catalog when apply is called directly', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'catalog-fixture-key')
+    vi.stubEnv('GLKJ_API_KEY', 'catalog-fixture-key')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     LlmDeepSeek.apply(ctx, LlmDeepSeek.Config({ baseURL: 'http://127.0.0.1:1' }))
@@ -1935,7 +1935,7 @@ describe('plugin registration and config', () => {
 
 
   it('advertises configured models without restricting arbitrary request ids', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'catalog-fixture-key')
+    vi.stubEnv('GLKJ_API_KEY', 'catalog-fixture-key')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, {
@@ -2212,9 +2212,9 @@ describe('plugin registration and config', () => {
     },
   )
 
-  it('falls back to DEEPSEEK_API_KEY and DEEPSEEK_BASE_URL env vars', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'env-key')
-    vi.stubEnv('DEEPSEEK_BASE_URL', 'http://127.0.0.1:1')
+  it('falls back to GLKJ_API_KEY and GLKJ_BASE_URL env vars', async () => {
+    vi.stubEnv('GLKJ_API_KEY', 'env-key')
+    vi.stubEnv('GLKJ_BASE_URL', 'http://127.0.0.1:1')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, {})
@@ -2222,7 +2222,7 @@ describe('plugin registration and config', () => {
   })
 
   it('loads keyless with an empty catalog and fails requests actionably', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, { baseURL: 'http://127.0.0.1:1' })
@@ -2237,13 +2237,13 @@ describe('plugin registration and config', () => {
     // The guidance names both places a credential can come from, and nothing
     // else: configuration carries the reference, never a literal key.
     expect(second.finish.failure.message)
-      .toMatch(/store DEEPSEEK_API_KEY through the credentials service.*export DEEPSEEK_API_KEY/s)
+      .toMatch(/store GLKJ_API_KEY through the credentials service.*export GLKJ_API_KEY/s)
   })
 
   it('reads the ambient variable when no credentials seam is mounted', async () => {
     // The plain cordis.yml composition: no credential provider, the key in
     // the launching environment.
-    vi.stubEnv('DEEPSEEK_API_KEY', 'ambient-key')
+    vi.stubEnv('GLKJ_API_KEY', 'ambient-key')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
@@ -2253,7 +2253,7 @@ describe('plugin registration and config', () => {
   })
 
   it('treats an empty ambient variable as no key when no credentials seam is mounted', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', '')
+    vi.stubEnv('GLKJ_API_KEY', '')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, { baseURL: 'http://127.0.0.1:1' })
@@ -2262,18 +2262,18 @@ describe('plugin registration and config', () => {
   })
 
   it('prefers explicit config over env for key and base URL', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'env-key')
-    vi.stubEnv('DEEPSEEK_BASE_URL', 'http://env-host:1')
+    vi.stubEnv('GLKJ_API_KEY', 'env-key')
+    vi.stubEnv('GLKJ_BASE_URL', 'http://env-host:1')
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
     const ctx = await harness(server.url) // harness passes explicit config
     await assemble(ctx,{ model: 'deepseek-v4-flash', messages: [] })
     expect(server.requests).toHaveLength(1) // hit the explicit URL, not env
   })
 
-  it('uses DEEPSEEK_BASE_URL when config omits baseURL', async () => {
+  it('uses GLKJ_BASE_URL when config omits baseURL', async () => {
     const server = await mockServer([{ kind: 'sse', events: textEvents }])
-    vi.stubEnv('DEEPSEEK_BASE_URL', server.url)
-    vi.stubEnv('DEEPSEEK_API_KEY', 'test-key')
+    vi.stubEnv('GLKJ_BASE_URL', server.url)
+    vi.stubEnv('GLKJ_API_KEY', 'test-key')
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     await ctx.plugin(LlmDeepSeek, {})
@@ -2282,27 +2282,27 @@ describe('plugin registration and config', () => {
   })
 
 
-  it('takes DEEPSEEK_BASE_URL from any environment layer, with explicit config still on top', () => {
+  it('takes GLKJ_BASE_URL from any environment layer, with explicit config still on top', () => {
     const trusted = createLaunchEnvironmentSnapshot([
-      { source: 'user-env', path: '/home/.dsh/.env', values: { DEEPSEEK_BASE_URL: 'https://user.example' } },
+      { source: 'user-env', path: '/home/.glh/.env', values: { GLKJ_BASE_URL: 'https://user.example' } },
     ])
     expect(resolveAdapterOptions({}, trusted).baseURL).toBe('https://user.example')
     // The product trusts the project it is launched in, so a checkout can
     // point its own agent at the gateway that checkout is meant to use.
     const project = createLaunchEnvironmentSnapshot([
-      { source: 'project-env', path: '/work/.env', values: { DEEPSEEK_BASE_URL: 'https://project.example' } },
+      { source: 'project-env', path: '/work/.env', values: { GLKJ_BASE_URL: 'https://project.example' } },
     ])
     expect(resolveAdapterOptions({}, project).baseURL).toBe('https://project.example')
     // An explicitly configured endpoint outranks every environment layer, so a
     // stale shell value cannot rewrite a deployment's own gateway.
     const shell = createLaunchEnvironmentSnapshot([
-      { source: 'process', values: { DEEPSEEK_BASE_URL: 'https://stale.example' } },
+      { source: 'process', values: { GLKJ_BASE_URL: 'https://stale.example' } },
     ])
     expect(resolveAdapterOptions({ baseURL: 'https://gateway.internal' }, shell).baseURL).toBe('https://gateway.internal')
   })
   it('uses the public Messages base URL without an endpoint override', async () => {
-    vi.stubEnv('DEEPSEEK_API_KEY', 'k')
-    vi.stubEnv('DEEPSEEK_BASE_URL', undefined)
+    vi.stubEnv('GLKJ_API_KEY', 'k')
+    vi.stubEnv('GLKJ_BASE_URL', undefined)
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     // Registration succeeds; no call is made (would hit api.deepseek.com).

@@ -10,9 +10,9 @@ Plugin authors need npm identity, runtime requirements, and DSH declarations fro
 
 ## Decision
 
-[`DshPackageManifest`](../../../../packages/util/package-manifest/src/types.ts) describes the package.json fields DSH uses, with required `name` and `version`. Its optional `dsh` member uses `DshManifest` for public composition and author metadata. The type is a selected npm field set, not a complete package.json schema. App-boot adapts it with `Partial` for local profiles, which need no published identity.
+[`DshPackageManifest`](../../../../packages/util/package-manifest/src/types.ts) describes the package.json fields DSH uses, with required `name` and `version`. Its optional `glh` member uses `DshManifest` for public composition and author metadata. The type is a selected npm field set, not a complete package.json schema. App-boot adapts it with `Partial` for local profiles, which need no published identity.
 
-Runtime requirements live at top-level `engines`: `dsh`, `node`, and `npm` are optional version strings, and other engine names are allowed. `dsh.manifestVersion` identifies declaration format `1`. Format and DSH compatibility declarations are not enforced by current installers or loaders.
+Runtime requirements live at top-level `engines`: `glh`, `node`, and `npm` are optional version strings, and other engine names are allowed. `dsh.manifestVersion` identifies declaration format `1`. Format and DSH compatibility declarations are not enforced by current installers or loaders.
 
 The image packer owns `configTrees`, and the workspace catalog generator owns Session migration declarations. Their existing on-disk keys remain readable by those internal tools, but the public manifest types do not expose them.
 

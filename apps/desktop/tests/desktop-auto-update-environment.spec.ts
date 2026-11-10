@@ -13,7 +13,7 @@ const RELEASE_ID = '0123456789abcdef0123456789abcdef'
 
 describe('desktop auto-update environment', () => {
   it.each([undefined, 'test'])('requires a release ID for deployment %s', (deployment) => {
-    const environment = { DSH_DESKTOP_AUTO_UPDATE_ENV: deployment, DOWNLOAD_TEST_ORIGIN: 'https://updates.example.com',
+    const environment = { GLH_DESKTOP_AUTO_UPDATE_ENV: deployment, DOWNLOAD_TEST_ORIGIN: 'https://updates.example.com',
       DOWNLOAD_TEST_COS_BUCKET: 'test-bucket' }
     expect(() => resolveDesktopAutoUpdateConfig(environment, 'win32', 'x64')).toThrow(/DOWNLOAD_TEST_RELEASE_ID/u)
     expect(() => resolveDesktopUploadConfig(environment, 'win32', 'x64')).toThrow(/DOWNLOAD_TEST_RELEASE_ID/u)
@@ -61,7 +61,7 @@ describe('desktop auto-update environment', () => {
 
   it.each([undefined, RELEASE_ID, 'unused-test-value'])('keeps production paths independent of test release ID %s', (id) => {
     expect(resolveDesktopAutoUpdateConfig({
-      DSH_DESKTOP_AUTO_UPDATE_ENV: 'production',
+      GLH_DESKTOP_AUTO_UPDATE_ENV: 'production',
       DOWNLOAD_TEST_RELEASE_ID: id,
     }, 'win32', 'x64')).toMatchObject({
       environment: 'production',
@@ -70,7 +70,7 @@ describe('desktop auto-update environment', () => {
       binaryKeyPrefix: 'dsh-desk/bin/win-x64',
     })
     expect(resolveDesktopUploadConfig({
-      DSH_DESKTOP_AUTO_UPDATE_ENV: 'production',
+      GLH_DESKTOP_AUTO_UPDATE_ENV: 'production',
       DOWNLOAD_PROD_COS_BUCKET: 'production-download-bucket',
     }, 'win32', 'x64')).toMatchObject({
       bucket: 'production-download-bucket',
@@ -91,7 +91,7 @@ describe('desktop auto-update environment', () => {
       DOWNLOAD_TEST_RELEASE_ID: RELEASE_ID,
     }, 'darwin', 'arm64')).toThrow(/DOWNLOAD_TEST_COS_BUCKET/u)
     expect(() => resolveDesktopUploadConfig({
-      DSH_DESKTOP_AUTO_UPDATE_ENV: 'production',
+      GLH_DESKTOP_AUTO_UPDATE_ENV: 'production',
     }, 'win32', 'x64')).toThrow(/DOWNLOAD_PROD_COS_BUCKET/u)
   })
 
@@ -106,7 +106,7 @@ describe('desktop auto-update environment', () => {
 
   it('rejects unknown deployments and targets', () => {
     expect(() => resolveDesktopAutoUpdateEnvironment({
-      DSH_DESKTOP_AUTO_UPDATE_ENV: 'staging',
+      GLH_DESKTOP_AUTO_UPDATE_ENV: 'staging',
     })).toThrow(/test.*production/u)
     expect(() => resolveDesktopAutoUpdateTarget('linux', 'x64')).toThrow(/unsupported target/u)
     expect(() => desktopBuildRecordFilename('linux-x64' as 'mac-arm64')).toThrow(/unsupported target/u)
@@ -131,10 +131,10 @@ it.each([
 
 it.each([['darwin', 'arm64', 'mac-arm64', 'stable-mac.yml'], ['darwin', 'x64', 'mac-x64', 'stable-mac.yml'], ['win32', 'x64', 'win-x64', 'stable.yml']] as const)
 ('routes stable metadata and binaries separately for %s %s', (platform, arch, target, filename) => {
-  const config = resolveDesktopAutoUpdateConfig({ DSH_DESKTOP_AUTO_UPDATE_ENV: 'production', DSH_DESKTOP_UPDATE_CHANNEL: 'stable' }, platform, arch)
+  const config = resolveDesktopAutoUpdateConfig({ GLH_DESKTOP_AUTO_UPDATE_ENV: 'production', GLH_DESKTOP_UPDATE_CHANNEL: 'stable' }, platform, arch)
   expect(config.channel).toBe('stable')
   expect(config.keyPrefix).toBe(`dsh-desk/feeds/${target}`)
   expect(config.binaryKeyPrefix).toBe(`dsh-desk/bin/${target}/stable`)
   expect(desktopUpdateMetadataFilename('1.0.0', platform, config.channel)).toBe(filename)
-  expect(() => resolveDesktopAutoUpdateConfig({ DSH_DESKTOP_UPDATE_CHANNEL: 'latest' }, platform, arch)).toThrow(/channel/u)
+  expect(() => resolveDesktopAutoUpdateConfig({ GLH_DESKTOP_UPDATE_CHANNEL: 'latest' }, platform, arch)).toThrow(/channel/u)
 })

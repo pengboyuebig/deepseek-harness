@@ -27,7 +27,7 @@ const binScript = fileURLToPath(new URL('../../../../../../packages/test-support
 const tsconfigPath = fileURLToPath(new URL('../../../../../../tsconfig.json', import.meta.url))
 const parentId = SessionId('subagent-diagnostic-parent')
 const childId = SessionId('subagent-diagnostic-child')
-const refreshing = process.env.DSH_SNAPSHOT === 'refresh'
+const refreshing = process.env.GLH_SNAPSHOT === 'refresh'
 const task = 'Call list_agents once and report what it shows.'
 
 /** Compare current normalized Session records without historical migration. */
@@ -117,8 +117,8 @@ describe('parent-owned cold child catalog snapshot', () => {
       binArgs: [configPath, task],
       tsconfigPath,
       env: {
-        DSH_SNAPSHOT_FILE: replayOverride,
-        DSH_SNAPSHOT_OVERRIDE: replayOverride,
+        GLH_SNAPSHOT_FILE: replayOverride,
+        GLH_SNAPSHOT_OVERRIDE: replayOverride,
       },
       prepare: async (runCwd) => {
         cwd = runCwd

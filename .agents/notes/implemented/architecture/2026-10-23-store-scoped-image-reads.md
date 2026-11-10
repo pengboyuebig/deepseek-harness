@@ -30,7 +30,7 @@ This rule narrows the readers covered by [Session observations](2026-08-25-sessi
 
 Knowing a valid image reference and having permission to invoke the endpoint for the supplied Session resource permits reading that object across Sessions. The local ID is the SHA-256 of normalized bytes. For known PNG, JPEG, or WebP bytes that admission preserves unchanged, a caller can calculate the ID, derive the format, byte length, and dimensions, and use an authorized read to test whether the object exists. The required reference fields need not come from a Session log.
 
-Image isolation requires separate Host instances with separate `DSH_HOME` directories. The shipped composition uses one attachment store per Host and does not select a store by Session. Authentication, Gateway action/resource checks, fixed storage paths, digest verification, and explicit failures remain required.
+Image isolation requires separate Host instances with separate `GLH_HOME` directories. The shipped composition uses one attachment store per Host and does not select a store by Session. Authentication, Gateway action/resource checks, fixed storage paths, digest verification, and explicit failures remain required.
 
 Image reads no longer depend on history length or Session materialization. File reading, integrity verification, encoding, and transport still cost time; this change makes no claim about upload or model inference latency. Existing Session data and fork references need no migration.
 

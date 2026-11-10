@@ -44,12 +44,12 @@ it.each([false, true])('prints the redacted Apple failure with a journal=%s and 
   const directory = recorded ? createPackagingRun(root, {}).directory : undefined
   const savedArgv = process.argv
   const savedExit = process.exitCode
-  const savedDirectory = process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
+  const savedDirectory = process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
   const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
   const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
   try {
-    if (directory === undefined) delete process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
-    else process.env.DSH_DESKTOP_PACKAGING_RUN_DIR = directory
+    if (directory === undefined) delete process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
+    else process.env.GLH_DESKTOP_PACKAGING_RUN_DIR = directory
     process.argv = [process.execPath, fileURLToPath(new URL('../scripts/logged-notarytool.mjs', import.meta.url)),
       'submit', '/fixture/app.zip', '--apple-id', 'private@example.test', '--password', 'secret-sentinel',
       '--team-id', 'private-team', '--wait', '--output-format', 'json']
@@ -75,8 +75,8 @@ it.each([false, true])('prints the redacted Apple failure with a journal=%s and 
   } finally {
     process.argv = savedArgv
     process.exitCode = savedExit
-    if (savedDirectory === undefined) delete process.env.DSH_DESKTOP_PACKAGING_RUN_DIR
-    else process.env.DSH_DESKTOP_PACKAGING_RUN_DIR = savedDirectory
+    if (savedDirectory === undefined) delete process.env.GLH_DESKTOP_PACKAGING_RUN_DIR
+    else process.env.GLH_DESKTOP_PACKAGING_RUN_DIR = savedDirectory
     stderr.mockRestore()
     stdout.mockRestore()
     await rm(root, { recursive: true, force: true })

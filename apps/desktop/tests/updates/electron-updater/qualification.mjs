@@ -13,7 +13,7 @@ import { DesktopUpdateHttpExecutor } from '../../../lib/types/updates/electron-u
 
 async function main() {
   await app.whenReady()
-  const root = process.env.DSH_CHANNEL_TEST_ROOT
+  const root = process.env.GLH_CHANNEL_TEST_ROOT
   assert.ok(root)
   const requests = []
   let percentage

@@ -66,11 +66,11 @@ kind: "package-reference"
 
 ### 验证已安装的驱动
 
-在仓库根目录，用 Cua Driver 可执行程序的绝对路径显式启用真实兼容性测试。测试发现工具，以 `prompt: false` 调用 `check_permissions`，并验证清理结果。在 macOS 上，`--direct` 使用启动宿主的权限在 MCP 进程中运行驱动；省略 `DSH_COMPUTER_USE_MCP_ARGS` 则使用默认的 `["mcp"]` 参数。
+在仓库根目录，用 Cua Driver 可执行程序的绝对路径显式启用真实兼容性测试。测试发现工具，以 `prompt: false` 调用 `check_permissions`，并验证清理结果。在 macOS 上，`--direct` 使用启动宿主的权限在 MCP 进程中运行驱动；省略 `GLH_COMPUTER_USE_MCP_ARGS` 则使用默认的 `["mcp"]` 参数。
 
 ```sh
-DSH_COMPUTER_USE_MCP_EXECUTABLE=/absolute/path/to/cua-driver \
-DSH_COMPUTER_USE_MCP_ARGS='["mcp","--direct"]' \
+GLH_COMPUTER_USE_MCP_EXECUTABLE=/absolute/path/to/cua-driver \
+GLH_COMPUTER_USE_MCP_ARGS='["mcp","--direct"]' \
 pnpm run test:e2e packages/experimental/computer-use-cua-driver-mcp/tests/installed-driver.e2e.ts
 ```
 

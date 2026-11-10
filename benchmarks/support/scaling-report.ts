@@ -108,10 +108,10 @@ function appendRecords(records: readonly (TimingRecord | MemoryRecord)[]): void 
  * @throws If the value is not a known phase.
  */
 function reportPhase(): 'first' | 'last' | 'all' {
-  const raw = process.env.DSH_BENCH_REPORT_PHASE
+  const raw = process.env.GLH_BENCH_REPORT_PHASE
   if (raw === undefined || raw === '' || raw === 'all') return 'all'
   if (raw === 'first' || raw === 'last') return raw
-  throw new Error(`DSH_BENCH_REPORT_PHASE must be "first", "last", or "all", got ${JSON.stringify(raw)}.`)
+  throw new Error(`GLH_BENCH_REPORT_PHASE must be "first", "last", or "all", got ${JSON.stringify(raw)}.`)
 }
 
 /** Vitest global setup: discard results of an earlier run unless this phase continues one. */
@@ -165,7 +165,7 @@ export function renderReport(data: ReportData): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DeepSeek Harness benchmark scenarios</title>
+<title>GLKJ Harness benchmark scenarios</title>
 <style>
 body { font: 14px/1.45 system-ui, sans-serif; margin: 24px; color: #1f2328; }
 h1 { font-size: 20px; margin: 0 0 4px; }
@@ -186,7 +186,7 @@ tbody tr { cursor: pointer; }
 </style>
 </head>
 <body>
-<h1>DeepSeek Harness benchmark scenarios</h1>
+<h1>GLKJ Harness benchmark scenarios</h1>
 <p class="meta" id="meta"></p>
 <h2>Machines</h2>
 <p class="note">Each measured endpoint is rescaled to other machines. Its CPU share scales by the PassMark single-thread rating ratio and slows further when the endpoint kept more CPUs busy than the target has. Its storage share scales by the typical 4 KiB queue-depth-1 latency ratio of the default disk. Endpoints that report process CPU time use their measured share of wall time not spent on CPU as the storage share; the others use a declared estimate. Profiles are estimates; memory size is not modelled.</p>
@@ -201,7 +201,7 @@ tbody tr { cursor: pointer; }
 <p class="legend"><span class="b0">&lt; 100 ms</span><span class="b1">&lt; 1 s</span><span class="b2">&lt; 10 s</span><span class="b3">&ge; 10 s</span> Hover an endpoint for what it measures; click a row to chart it.</p>
 <div class="wrap"><table id="table"></table></div>
 <h2>Memory pressure</h2>
-<p class="note">Measured peak memory of each case against 4 GB and 8 GB of memory available to DeepSeek Harness. Peaks are not scaled. Cases were not run under an operating-system memory limit, so swapping and reclaim costs are not measured.</p>
+<p class="note">Measured peak memory of each case against 4 GB and 8 GB of memory available to GLKJ Harness. Peaks are not scaled. Cases were not run under an operating-system memory limit, so swapping and reclaim costs are not measured.</p>
 <svg id="memory-chart" width="960" role="img" aria-label="Peak memory against available memory"></svg>
 <p class="legend"><span class="b0">&lt; 50%</span><span class="b1">&lt; 75%</span><span class="b2">&lt; 100%</span><span class="b3">&ge; 100%</span> of available memory</p>
 <div class="wrap"><table id="memory-table"></table></div>

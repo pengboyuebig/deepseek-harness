@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import LocalCredentialProvider from '@deepseek-ai/dsh-credentials-local'
 import { credentialKey, credentialRef } from '@deepseek-ai/dsh-credentials'
-import { createLaunchEnvironmentSnapshot, DSH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
+import { createLaunchEnvironmentSnapshot, GLH_LAUNCH_ENVIRONMENT_KEY } from '@deepseek-ai/dsh-launch-environment'
 import { authContextFrom, credentialStoreFrom, recordKeyFor } from '../src/auth.ts'
 
 const home = vi.hoisted(() => ({ unavailable: false }))
@@ -26,7 +26,7 @@ const CODEX = recordKeyFor('openai-codex')
 
 const dirs: string[] = []
 
-/** A context whose credential records live in a throwaway `$DSH_HOME`. */
+/** A context whose credential records live in a throwaway `$GLH_HOME`. */
 async function stored(
   layers?: Parameters<typeof createLaunchEnvironmentSnapshot>[0],
   initialRefs?: Record<string, string>,
@@ -34,7 +34,7 @@ async function stored(
   const dir = await mkdtemp(join(tmpdir(), 'dsh-pi-auth-'))
   dirs.push(dir)
   const ctx = new Context()
-  if (layers !== undefined) ctx.provide(DSH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot(layers))
+  if (layers !== undefined) ctx.provide(GLH_LAUNCH_ENVIRONMENT_KEY, createLaunchEnvironmentSnapshot(layers))
   const path = join(dir, '.credentials.yaml')
   if (initialRefs !== undefined) {
     const refs = Object.entries(initialRefs).map(([name, value]) => `  ${name}: ${value}`).join('\n')
@@ -214,7 +214,7 @@ describe('pi-ai ambient auth context', () => {
     const ctx = await stored([
       { source: 'process', values: { OPENAI_API_KEY: 'from-launch' } },
       { source: 'project-env', path: '/work/.env', values: { OPENAI_API_KEY: 'from-project' } },
-      { source: 'user-env', path: '/home/.dsh/.env', values: { OPENAI_API_KEY: 'from-home' } },
+      { source: 'user-env', path: '/home/.glh/.env', values: { OPENAI_API_KEY: 'from-home' } },
     ], { OPENAI_API_KEY: 'from-credentials' })
 
     await expect(authContextFrom(ctx).env('OPENAI_API_KEY')).resolves.toBe('from-credentials')
