@@ -9,7 +9,7 @@ the web UI; parity is verified against its test fixtures.
 | Milestone | Scope | State |
 | --- | --- | --- |
 | G0 | module, layout, plugin context, profile composition, session log, LLM SSE client, API server, CLI | done |
-| G1 | cordis parity: profile/bundle/patch resolution, `dump-config` byte parity | in progress |
+| G1 | cordis parity: profile/bundle/patch resolution, `dump-config` structural parity | done |
 | G2 | session log: JSONL persistence, `deriveMessages`, fork/resume, snapshot replay | pending |
 | G3 | agent loop: turn/step state machine, tool pipeline, streaming handlers | pending |
 | G4 | tool set + fs/shell/subprocess/sandbox, sqlite session query, headless | pending |
@@ -44,6 +44,25 @@ GLH_HOME=~/.glh ./bin/glh --profile web dump-config
 The binary serves `apps/web/dist` when it exists next to the repository, or
 `$GLH_WEB_DIST`; otherwise it serves a placeholder page explaining how to build
 the client.
+
+`dump-config` reads the profile manifest (`dsh.profile.bundles`), resolves each
+bundle's `dsh.bundle.patch` from the install anchor's `node_modules`, then stacks
+the profile patch, the home patch, and `--patch` overlays. Set
+`GLH_INSTALL_ANCHOR` to the directory holding the bundle packages (normally the
+CLI package) when running outside an installed profile.
+
+Parity with the TypeScript dump is checked structurally:
+
+```sh
+GLH_HOME=~/.glh pnpm glh --profile web --dump-config > /tmp/ts.yml
+GLH_HOME=~/.glh ./bin/glh --profile web dump-config > /tmp/go.yml
+python3 scripts/parity.py /tmp/ts.yml /tmp/go.yml
+```
+
+The script needs PyYAML (`python3 -m pip install pyyaml`, or a venv).
+
+Long `!!js` and prose scalars may wrap differently in the two emitters; the
+script compares rows, fields, and the provenance layer chain, not whitespace.
 
 ## Deliberate divergences
 

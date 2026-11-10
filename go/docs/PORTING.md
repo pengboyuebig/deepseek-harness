@@ -34,17 +34,19 @@ reference implementation and parity oracle.
 Acceptance: `go build ./... && go vet ./... && go test ./...`; `glh version`;
 `glh dump-config` on a profile.
 
-### G1 — composition parity
+### G1 — composition parity (done)
 
 - Resolve bundles from the profile manifest (`dsh.profile.bundles`) instead of a
   hard-coded base patch.
 - Apply profile → home → `--patch` overlays in the documented order and reject
   patches targeting unknown rows.
 - `dump-config` output diffed against the TypeScript binary for the `base`,
-  `web`, and `headless` profiles.
+  `web`, and `headless` profiles, plus profile-patch and `--patch` overlays.
 
-Acceptance: byte-identical row order, ids, and `!!js` rendering for the three
-shipped profiles; `--dump-config` exit codes match.
+Acceptance: identical row order, ids, fields, `!!js` values, and provenance
+headers; unknown-id patches warn and are skipped with the same exit code as the
+TypeScript loader. Long scalar wrapping differs between the YAML emitters, so
+`go/scripts/parity.py` compares the parsed tree rather than raw bytes.
 
 ### G2 — session parity
 

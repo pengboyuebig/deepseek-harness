@@ -7,11 +7,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 	"time"
 
@@ -38,11 +38,12 @@ func main() {
 
 func rootCommand() *cobra.Command {
 	var (
-		profile  string
-		patches  []string
-		port     int
-		repoDir  string
-		logLevel string
+		profile       string
+		patches       []string
+		port          int
+		repoDir       string
+		installAnchor string
+		logLevel      string
 	)
 
 	root := &cobra.Command{
@@ -54,6 +55,8 @@ func rootCommand() *cobra.Command {
 
 	root.PersistentFlags().StringVar(&profile, "profile", "", "profile name (default web)")
 	root.PersistentFlags().StringSliceVar(&patches, "patch", nil, "extra patch overlay, in argv order")
+	root.PersistentFlags().StringVar(&repoDir, "repo", "", "repository root used to locate apps/web/dist and the install anchor")
+	root.PersistentFlags().StringVar(&installAnchor, "install-anchor", "", "directory whose node_modules holds the bundle packages")
 	root.PersistentFlags().StringVar(&logLevel, "log-level", "info", "debug, info, warn, error")
 
 	root.AddCommand(&cobra.Command{
@@ -69,8 +72,8 @@ func rootCommand() *cobra.Command {
 		Use:   "dump-config",
 		Short: "Print the composed plugin tree without starting it",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			cfg := config.Load(profile)
-			dump, err := composeDump(cfg, patches)
+			cfg := loadConfig(profile, repoDir, installAnchor)
+			dump, err := composeDump(cfg, patches, cmd.ErrOrStderr())
 			if err != nil {
 				return err
 			}
@@ -83,8 +86,8 @@ func rootCommand() *cobra.Command {
 		Use:   "web",
 		Short: "Serve the web client",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			cfg := config.Load(profile)
-			compose := func() (string, error) { return composeDump(cfg, patches) }
+			cfg := loadConfig(profile, repoDir, installAnchor)
+			compose := func() (string, error) { return composeDump(cfg, patches, io.Discard) }
 			if _, err := compose(); err != nil {
 				return err
 			}
@@ -109,7 +112,6 @@ func rootCommand() *cobra.Command {
 		},
 	}
 	webCommand.Flags().IntVar(&port, "port", 3080, "listen port; 0 picks a free one")
-	webCommand.Flags().StringVar(&repoDir, "repo", "", "repository root used to locate apps/web/dist")
 	root.AddCommand(webCommand)
 
 	var jsonOutput bool
@@ -118,7 +120,7 @@ func rootCommand() *cobra.Command {
 		Short: "Run one task without a server",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg := config.Load(profile)
+			cfg := loadConfig(profile, repoDir, installAnchor)
 			logger := newLogger(logLevel)
 			ctx := plugin.New(logger)
 			defer ctx.Dispose()
@@ -153,6 +155,13 @@ func rootCommand() *cobra.Command {
 	return root
 }
 
+func loadConfig(profile, repoDir, anchor string) config.Config {
+	cfg := config.Load(profile)
+	cfg.RepoDir = repoDir
+	cfg.Anchor = anchor
+	return cfg
+}
+
 func newLogger(level string) *slog.Logger {
 	var parsed slog.Level
 	if err := parsed.UnmarshalText([]byte(level)); err != nil {
@@ -163,67 +172,19 @@ func newLogger(level string) *slog.Logger {
 
 // composeDump stacks the profile's bundles, the profile patch, the home patch,
 // and any --patch overlays over an empty entry list.
-func composeDump(cfg config.Config, overlays []string) (string, error) {
-	tree := boot.NewTree()
-
-	bundlePatches, err := bundlesFor(cfg)
+func composeDump(cfg config.Config, overlays []string, warn io.Writer) (string, error) {
+	layers, err := boot.StackLayers(cfg.ProfilePath(), cfg.Home, cfg.InstallAnchor(), overlays)
 	if err != nil {
 		return "", err
 	}
-	for _, path := range bundlePatches {
-		layer, err := boot.LoadPatch(path)
-		if err != nil {
-			return "", err
-		}
+	tree := boot.NewTree()
+	for _, layer := range layers {
 		if err := tree.Apply(layer); err != nil {
 			return "", err
 		}
 	}
-
-	for _, path := range profileLayers(cfg) {
-		layer, err := boot.LoadPatch(path)
-		if err != nil {
-			return "", err
-		}
-		if err := tree.Apply(layer); err != nil {
-			return "", err
-		}
-	}
-	for _, path := range overlays {
-		layer, err := boot.LoadPatch(path)
-		if err != nil {
-			return "", err
-		}
-		if err := tree.Apply(layer); err != nil {
-			return "", err
-		}
+	for _, warning := range tree.Warnings() {
+		fmt.Fprintf(warn, "glh: %s\n", warning)
 	}
 	return tree.Dump()
-}
-
-func bundlesFor(cfg config.Config) ([]string, error) {
-	candidates := []string{
-		filepath.Join(cfg.ProfilePath(), "node_modules", "@deepseek-ai", "dsh-base", "cordis.patch.yml"),
-	}
-	var patches []string
-	for _, candidate := range candidates {
-		if _, err := os.Stat(candidate); err == nil {
-			patches = append(patches, candidate)
-		}
-	}
-	return patches, nil
-}
-
-func profileLayers(cfg config.Config) []string {
-	candidates := []string{
-		filepath.Join(cfg.ProfilePath(), "cordis.patch.yml"),
-		filepath.Join(cfg.Home, "cordis.patch.yml"),
-	}
-	var layers []string
-	for _, candidate := range candidates {
-		if _, err := os.Stat(candidate); err == nil {
-			layers = append(layers, candidate)
-		}
-	}
-	return layers
 }

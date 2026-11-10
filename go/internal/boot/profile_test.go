@@ -6,8 +6,26 @@ import (
 	"strings"
 	"testing"
 
+	"gopkg.in/yaml.v3"
+
 	"git.glkj.example.com/glkj/harness/go/internal/boot"
 )
+
+func configValue(node *yaml.Node, key string) (any, bool) {
+	if node == nil {
+		return nil, false
+	}
+	for i := 0; i+1 < len(node.Content); i += 2 {
+		if node.Content[i].Value == key {
+			var value any
+			if err := node.Content[i+1].Decode(&value); err != nil {
+				return nil, false
+			}
+			return value, true
+		}
+	}
+	return nil, false
+}
 
 func writeFile(t *testing.T, dir, name, body string) string {
 	t.Helper()
@@ -55,12 +73,16 @@ func TestApplyInsertsThenPatchesByID(t *testing.T) {
 	if len(tree.Rows) != 3 {
 		t.Fatalf("rows = %d, want 3", len(tree.Rows))
 	}
-	if tree.Rows[1].ID != "tools" || tree.Rows[1].Config["parallel"] != 4 {
+	if tree.Rows[1].ID != "tools" {
 		t.Fatalf("patched row = %+v", tree.Rows[1])
+	}
+	parallel, ok := configValue(tree.Rows[1].Config, "parallel")
+	if !ok || parallel != 4 {
+		t.Fatalf("parallel = %v, %v", parallel, ok)
 	}
 }
 
-func TestPatchOfUnknownRowFails(t *testing.T) {
+func TestPatchOfUnknownRowWarnsAndIsSkipped(t *testing.T) {
 	dir := t.TempDir()
 	path := writeFile(t, dir, "patch.yml", `
 - id: missing
@@ -71,8 +93,15 @@ func TestPatchOfUnknownRowFails(t *testing.T) {
 		t.Fatalf("load: %v", err)
 	}
 	tree := boot.NewTree()
-	if err := tree.Apply(layer); err == nil {
-		t.Fatal("expected an unknown-id patch to fail")
+	if err := tree.Apply(layer); err != nil {
+		t.Fatalf("apply: %v", err)
+	}
+	if len(tree.Rows) != 0 {
+		t.Fatalf("rows = %d, want 0", len(tree.Rows))
+	}
+	warnings := tree.Warnings()
+	if len(warnings) != 1 || !strings.Contains(warnings[0], `entry "missing" not found`) {
+		t.Fatalf("warnings = %v", warnings)
 	}
 }
 

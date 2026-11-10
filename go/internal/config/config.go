@@ -21,6 +21,8 @@ type Config struct {
 	BaseURL string
 	Model   string
 	WebDist string
+	RepoDir string
+	Anchor  string
 }
 
 // Load resolves configuration from flags and the environment.
@@ -48,6 +50,25 @@ func Load(profile string) Config {
 		Model:   os.Getenv("GLH_MODEL"),
 		WebDist: os.Getenv("GLH_WEB_DIST"),
 	}
+}
+
+// InstallAnchor is the directory whose node_modules tree holds the bundle
+// packages: GLH_INSTALL_ANCHOR, else <repo>/apps/cli, else the working
+// directory.
+func (c Config) InstallAnchor() string {
+	if c.Anchor != "" {
+		return c.Anchor
+	}
+	if anchor := os.Getenv("GLH_INSTALL_ANCHOR"); anchor != "" {
+		return anchor
+	}
+	if c.RepoDir != "" {
+		return filepath.Join(c.RepoDir, "apps", "cli")
+	}
+	if cwd, err := os.Getwd(); err == nil {
+		return cwd
+	}
+	return "."
 }
 
 // ProfilePath returns the profile directory under the harness home.
