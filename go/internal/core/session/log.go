@@ -214,7 +214,7 @@ func (l *Log) DeriveMessages() ([]Message, error) {
 		if err != nil {
 			return nil, err
 		}
-		if raw != nil {
+		if len(raw) > 0 {
 			messages = append(messages, Message{Raw: raw})
 		}
 	}

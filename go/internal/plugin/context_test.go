@@ -125,3 +125,26 @@ func TestWaterfallDelegatesThroughTheChain(t *testing.T) {
 		t.Fatalf("order = %v, want [first second]", order)
 	}
 }
+
+func TestDisposingTheParentDisposesItsChildren(t *testing.T) {
+	root := plugin.New(nil)
+	child := root.Child()
+	grandchild := child.Child()
+	var order []string
+	root.Effect(func() { order = append(order, "root") })
+	child.Effect(func() { order = append(order, "child") })
+	grandchild.Effect(func() { order = append(order, "grandchild") })
+
+	if err := root.Dispose(); err != nil {
+		t.Fatalf("dispose: %v", err)
+	}
+	want := []string{"grandchild", "child", "root"}
+	if len(order) != len(want) {
+		t.Fatalf("order = %v, want %v", order, want)
+	}
+	for i := range want {
+		if order[i] != want[i] {
+			t.Fatalf("order = %v, want %v", order, want)
+		}
+	}
+}

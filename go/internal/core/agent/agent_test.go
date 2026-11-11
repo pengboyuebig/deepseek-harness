@@ -247,6 +247,9 @@ func TestCancellationClosesTheTurn(t *testing.T) {
 	if events[len(events)-1].Type != "turn/end" || last.Reason.Kind != "error" {
 		t.Fatalf("last = %+v", events[len(events)-1])
 	}
+	if events[len(events)-2].Type != "step/end" {
+		t.Fatalf("open step was not closed before turn/end: %v", eventTypes(log))
+	}
 }
 
 func TestPreStepWaterfallCanRejectTheTurn(t *testing.T) {
@@ -274,5 +277,37 @@ func TestMissingProviderFailsTheTurn(t *testing.T) {
 	runner := agent.New(ctx, log, agent.Options{Model: "m"})
 	if err := runner.Run(context.Background(), "hi"); err == nil {
 		t.Fatal("expected a missing provider to fail")
+	}
+}
+
+func TestResumedLogContinuesTurnNumbering(t *testing.T) {
+	ctx := plugin.New(nil)
+	defer ctx.Dispose()
+	log := session.NewLog("s1")
+	provider := &scriptedProvider{responses: []scriptedResponse{{text: "one"}, {text: "two"}}}
+
+	runner := agent.New(ctx, log, agent.Options{Provider: provider, Model: "m"})
+	if err := runner.Run(context.Background(), "first"); err != nil {
+		t.Fatalf("first run: %v", err)
+	}
+	if err := runner.Run(context.Background(), "second"); err != nil {
+		t.Fatalf("second run: %v", err)
+	}
+
+	var turns []int
+	for _, event := range log.Events() {
+		if event.Type != "turn/start" {
+			continue
+		}
+		var data struct {
+			Turn int `json:"turn"`
+		}
+		if err := json.Unmarshal(event.Data, &data); err != nil {
+			t.Fatalf("decode: %v", err)
+		}
+		turns = append(turns, data.Turn)
+	}
+	if len(turns) != 2 || turns[0] != 1 || turns[1] != 2 {
+		t.Fatalf("turns = %v, want [1 2]", turns)
 	}
 }

@@ -203,7 +203,9 @@ func (t *Tree) Apply(layer Layer) error {
 		if entry.Row.node == nil && entry.Row.Name == "" && entry.Row.ID == "" {
 			continue
 		}
-		t.patch(entry.Row, layer.Label)
+		if err := t.patch(entry.Row, layer.Label); err != nil {
+			return fmt.Errorf("%s: %w", layer.Label, err)
+		}
 	}
 	return nil
 }
@@ -225,26 +227,30 @@ func (t *Tree) insert(row Row, label string) error {
 	return nil
 }
 
-func (t *Tree) patch(patch Row, label string) {
+func (t *Tree) patch(patch Row, label string) error {
 	if patch.ID == "" {
 		t.warnings = append(t.warnings, fmt.Sprintf("%s: patch: entry with no id ignored", label))
-		return
+		return nil
 	}
 	index, exists := t.byID[patch.ID]
 	if !exists {
 		t.warnings = append(t.warnings, fmt.Sprintf("%s: patch: entry %q not found", label, patch.ID))
-		return
+		return nil
 	}
 	previous := t.Rows[index]
-	merged, changed := mergeRow(previous, patch)
+	merged, changed, err := mergeRow(previous, patch)
+	if err != nil {
+		return err
+	}
 	if !changed {
-		return
+		return nil
 	}
 	merged.patched = append([]string(nil), previous.patched...)
 	if len(merged.patched) == 0 || merged.patched[len(merged.patched)-1] != label {
 		merged.patched = append(merged.patched, label)
 	}
 	t.Rows[index] = merged
+	return nil
 }
 
 // patched is the layer chain recorded on a row; kept off Row's exported surface.
@@ -299,7 +305,7 @@ func ProfileDir(home, name string) string {
 	return filepath.Join(home, "profiles", name)
 }
 
-func mergeRow(base, patch Row) (Row, bool) {
+func mergeRow(base, patch Row) (Row, bool, error) {
 	if base.node == nil {
 		base.node = base.buildNode()
 	}
@@ -307,9 +313,9 @@ func mergeRow(base, patch Row) (Row, bool) {
 	merged := base
 	merged.node = mergedNode
 	if err := merged.readFields(mergedNode); err != nil {
-		return base, false
+		return base, false, err
 	}
-	return merged, changed
+	return merged, changed, nil
 }
 
 func mergeNodes(base, patch *yaml.Node) (*yaml.Node, bool) {

@@ -155,6 +155,19 @@ func (d *DeepSeek) Stream(ctx context.Context, request Request, emit func(Chunk)
 	}
 	pending := make(map[int]*pendingCall)
 	var order []int
+	settled := false
+	settle := func(reason string) error {
+		if settled {
+			return nil
+		}
+		settled = true
+		calls := make([]ToolCall, 0, len(order))
+		for _, index := range order {
+			entry := pending[index]
+			calls = append(calls, ToolCall{ID: entry.ID, Name: entry.Name, Arguments: entry.Arguments.String()})
+		}
+		return emit(Chunk{Reason: reason, ToolCalls: calls, Finished: true})
+	}
 
 	scanner := bufio.NewScanner(response.Body)
 	scanner.Buffer(make([]byte, 0, 64*1024), 4*1024*1024)
@@ -165,7 +178,7 @@ func (d *DeepSeek) Stream(ctx context.Context, request Request, emit func(Chunk)
 		}
 		payload := strings.TrimSpace(strings.TrimPrefix(line, "data:"))
 		if payload == "[DONE]" {
-			return emit(Chunk{Finished: true})
+			return settle("stop")
 		}
 		var parsed chatChunk
 		if err := json.Unmarshal([]byte(payload), &parsed); err != nil {
@@ -193,12 +206,7 @@ func (d *DeepSeek) Stream(ctx context.Context, request Request, emit func(Chunk)
 				entry.Arguments.WriteString(call.Function.Arguments)
 			}
 			if choice.FinishReason != "" {
-				calls := make([]ToolCall, 0, len(order))
-				for _, index := range order {
-					entry := pending[index]
-					calls = append(calls, ToolCall{ID: entry.ID, Name: entry.Name, Arguments: entry.Arguments.String()})
-				}
-				if err := emit(Chunk{Reason: choice.FinishReason, ToolCalls: calls, Finished: true}); err != nil {
+				if err := settle(choice.FinishReason); err != nil {
 					return err
 				}
 			}
@@ -207,5 +215,5 @@ func (d *DeepSeek) Stream(ctx context.Context, request Request, emit func(Chunk)
 	if err := scanner.Err(); err != nil {
 		return fmt.Errorf("llm: read stream: %w", err)
 	}
-	return nil
+	return settle("stop")
 }

@@ -7,12 +7,13 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 //go:embed dist
 var embedded embed.FS
 
-// Handler returns the static file handler. A GHL_WEB_DIST directory or the
+// Handler returns the static file handler. A GLH_WEB_DIST directory or the
 // repository's apps/web/dist wins over the embedded placeholder so a real build
 // is served without recompiling.
 func Handler(repoRoot string) http.Handler {
@@ -22,7 +23,7 @@ func Handler(repoRoot string) http.Handler {
 		}
 	}
 	if repoRoot != "" {
-		candidate := repoRoot + "/apps/web/dist"
+		candidate := filepath.Join(repoRoot, "apps", "web", "dist")
 		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
 			return http.FileServer(http.Dir(candidate))
 		}

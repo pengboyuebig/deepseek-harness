@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -92,8 +93,12 @@ func rootCommand() *cobra.Command {
 				return err
 			}
 			server := &api.Server{Config: cfg, Compose: compose, RepoDir: repoDir}
-			listener := api.Addr("127.0.0.1", port)
-			httpServer := &http.Server{Addr: listener, Handler: server.Handler(), ReadHeaderTimeout: 10 * time.Second}
+			address := api.Addr("127.0.0.1", port)
+			listener, err := net.Listen("tcp", address)
+			if err != nil {
+				return fmt.Errorf("listen %s: %w", address, err)
+			}
+			httpServer := &http.Server{Handler: server.Handler(), ReadHeaderTimeout: 10 * time.Second}
 
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
@@ -104,8 +109,8 @@ func rootCommand() *cobra.Command {
 				_ = httpServer.Shutdown(shutdownCtx)
 			}()
 
-			fmt.Fprintf(cmd.OutOrStdout(), "glh web: http://%s\n", listener)
-			if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			fmt.Fprintf(cmd.OutOrStdout(), "glh web: http://%s\n", listener.Addr().String())
+			if err := httpServer.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				return fmt.Errorf("serve: %w", err)
 			}
 			return nil

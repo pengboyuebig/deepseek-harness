@@ -26,6 +26,7 @@ type Context struct {
 	middlewares map[string][]middlewareEntry
 	nextID      uint64
 	effects     []func()
+	children    []*Context
 	disposed    bool
 }
 
@@ -42,15 +43,20 @@ func New(log *slog.Logger) *Context {
 	}
 }
 
-// Child creates a scoped context. Disposing the child unwinds only its effects.
+// Child creates a scoped context. Disposing the parent disposes its children
+// first, so a scoped plugin can never outlive the context that created it.
 func (c *Context) Child() *Context {
-	return &Context{
+	child := &Context{
 		parent:      c,
 		log:         c.log,
 		services:    make(map[string]any),
 		handlers:    make(map[string][]handlerEntry),
 		middlewares: make(map[string][]middlewareEntry),
 	}
+	c.mu.Lock()
+	c.children = append(c.children, child)
+	c.mu.Unlock()
+	return child
 }
 
 // Logger returns the context logger.
@@ -121,6 +127,17 @@ func (c *Context) On(name string, handler Handler) Listener {
 	}
 }
 
+func (c *Context) removeChild(child *Context) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	for i, candidate := range c.children {
+		if candidate == child {
+			c.children = append(c.children[:i:i], c.children[i+1:]...)
+			return
+		}
+	}
+}
+
 // Emit delivers payload to every handler registered on this context and its
 // ancestors, newest registration last.
 func (c *Context) Emit(ctx context.Context, name string, payload any) {
@@ -150,13 +167,20 @@ func (c *Context) Dispose() error {
 	}
 	c.disposed = true
 	effects := c.effects
+	children := c.children
 	c.effects = nil
+	c.children = nil
 	c.services = make(map[string]any)
 	c.handlers = make(map[string][]handlerEntry)
 	c.middlewares = make(map[string][]middlewareEntry)
 	c.mu.Unlock()
 
 	var first error
+	for i := len(children) - 1; i >= 0; i-- {
+		if err := children[i].Dispose(); err != nil && first == nil {
+			first = err
+		}
+	}
 	for i := len(effects) - 1; i >= 0; i-- {
 		func() {
 			defer func() {

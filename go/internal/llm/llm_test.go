@@ -71,3 +71,37 @@ func TestStreamReportsHTTPFailure(t *testing.T) {
 		t.Fatalf("err = %v, want a 401 report", err)
 	}
 }
+
+func TestStreamSettlesToolCallsWithoutAFinishChunk(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		for _, line := range []string{
+			`data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-1","function":{"name":"echo","arguments":"{\"a\":"}}]}}]}`,
+			`data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"1}"}}]}}]}`,
+			`data: [DONE]`,
+		} {
+			w.Write([]byte(line + "\n\n"))
+		}
+	}))
+	defer server.Close()
+
+	provider := llm.NewDeepSeek(server.URL, "key")
+	var calls []llm.ToolCall
+	var finished int
+	err := provider.Stream(context.Background(), llm.Request{}, func(chunk llm.Chunk) error {
+		calls = append(calls, chunk.ToolCalls...)
+		if chunk.Finished {
+			finished++
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("stream: %v", err)
+	}
+	if len(calls) != 1 || calls[0].ID != "call-1" || calls[0].Name != "echo" || calls[0].Arguments != `{"a":1}` {
+		t.Fatalf("calls = %+v", calls)
+	}
+	if finished != 1 {
+		t.Fatalf("finished = %d, want 1 settlement", finished)
+	}
+}

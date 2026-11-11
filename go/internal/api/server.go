@@ -17,7 +17,6 @@ import (
 type Server struct {
 	Config  config.Config
 	Compose func() (string, error)
-	WebDist string
 	RepoDir string
 }
 

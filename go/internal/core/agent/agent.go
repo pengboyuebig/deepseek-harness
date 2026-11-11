@@ -73,7 +73,7 @@ func (a *Agent) Log() *session.Log { return a.log }
 
 // Run executes one turn: one or more steps until the model asks for no tool.
 func (a *Agent) Run(ctx context.Context, input string) error {
-	const turn = 1
+	turn := nextTurn(a.log.Events())
 	if _, err := a.log.Append("turn/start", map[string]any{"turn": turn}); err != nil {
 		return err
 	}
@@ -88,12 +88,12 @@ func (a *Agent) Run(ctx context.Context, input string) error {
 
 	preStep := PreStepPayload{Messages: []session.Message{{Raw: userMessage}}}
 	if _, err := a.ctx.Waterfall(ctx, "agent/pre-step", &preStep, nil); err != nil {
-		return a.finish(ctx, turn, fmt.Errorf("agent: pre-step rejected: %w", err))
+		return a.finish(ctx, turn, 0, fmt.Errorf("agent: pre-step rejected: %w", err))
 	}
 
 	for step := 1; step <= a.maxSteps; step++ {
 		if err := ctx.Err(); err != nil {
-			return a.finish(ctx, turn, err)
+			return a.finish(ctx, turn, 0, err)
 		}
 		if _, err := a.log.Append("step/start", map[string]any{"turn": turn, "step": step}); err != nil {
 			return err
@@ -108,7 +108,7 @@ func (a *Agent) Run(ctx context.Context, input string) error {
 
 		text, calls, stream, err := a.request(ctx, turn, step)
 		if err != nil {
-			return a.finish(ctx, turn, err)
+			return a.finish(ctx, turn, step, err)
 		}
 
 		if _, err := a.log.Append("assistant/message", a.assistantData(turn, step, text, calls, stream), session.WithAppend()); err != nil {
@@ -117,10 +117,10 @@ func (a *Agent) Run(ctx context.Context, input string) error {
 
 		for _, call := range calls {
 			if err := a.runTool(ctx, turn, step, call); err != nil {
-				return err
+				return a.finish(ctx, turn, step, err)
 			}
 			if err := ctx.Err(); err != nil {
-				return a.finish(ctx, turn, err)
+				return a.finish(ctx, turn, step, err)
 			}
 		}
 
@@ -131,12 +131,12 @@ func (a *Agent) Run(ctx context.Context, input string) error {
 			break
 		}
 		if step == a.maxSteps {
-			return a.finish(ctx, turn, fmt.Errorf("agent: step limit %d reached with tool calls pending", a.maxSteps))
+			return a.finish(ctx, turn, 0, fmt.Errorf("agent: step limit %d reached with tool calls pending", a.maxSteps))
 		}
 	}
 
 	if _, err := a.ctx.Waterfall(ctx, "agent/turn-stopping", turn, nil); err != nil {
-		return a.finish(ctx, turn, err)
+		return a.finish(ctx, turn, 0, err)
 	}
 	if _, err := a.log.Append("turn/end", map[string]any{"turn": turn, "reason": map[string]any{"kind": "completed"}}); err != nil {
 		return err
@@ -145,7 +145,12 @@ func (a *Agent) Run(ctx context.Context, input string) error {
 	return nil
 }
 
-func (a *Agent) finish(ctx context.Context, turn int, cause error) error {
+func (a *Agent) finish(ctx context.Context, turn, step int, cause error) error {
+	if step > 0 {
+		if _, err := a.log.Append("step/end", map[string]any{"turn": turn, "step": step}); err != nil {
+			return err
+		}
+	}
 	reason := map[string]any{"kind": "error", "message": cause.Error()}
 	if ctx.Err() != nil {
 		reason = map[string]any{"kind": "cancelled"}
@@ -155,6 +160,24 @@ func (a *Agent) finish(ctx context.Context, turn int, cause error) error {
 	}
 	a.ctx.Emit(ctx, "turn/end", a.log.Header.ID)
 	return cause
+}
+
+// nextTurn continues numbering from the durable log so a resumed session never
+// reuses a turn number.
+func nextTurn(events []session.Event) int {
+	turn := 1
+	for _, event := range events {
+		if event.Type != "turn/start" {
+			continue
+		}
+		var data struct {
+			Turn int `json:"turn"`
+		}
+		if err := json.Unmarshal(event.Data, &data); err == nil && data.Turn >= turn {
+			turn = data.Turn + 1
+		}
+	}
+	return turn
 }
 
 // PreStepPayload is the waterfall payload that decides what the model sees.
