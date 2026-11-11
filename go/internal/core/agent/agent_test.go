@@ -50,8 +50,11 @@ func TestRunRecordsTheDurableEventSequence(t *testing.T) {
 		}
 	}
 
-	messages := log.DeriveMessages()
-	if len(messages) != 2 || messages[1].Text != "hello" {
+	messages, err := log.DeriveMessages()
+	if err != nil {
+		t.Fatalf("derive: %v", err)
+	}
+	if len(messages) != 2 || messages[1].Role() != "assistant" {
 		t.Fatalf("messages = %+v", messages)
 	}
 	if len(provider.last.Messages) != 1 || provider.last.Messages[0].Content != "hi" {

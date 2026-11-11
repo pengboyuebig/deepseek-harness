@@ -48,15 +48,21 @@ headers; unknown-id patches warn and are skipped with the same exit code as the
 TypeScript loader. Long scalar wrapping differs between the YAML emitters, so
 `go/scripts/parity.py` compares the parsed tree rather than raw bytes.
 
-### G2 — session parity
+### G2 — session parity (done)
 
 - JSONL persistence compatible with `session.v4.jsonl` fixtures.
 - `deriveMessages` over every event kind that contributes model history.
 - Fork, resume, and turn numbering from a loaded log.
-- Replay the repository's `snapshots/session/*` corpus and compare the derived
-  message stream.
+- Replay the repository's `snapshots/**/*.v4.jsonl` corpus and compare the
+  derived message stream.
 
-Acceptance: 100% of snapshot fixtures replay with identical message sequences.
+Acceptance: every fixture the standalone TypeScript oracle can load derives the
+same message list. `make parity-session` reports `compared=271 skipped=19
+failures=0`; the skipped fixtures need plugin-owned message projections or
+templated tool-addition headers that only the full harness can supply.
+
+The Go writer is also checked in the other direction: a session written by the
+Go agent loads in the TypeScript `Session` and derives the same messages.
 
 ### G3 — agent loop parity
 

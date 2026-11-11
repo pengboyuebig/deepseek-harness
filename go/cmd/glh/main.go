@@ -142,9 +142,12 @@ func rootCommand() *cobra.Command {
 				fmt.Fprintln(cmd.OutOrStdout(), string(encoded))
 				return nil
 			}
-			messages := log.DeriveMessages()
+			messages, err := log.DeriveMessages()
+			if err != nil {
+				return err
+			}
 			if len(messages) > 0 {
-				fmt.Fprintln(cmd.OutOrStdout(), messages[len(messages)-1].Text)
+				fmt.Fprintln(cmd.OutOrStdout(), textOf(messages[len(messages)-1]))
 			}
 			return nil
 		},
@@ -153,6 +156,18 @@ func rootCommand() *cobra.Command {
 	root.AddCommand(headless)
 
 	return root
+}
+
+func textOf(message session.Message) string {
+	var builder []byte
+	for _, block := range message.Content() {
+		if object, ok := block.(map[string]any); ok && object["type"] == "text" {
+			if text, ok := object["text"].(string); ok {
+				builder = append(builder, text...)
+			}
+		}
+	}
+	return string(builder)
 }
 
 func loadConfig(profile, repoDir, anchor string) config.Config {

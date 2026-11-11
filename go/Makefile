@@ -1,7 +1,7 @@
 GO ?= go
 BIN := bin/glh
 
-.PHONY: all build test vet fmt check clean
+.PHONY: all build test vet fmt check clean parity-session
 
 all: check build
 
@@ -21,6 +21,9 @@ check:
 	gofmt -l . | tee /dev/stderr | test -z "$$(cat)"
 	$(GO) vet ./...
 	$(GO) test ./...
+
+parity-session:
+	./scripts/session-parity.sh
 
 clean:
 	rm -rf bin
