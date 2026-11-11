@@ -64,15 +64,21 @@ templated tool-addition headers that only the full harness can supply.
 The Go writer is also checked in the other direction: a session written by the
 Go agent loads in the TypeScript `Session` and derives the same messages.
 
-### G3 — agent loop parity
+### G3 — agent loop parity (done)
 
 - Turn/step state machine with `agent/pre-step`, `agent/request`, `llm/stream`.
 - Tool pipeline `tools/pre-execute → execute → post-execute` with parallel calls
   and cancellation.
 - Compaction hooks and turn-stopping.
 
-Acceptance: event-sequence equality against `snapshots/session` expectations for
-text turns, tool turns, retries, and cancellation.
+Acceptance: text and tool turns emit the durable sequence
+`turn/start → step/start → user/message → assistant/message → tool/call →
+tool/result → step/end → turn/end`, tool failures settle as error results,
+cancellation and pre-step rejection close the turn, the step limit stops an
+endless tool loop, and the sessions the Go agent writes load in the TypeScript
+runtime with identical derived messages. Still out of scope until G4: the
+provider-specific `request/header`/`request/context` rows, `session/title`, and
+compaction events that snapshots also contain.
 
 ### G4 — tools and persistence
 

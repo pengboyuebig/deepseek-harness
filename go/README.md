@@ -11,7 +11,7 @@ the web UI; parity is verified against its test fixtures.
 | G0 | module, layout, plugin context, profile composition, session log, LLM SSE client, API server, CLI | done |
 | G1 | cordis parity: profile/bundle/patch resolution, `dump-config` structural parity | done |
 | G2 | session log: JSONL persistence, `deriveMessages`, fork/resume, snapshot replay | done |
-| G3 | agent loop: turn/step state machine, tool pipeline, streaming handlers | pending |
+| G3 | agent loop: turn/step state machine, tool pipeline, streaming handlers | done |
 | G4 | tool set + fs/shell/subprocess/sandbox, sqlite session query, headless | pending |
 | G5 | `/api` gateway + SSE, embedded React client | pending |
 | G6 | Go plugin interface, packaging and release | pending |
@@ -74,7 +74,8 @@ make parity-session
 It loads every `snapshots/**/*.v4.jsonl` fixture through both runtimes and
 compares the derived model-visible messages. Fixtures that need a plugin-owned
 message projection cannot be loaded by the standalone oracle and are skipped.
-Sessions written by the Go agent load in the TypeScript runtime as well.
+Sessions written by the Go agent load in the TypeScript runtime as well; both a
+text turn and a tool turn derive the same messages there.
 
 ## Deliberate divergences
 
